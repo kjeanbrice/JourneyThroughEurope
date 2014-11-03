@@ -13,14 +13,20 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import journeythrougheurope.application.Main;
 import journeythrougheurope.application.Main.JourneyThroughEuropePropertyType;
@@ -33,6 +39,7 @@ import properties_manager.PropertiesManager;
  */
 public class JourneyThroughEuropeUI extends Pane {
 
+    private final int MAX_PLAYERS = 6;
     private Stage primaryStage;
     private BorderPane mainPane;
     private StackPane workspace;
@@ -60,7 +67,8 @@ public class JourneyThroughEuropeUI extends Pane {
     //Game Setup Screen
     private ComboBox playerSelectionComboBox;
     private HBox northPanel;
-    private VBox centerPanel;
+    private FlowPane centerPanel;
+    private StackPane playerGridPanes[];
     private Button btnGo;
 
     //Containers
@@ -116,7 +124,7 @@ public class JourneyThroughEuropeUI extends Pane {
     }
 
     private void initMainPane() {
-        marginlessInsets = new Insets(5, 5, 5, 5);
+        marginlessInsets = new Insets(3,3,3,3);
         mainPane = new BorderPane();
         mainPane.setStyle("-fx-background-color:brown");
         PropertiesManager props = PropertiesManager.getPropertiesManager();
@@ -234,6 +242,8 @@ public class JourneyThroughEuropeUI extends Pane {
     private void initGameSetupScreen() {
 
         northPanel = new HBox();
+        centerPanel = new FlowPane();
+        
         playerSelectionComboBox = new ComboBox();
         playerSelectionComboBox.getItems().addAll("1", "2", "3", "4", "5", "6");
         playerSelectionComboBox.setValue("1");
@@ -251,13 +261,27 @@ public class JourneyThroughEuropeUI extends Pane {
         });
 
         northPanel.setSpacing(10);
-        northPanel.setPadding(new Insets(20, 20, 20, 20));
+        northPanel.setPadding(new Insets(10, 10, 10, 10));
         northPanel.setAlignment(Pos.CENTER_LEFT);
         northPanel.getChildren().add(lblPlayerSelection);
         northPanel.getChildren().add(playerSelectionComboBox);
         northPanel.getChildren().add(btnGo);
-
+        
+        centerPanel.setPadding(marginlessInsets);
+        centerPanel.setAlignment(Pos.CENTER);
+        centerPanel.setVgap(5.0);
+        centerPanel.setHgap(5.0);
+        
+        playerGridPanes = new StackPane[MAX_PLAYERS];
+        for(int i = 0; i<playerGridPanes.length; i++)
+        {
+            playerGridPanes[i] = setupPlayerGridPane();
+            centerPanel.getChildren().add(playerGridPanes[i]);
+        }
+        
+        
         gameSetupScreenContainer.setTop(northPanel);
+        gameSetupScreenContainer.setCenter(centerPanel);
         workspace.getChildren().add(gameSetupScreenContainer);
     }
 
@@ -299,5 +323,50 @@ public class JourneyThroughEuropeUI extends Pane {
         //gameScreenContainer.setVisible(false);
         //statsScreenContainer.setVisible(false);
         //helpScreenContainer.setVisible(false);
+    }
+    
+    public StackPane setupPlayerGridPane()
+    {
+        StackPane pane = new StackPane();
+        pane.setAlignment(Pos.CENTER);
+        pane.setStyle("-fx-border-color:brown;" + "-fx-border-width: 3px;" + "-fx-effect: dropshadow( three-pass-box , brown , 10 , 0 , 0 , 0 );");
+        
+        
+       
+        HBox playerPane = new HBox();
+        playerPane.setAlignment(Pos.CENTER);
+        playerPane.setPadding(marginlessInsets);
+        playerPane.setSpacing(25);
+          
+        ToggleGroup group = new ToggleGroup();    
+        RadioButton player = new RadioButton("Player");
+        RadioButton computer = new RadioButton("Computer");  
+        player.setSelected(true);
+        player.setToggleGroup(group);
+        computer.setToggleGroup(group);
+        
+        Label lblName = new Label("Name");
+        TextField txtName = new TextField();
+        txtName.setPrefColumnCount(5);
+        
+        VBox playerNamePane = new VBox();
+        playerNamePane.setAlignment(Pos.CENTER);
+        playerNamePane.setSpacing(5);
+        playerNamePane.getChildren().add(lblName);
+        playerNamePane.getChildren().add(txtName);
+        
+        VBox playerTypePane = new VBox();
+        playerTypePane.setAlignment(Pos.CENTER_LEFT);
+        playerTypePane.getChildren().add(player);
+        playerTypePane.getChildren().add(computer);
+        playerTypePane.setSpacing(5);
+        
+        
+        playerPane.getChildren().add(playerTypePane);
+        playerPane.getChildren().add(playerNamePane);  
+        pane.getChildren().add(new Rectangle(300,275,Color.SANDYBROWN));
+        pane.getChildren().add(playerPane);
+        
+        return pane;
     }
 }
