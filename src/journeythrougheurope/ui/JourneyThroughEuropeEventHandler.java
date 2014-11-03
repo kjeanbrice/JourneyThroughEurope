@@ -19,8 +19,8 @@ public class JourneyThroughEuropeEventHandler {
         this.ui = ui;
     }
 
-    public void respondToSwitchScreenRequest() {
-
+    public void respondToSwitchScreenRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState uiState) {
+       ui.changeWorkspace(uiState);
     }
 
     public void respondToStartGameRequest() {
@@ -40,7 +40,7 @@ public class JourneyThroughEuropeEventHandler {
     }
 
     public void respondToStartRequest() {
-      //changeWorkspace to game setup screen
+      respondToSwitchScreenRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.GAME_SETUP_STATE);
     }
 
     public void respondToChangeMapGridRequest() {
@@ -49,5 +49,11 @@ public class JourneyThroughEuropeEventHandler {
 
     public void respondToShowWinDialogRequest(Stage primaryStage) {
 
+    }
+    
+    public void respondToChangeNumberOfPlayersRequest(int numPlayers)
+    {
+        ui.disablePlayerGridPanes();
+        ui.enablePlayerGridPanes(numPlayers);
     }
 }

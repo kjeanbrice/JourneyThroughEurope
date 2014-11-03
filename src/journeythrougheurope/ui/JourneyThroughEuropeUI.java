@@ -6,6 +6,8 @@
 package journeythrougheurope.ui;
 
 import java.util.ArrayList;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -68,7 +70,8 @@ public class JourneyThroughEuropeUI extends Pane {
     private ComboBox playerSelectionComboBox;
     private HBox northPanel;
     private FlowPane centerPanel;
-    private StackPane playerGridPanes[];
+    private HBox playerGridPanes[];
+    private StackPane playerGridContainers[];
     private Button btnGo;
 
     //Containers
@@ -120,11 +123,11 @@ public class JourneyThroughEuropeUI extends Pane {
         initAboutScreen();
         initStatsScreen();
         initGameScreen();
-        changeWorkspace(JourneyThroughEuropeUIState.GAME_SETUP_STATE);
+        changeWorkspace(JourneyThroughEuropeUIState.SPLASH_SCREEN_STATE);
     }
 
     private void initMainPane() {
-        marginlessInsets = new Insets(3,3,3,3);
+        marginlessInsets = new Insets(3, 3, 3, 3);
         mainPane = new BorderPane();
         mainPane.setStyle("-fx-background-color:brown");
         PropertiesManager props = PropertiesManager.getPropertiesManager();
@@ -205,7 +208,7 @@ public class JourneyThroughEuropeUI extends Pane {
             @Override
             public void handle(ActionEvent event) {
 
-                eventHandler.respondToSwitchScreenRequest();
+                //eventHandler.respondToSwitchScreenRequest();
             }
         });
 
@@ -225,8 +228,8 @@ public class JourneyThroughEuropeUI extends Pane {
         container.getChildren().add(btnAbout);
         container.getChildren().add(btnExit);
         container.setAlignment(Pos.BOTTOM_CENTER);
-        container.setSpacing(3.0);
-        container.setPadding(marginlessInsets);
+        container.setSpacing(5.0);
+        container.setPadding(new Insets(0,0,30,0));
 
         splashScreenPane.getChildren().add(splashScreenImageLabel);
         splashScreenPane.getChildren().add(container);
@@ -243,10 +246,17 @@ public class JourneyThroughEuropeUI extends Pane {
 
         northPanel = new HBox();
         centerPanel = new FlowPane();
-        
+
         playerSelectionComboBox = new ComboBox();
         playerSelectionComboBox.getItems().addAll("1", "2", "3", "4", "5", "6");
         playerSelectionComboBox.setValue("1");
+
+        playerSelectionComboBox.valueProperty().addListener(new ChangeListener<String>() {
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                int numPlayers = Integer.parseInt(playerSelectionComboBox.getValue().toString());
+                eventHandler.respondToChangeNumberOfPlayersRequest(numPlayers);
+            }
+        });
 
         Label lblPlayerSelection = new Label("Number of Players :");
 
@@ -266,20 +276,24 @@ public class JourneyThroughEuropeUI extends Pane {
         northPanel.getChildren().add(lblPlayerSelection);
         northPanel.getChildren().add(playerSelectionComboBox);
         northPanel.getChildren().add(btnGo);
-        
+
         centerPanel.setPadding(marginlessInsets);
         centerPanel.setAlignment(Pos.CENTER);
         centerPanel.setVgap(5.0);
         centerPanel.setHgap(5.0);
-        
-        playerGridPanes = new StackPane[MAX_PLAYERS];
-        for(int i = 0; i<playerGridPanes.length; i++)
-        {
+
+        playerGridPanes = new HBox[MAX_PLAYERS];
+        playerGridContainers = new StackPane[MAX_PLAYERS];
+
+        for (int i = 0; i < playerGridPanes.length; i++) {
             playerGridPanes[i] = setupPlayerGridPane();
-            centerPanel.getChildren().add(playerGridPanes[i]);
+            playerGridContainers[i] = setupPlayerGridContainers();
+            playerGridContainers[i].getChildren().add(playerGridPanes[i]);
+            centerPanel.getChildren().add(playerGridContainers[i]);
         }
-        
-        
+
+        disablePlayerGridPanes();
+        enablePlayerGridPanes(1);
         gameSetupScreenContainer.setTop(northPanel);
         gameSetupScreenContainer.setCenter(centerPanel);
         workspace.getChildren().add(gameSetupScreenContainer);
@@ -324,49 +338,62 @@ public class JourneyThroughEuropeUI extends Pane {
         //statsScreenContainer.setVisible(false);
         //helpScreenContainer.setVisible(false);
     }
-    
-    public StackPane setupPlayerGridPane()
-    {
-        StackPane pane = new StackPane();
-        pane.setAlignment(Pos.CENTER);
-        pane.setStyle("-fx-border-color:brown;" + "-fx-border-width: 3px;" + "-fx-effect: dropshadow( three-pass-box , brown , 10 , 0 , 0 , 0 );");
-        
-        
-       
+
+    public HBox setupPlayerGridPane() {
         HBox playerPane = new HBox();
         playerPane.setAlignment(Pos.CENTER);
         playerPane.setPadding(marginlessInsets);
         playerPane.setSpacing(25);
-          
-        ToggleGroup group = new ToggleGroup();    
+
+        ToggleGroup group = new ToggleGroup();
         RadioButton player = new RadioButton("Player");
-        RadioButton computer = new RadioButton("Computer");  
+        RadioButton computer = new RadioButton("Computer");
         player.setSelected(true);
         player.setToggleGroup(group);
         computer.setToggleGroup(group);
-        
-        Label lblName = new Label("Name");
+
+        Label lblName = new Label("Name:");
         TextField txtName = new TextField();
         txtName.setPrefColumnCount(5);
-        
+
         VBox playerNamePane = new VBox();
         playerNamePane.setAlignment(Pos.CENTER);
         playerNamePane.setSpacing(5);
         playerNamePane.getChildren().add(lblName);
         playerNamePane.getChildren().add(txtName);
-        
+
         VBox playerTypePane = new VBox();
         playerTypePane.setAlignment(Pos.CENTER_LEFT);
         playerTypePane.getChildren().add(player);
         playerTypePane.getChildren().add(computer);
         playerTypePane.setSpacing(5);
-        
-        
+
         playerPane.getChildren().add(playerTypePane);
-        playerPane.getChildren().add(playerNamePane);  
-        pane.getChildren().add(new Rectangle(300,275,Color.SANDYBROWN));
-        pane.getChildren().add(playerPane);
-        
+        playerPane.getChildren().add(playerNamePane);
+
+        return playerPane;
+    }
+
+    public StackPane setupPlayerGridContainers() {
+
+        StackPane pane = new StackPane();
+        pane.setAlignment(Pos.CENTER);
+        pane.setStyle("-fx-border-color:brown;" + "-fx-border-width: 3px;" + "-fx-effect: dropshadow( three-pass-box , brown , 10 , 0 , 0 , 0 );");
+        pane.getChildren().add(new Rectangle(300, 275, Color.SANDYBROWN));
+
         return pane;
     }
+
+    public void disablePlayerGridPanes() {
+        for (int i = 0; i < playerGridPanes.length; i++) {
+            playerGridPanes[i].setVisible(false);
+        }
+    }
+
+    public void enablePlayerGridPanes(int numPlayers) {
+        for (int i = 0; i < numPlayers; i++) {
+            playerGridPanes[i].setVisible(true);
+        }
+    }
+
 }
