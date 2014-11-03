@@ -32,8 +32,10 @@ public class Main extends Application {
             primaryStage.setTitle(title);
 
             JourneyThroughEuropeUI root = new JourneyThroughEuropeUI();
+            root.initJourneyThroughEuropeGame();
             BorderPane mainPane = root.getMainPane();
             root.setStage(primaryStage);
+           
 
             Scene scene = new Scene(mainPane, mainPane.getWidth(), mainPane.getHeight());
             primaryStage.setScene(scene);

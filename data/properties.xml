@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    The properties in this file are loaded when the HangMan game application
+    first loads.
+-->
+<properties>
+    <property_list>   
+        <property name ="START_IMG_NAME" 			value = "Start.png"></property>
+		<property name ="LOAD_IMG_NAME" 			value = "Load.png"></property>
+		<property name ="ABOUT_IMG_NAME"			value = "About.png"></property>
+		<property name ="EXIT_IMG_NAME"				value = "Exit.png"></property>
+		<property name ="RESET_IMG_NAME"			value = "Reset.png"></property>
+		<property name ="HOME_IMG_NAME"			    value = "Home.png"></property>
+        <property name="SPLASH_SCREEN_TITLE_TEXT"   value="Journey Through Europe"></property>
+        <property name="WINDOW_WIDTH"               value="1010"></property>
+        <property name="WINDOW_HEIGHT"              value="670"></property>
+        <property name="SPLASH_SCREEN_IMAGE_NAME"   value="JourneyThroughEuropeSplashScreen.png"></property>
+        <property name="DATA_PATH"                  value="./data/"></property>
+        <property name="IMG_PATH"                   value="./images/"></property>
+        <property name="LETTERS_FONT_FAMILY"        value="monospaced"></property>
+        <property name="LETTERS_FONT_SIZE"          value="24"></property>
+        <property name="DEFAULT_YES_TEXT"           value="Yes"></property>
+        <property name="DEFAULT_NO_TEXT"            value="No"></property>
+       	<property name="DEFAULT_EXIT_TEXT"          value="Are you sure you want to reset this level? Note: This will count as a lost."></property>
+		<property name="LEVEL1_STATS_FILE_NAME"     value="Level1_StatsDisplay.html"></property>	
+    </property_list>
+    <property_options_list>
+        <property_options name="LEVEL_OPTIONS">
+            <option>1</option>
+            <option>2</option>
+        </property_options>
+        <property_options name="LEVEL_IMAGE_NAMES">
+            <option>level_1.png</option>
+            <option>level_2.png</option>
+        </property_options>
+        <property_options name="LEVEL_FILES">
+            <option>level1.sok</option>
+            <option>level2.sok</option>
+        </property_options>
+    </property_options_list>
+</properties>
