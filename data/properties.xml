@@ -12,9 +12,12 @@
 		<property name ="RESET_IMG_NAME"			value = "Reset.png"></property>
 		<property name ="HOME_IMG_NAME"			    value = "Home.png"></property>
         <property name="SPLASH_SCREEN_TITLE_TEXT"   value="Journey Through Europe"></property>
-        <property name="WINDOW_WIDTH"               value="1010"></property>
-        <property name="WINDOW_HEIGHT"              value="670"></property>
+        <property name="WINDOW_WIDTH"               value="1028"></property>
+        <property name="WINDOW_HEIGHT"              value="685"></property>
+		<property name="IMAGE_WIDTH"                value="500"></property>
+		<property name="IMAGE_HEIGHT"               value="665"></property>
         <property name="SPLASH_SCREEN_IMAGE_NAME"   value="JourneyThroughEuropeSplashScreen.png"></property>
+		<property name="GAME_GRID1_IMAGE_NAME"		value="GameGrid1.png"></property>
         <property name="DATA_PATH"                  value="./data/"></property>
         <property name="IMG_PATH"                   value="./images/"></property>
         <property name="LETTERS_FONT_FAMILY"        value="monospaced"></property>

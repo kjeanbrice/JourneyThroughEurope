@@ -74,9 +74,32 @@ public class JourneyThroughEuropeUI extends Pane {
     private StackPane playerGridContainers[];
     private Button btnGo;
 
+    //Game Screen
+    private VBox leftPanel;
+    private FlowPane gameGridPanel;
+    private VBox gameOptionPane;
+    private Image gameGridImage;
+    private ImageView gameGridImageView;
+    private Label gameGridImageLabel;
+
+    private Button playerName;
+    private StackPane cardPanel;
+
+    private VBox rightPanel;
+    private Button btnGameHistory;
+    private Button btnAboutPlay;
+    private VBox gameButtonsPanel;
+
+    private Button gridButtons[];
+    
+    private VBox diePanel;
+    private Button die;
+    
+
     //Containers
     private BorderPane splashScreenContainer;
     private BorderPane gameSetupScreenContainer;
+    private BorderPane gameScreenContainer;
 
     public enum JourneyThroughEuropeUIState {
 
@@ -123,13 +146,13 @@ public class JourneyThroughEuropeUI extends Pane {
         initAboutScreen();
         initStatsScreen();
         initGameScreen();
-        changeWorkspace(JourneyThroughEuropeUIState.SPLASH_SCREEN_STATE);
+        changeWorkspace(JourneyThroughEuropeUIState.PLAY_GAME_STATE);
     }
 
     private void initMainPane() {
         marginlessInsets = new Insets(3, 3, 3, 3);
         mainPane = new BorderPane();
-        mainPane.setStyle("-fx-background-color:brown");
+        mainPane.setStyle("-fx-background-color:cb0d11");
         PropertiesManager props = PropertiesManager.getPropertiesManager();
         paneWidth = Integer.parseInt(props
                 .getProperty(JourneyThroughEuropePropertyType.WINDOW_WIDTH));
@@ -155,11 +178,10 @@ public class JourneyThroughEuropeUI extends Pane {
         gameSetupScreenContainer = new BorderPane();
         gameSetupScreenContainer.setStyle("-fx-background-color:sandybrown");
 
-        /*
-         gameScreenContainer = new BorderPane();
-         gameScreenContainer.setStyle("-fx-background-color:white");
+        gameScreenContainer = new BorderPane();
+        gameScreenContainer.setStyle("-fx-background-color:white");
 
-         statsScreenContainer = new BorderPane();
+        /* statsScreenContainer = new BorderPane();
          statsScreenContainer.setStyle("-fx-background-color:white");
 
          helpScreenContainer = new BorderPane();
@@ -217,7 +239,7 @@ public class JourneyThroughEuropeUI extends Pane {
             @Override
             public void handle(ActionEvent event) {
 
-                eventHandler.respondToExitGameRequest();
+                eventHandler.respondToExitGameRequest(primaryStage);
             }
         });
 
@@ -229,7 +251,7 @@ public class JourneyThroughEuropeUI extends Pane {
         container.getChildren().add(btnExit);
         container.setAlignment(Pos.BOTTOM_CENTER);
         container.setSpacing(5.0);
-        container.setPadding(new Insets(0,0,30,0));
+        container.setPadding(new Insets(0, 0, 30, 0));
 
         splashScreenPane.getChildren().add(splashScreenImageLabel);
         splashScreenPane.getChildren().add(container);
@@ -301,6 +323,120 @@ public class JourneyThroughEuropeUI extends Pane {
 
     private void initGameScreen() {
 
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        String gameGridImagePath = props.getProperty(JourneyThroughEuropePropertyType.GAME_GRID1_IMAGE_NAME);
+
+        gameGridImage = loadImage(gameGridImagePath);
+        gameGridImageView = new ImageView(gameGridImage);
+
+        gameGridImageLabel = new Label();
+        gameGridImageLabel.setGraphic(gameGridImageView);
+
+        gameGridPanel = new FlowPane();
+        gameGridPanel.setStyle("-fx-border-color:black;" + "-fx-border-width: 2px;");
+        gameGridPanel.getChildren().add(gameGridImageLabel);
+
+        playerName = new Button("Player 1");
+        playerName.setMaxWidth(Double.MAX_VALUE);
+        playerName.setStyle("-fx-background-color:#000000,"
+                + " linear-gradient(#7ebcea, #2f4b8f),"
+                + " linear-gradient(#426ab7, #263e75),"
+                + " linear-gradient(#395cab, #223768);"
+                + " -fx-background-insets: 0,1,2,3;"
+                + " -fx-background-radius: 3,2,2,2;"
+                + " -fx-padding: 3,4,3,4;"
+                + " -fx-text-fill: white;"
+                + " -fx-font-size: 15px;"
+                + " -fx-font-family: \"Arial\";"
+                + " -fx-font-weight: bold;");
+
+        cardPanel = new StackPane();
+        cardPanel.getChildren().add(new Rectangle(242, 636, Color.WHITE));
+
+        gameButtonsPanel = new VBox();
+        gameButtonsPanel.setAlignment(Pos.CENTER);
+
+        btnGameHistory = new Button("Game History");
+        btnAboutPlay = new Button("About Journey Through Europe");
+        VBox gameHistoryPanel = new VBox();
+        gameHistoryPanel.setAlignment(Pos.CENTER);
+
+        gameHistoryPanel.setPadding(new Insets(50,0,0,30));
+        gameHistoryPanel.setSpacing(5.0);
+        gameHistoryPanel.getChildren().add(btnGameHistory);
+        gameHistoryPanel.getChildren().add(btnAboutPlay);
+
+        VBox gridButtonsFirstColumnBox = new VBox();
+        gridButtonsFirstColumnBox.setAlignment(Pos.CENTER);
+        Label lblAC = new Label("A-C");
+        lblAC.setPadding(new Insets(0,0,5,0));
+        gridButtonsFirstColumnBox.getChildren().add(lblAC);
+        
+        VBox gridButtonsSecondColumnBox = new VBox();
+        gridButtonsSecondColumnBox.setAlignment(Pos.CENTER);
+        Label lblDF = new Label("D-F");
+        lblDF.setPadding(new Insets(0,0,5,0));
+        gridButtonsSecondColumnBox.getChildren().add(lblDF);
+        
+        VBox mapNumberPanel = new VBox();
+        gridButtonsSecondColumnBox.setAlignment(Pos.CENTER);
+        mapNumberPanel.setPadding(new Insets(43,10,0,0));
+        mapNumberPanel.setSpacing(43.0);
+        Label lblOneThroughFour = new Label("1-4");
+        Label lblFiveThroughEight = new Label("5-8");
+        lblFiveThroughEight.setAlignment(Pos.CENTER);
+        lblOneThroughFour.setAlignment(Pos.CENTER);
+        
+        mapNumberPanel.getChildren().addAll(lblOneThroughFour,lblFiveThroughEight);
+        
+        gridButtons = new Button[4];
+        for (int i = 0; i < gridButtons.length; i++) {
+            gridButtons[i] = new Button("     " + (i+1) + "     " + "\n\n\n");
+            if (i < gridButtons.length / 2) {
+                gridButtonsFirstColumnBox.getChildren().add(gridButtons[i]);
+            } else {
+                gridButtonsSecondColumnBox.getChildren().add(gridButtons[i]);
+            }
+
+        }
+
+        diePanel = new VBox();
+        diePanel.setAlignment(Pos.CENTER);
+        diePanel.setPadding(new Insets(0,0,50,20));
+       
+        die = new Button("\t\t\t\t\t\n\n\n\n\n\n\n");
+        Label lblRollDie = new Label("Roll Die!");
+        diePanel.getChildren().addAll(lblRollDie,die);
+        diePanel.setSpacing(5.0);
+        
+        HBox gridButtonsContainer = new HBox();
+        gridButtonsContainer.setAlignment(Pos.CENTER);
+        gridButtonsContainer.getChildren().add(mapNumberPanel);
+        gridButtonsContainer.getChildren().add(gridButtonsFirstColumnBox);
+        gridButtonsContainer.getChildren().add(gridButtonsSecondColumnBox);
+
+        gameButtonsPanel.getChildren().add(diePanel);
+        gameButtonsPanel.getChildren().add(gridButtonsContainer);
+        gameButtonsPanel.getChildren().add(gameHistoryPanel);
+
+        StackPane rightPaneContainer = new StackPane();
+        rightPaneContainer.getChildren().add(new Rectangle(242, 636, Color.WHITE));
+        rightPaneContainer.getChildren().add(gameButtonsPanel);
+
+        rightPanel = new VBox();
+        rightPanel.getChildren().add(rightPaneContainer);
+        rightPanel.setStyle("-fx-border-color:black;" + "-fx-border-width: 2px;");
+
+        leftPanel = new VBox();
+        leftPanel.getChildren().add(playerName);
+        leftPanel.getChildren().add(cardPanel);
+        leftPanel.setStyle("-fx-border-color:black;" + "-fx-border-width: 2px;");
+
+        gameScreenContainer.setCenter(gameGridPanel);
+        gameScreenContainer.setLeft(leftPanel);
+        gameScreenContainer.setRight(rightPanel);
+        workspace.getChildren().add(gameScreenContainer);
+
     }
 
     private void initStatsScreen() {
@@ -315,7 +451,7 @@ public class JourneyThroughEuropeUI extends Pane {
                 splashScreenContainer.setVisible(true);
                 break;
             case PLAY_GAME_STATE:
-                //gameScreenContainer.setVisible(true);
+                gameScreenContainer.setVisible(true);
                 break;
             case VIEW_STATS_STATE:
                 //statsScreenContainer.setVisible(true);
@@ -334,7 +470,7 @@ public class JourneyThroughEuropeUI extends Pane {
     public void disableAllPanes() {
         splashScreenContainer.setVisible(false);
         gameSetupScreenContainer.setVisible(false);
-        //gameScreenContainer.setVisible(false);
+        gameScreenContainer.setVisible(false);
         //statsScreenContainer.setVisible(false);
         //helpScreenContainer.setVisible(false);
     }
