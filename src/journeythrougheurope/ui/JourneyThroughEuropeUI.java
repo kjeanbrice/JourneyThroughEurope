@@ -5,9 +5,11 @@
  */
 package journeythrougheurope.ui;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingNode;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -16,6 +18,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
@@ -29,9 +32,15 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import javax.swing.JEditorPane;
+import javax.swing.JScrollPane;
+import javax.swing.text.html.HTMLDocument;
 import journeythrougheurope.application.Main;
 import journeythrougheurope.application.Main.JourneyThroughEuropePropertyType;
+import journeythrougheurope.file.JourneyThroughEuropeFileLoader;
 import journeythrougheurope.game.GameRenderer;
 import journeythrougheurope.game.JourneyThroughEuropeGameStateManager;
 import properties_manager.PropertiesManager;
@@ -44,7 +53,7 @@ public class JourneyThroughEuropeUI extends Pane {
 
     private GameRenderer gameManager;
     private JourneyThroughEuropeMouseHandler mouseHandler;
-    
+
     private final int MAX_PLAYERS = 6;
     private Stage primaryStage;
     private BorderPane mainPane;
@@ -96,19 +105,28 @@ public class JourneyThroughEuropeUI extends Pane {
     private VBox gameButtonsPanel;
 
     private Button gridButtons[];
-    
+
     private VBox diePanel;
     private Button die;
-    
+
+    //Stats Screen
+    private HBox gameHistoryToolbar;
+    private Button btnGame;
+    private JScrollPane gameHistoryScrollPane;
+    private JEditorPane gameHistoryPane;
+    private WebView gameHistoryWebView;
+    private WebEngine gameHistoryWebEngine;
+    private ScrollPane gameHistoryScrollPaneFX;
 
     //Containers
     private BorderPane splashScreenContainer;
     private BorderPane gameSetupScreenContainer;
     private BorderPane gameScreenContainer;
+    private BorderPane gameHistoryScreenContainer;
 
     public enum JourneyThroughEuropeUIState {
 
-        SPLASH_SCREEN_STATE, PLAY_GAME_STATE, VIEW_STATS_STATE, VIEW_ABOUT_STATE, GAME_SETUP_STATE
+        SPLASH_SCREEN_STATE, PLAY_GAME_STATE, VIEW_GAME_HISTORY_STATE, VIEW_ABOUT_STATE, GAME_SETUP_STATE
     }
 
     public JourneyThroughEuropeUI() {
@@ -149,7 +167,7 @@ public class JourneyThroughEuropeUI extends Pane {
         initSplashScreen();
         initGameSetupScreen();
         initAboutScreen();
-        initStatsScreen();
+        initGameHistoryScreen();
         initGameScreen();
         changeWorkspace(JourneyThroughEuropeUIState.SPLASH_SCREEN_STATE);
     }
@@ -186,10 +204,10 @@ public class JourneyThroughEuropeUI extends Pane {
         gameScreenContainer = new BorderPane();
         gameScreenContainer.setStyle("-fx-background-color:white");
 
-        /* statsScreenContainer = new BorderPane();
-         statsScreenContainer.setStyle("-fx-background-color:white");
+        gameHistoryScreenContainer = new BorderPane();
+        gameHistoryScreenContainer.setStyle("-fx-background-color:white");
 
-         helpScreenContainer = new BorderPane();
+        /*helpScreenContainer = new BorderPane();
          helpScreenContainer.setStyle("-fx-background-color:white");
          */
     }
@@ -342,8 +360,7 @@ public class JourneyThroughEuropeUI extends Pane {
         gamePanel.getChildren().add(gameGridImageLabel);
         //gameGridImageView.fitWidthProperty().bind(gamePanel.widthProperty());
         //gameGridImageView.fitHeightProperty().bind(gamePanel.heightProperty());
-        
-        
+
         canvas = new Pane();
         gamePanel.getChildren().add(canvas);
 
@@ -365,61 +382,68 @@ public class JourneyThroughEuropeUI extends Pane {
         cardPanel.getChildren().add(new Rectangle(242, 636, Color.WHITE));
 
         gameButtonsPanel = new VBox();
-        gameButtonsPanel.setAlignment(Pos.CENTER);
+        gameButtonsPanel.setAlignment(Pos.TOP_CENTER);
 
-        btnGameHistory = new Button("Game History");
-        btnAboutPlay = new Button("About Journey Through Europe");
+        btnGameHistory = this.initButton(JourneyThroughEuropePropertyType.GAME_HISTORY_IMAGE_NAME);
+        btnGameHistory.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+
+                eventHandler.respondToGameHistoryRequest(JourneyThroughEuropeUIState.VIEW_GAME_HISTORY_STATE);
+            }
+        });
+
+        btnAboutPlay = this.initButton(JourneyThroughEuropePropertyType.ABOUT_IMAGE_NAME);
         VBox gameHistoryPanel = new VBox();
         gameHistoryPanel.setAlignment(Pos.CENTER);
 
-        gameHistoryPanel.setPadding(new Insets(50,0,0,30));
-        gameHistoryPanel.setSpacing(5.0);
+        gameHistoryPanel.setPadding(new Insets(100, 0, 0, 30));
+        gameHistoryPanel.setSpacing(10.0);
         gameHistoryPanel.getChildren().add(btnGameHistory);
         gameHistoryPanel.getChildren().add(btnAboutPlay);
 
         VBox gridButtonsFirstColumnBox = new VBox();
         gridButtonsFirstColumnBox.setAlignment(Pos.CENTER);
-        Label lblAC = new Label("A-C");
-        lblAC.setPadding(new Insets(0,0,5,0));
+        Label lblAC = initLabel(JourneyThroughEuropePropertyType.AC_IMAGE_NAME);
+        lblAC.setPadding(new Insets(0, 0, 5, 0));
         gridButtonsFirstColumnBox.getChildren().add(lblAC);
-        
+
         VBox gridButtonsSecondColumnBox = new VBox();
         gridButtonsSecondColumnBox.setAlignment(Pos.CENTER);
-        Label lblDF = new Label("D-F");
-        lblDF.setPadding(new Insets(0,0,5,0));
+        Label lblDF = initLabel(JourneyThroughEuropePropertyType.DF_IMAGE_NAME);
+        lblDF.setPadding(new Insets(0, 0, 5, 0));
         gridButtonsSecondColumnBox.getChildren().add(lblDF);
-        
+
         VBox mapNumberPanel = new VBox();
         gridButtonsSecondColumnBox.setAlignment(Pos.CENTER);
-        mapNumberPanel.setPadding(new Insets(43,10,0,0));
-        mapNumberPanel.setSpacing(43.0);
-        Label lblOneThroughFour = new Label("1-4");
-        Label lblFiveThroughEight = new Label("5-8");
+        mapNumberPanel.setPadding(new Insets(60,5,0, 0));
+        mapNumberPanel.setSpacing(30.0);
+        Label lblOneThroughFour = initLabel(JourneyThroughEuropePropertyType.F4_IMAGE_NAME);
+        Label lblFiveThroughEight = initLabel(JourneyThroughEuropePropertyType.F8_IMAGE_NAME);
         lblFiveThroughEight.setAlignment(Pos.CENTER);
         lblOneThroughFour.setAlignment(Pos.CENTER);
-        
-        mapNumberPanel.getChildren().addAll(lblOneThroughFour,lblFiveThroughEight);
-        
-        gridButtons = new Button[4];
-        for (int i = 0; i < gridButtons.length; i++) {
-            gridButtons[i] = new Button("     " + (i+1) + "     " + "\n\n\n");
-            if (i < gridButtons.length / 2) {
-                gridButtonsFirstColumnBox.getChildren().add(gridButtons[i]);
-            } else {
-                gridButtonsSecondColumnBox.getChildren().add(gridButtons[i]);
-            }
 
-        }
+        mapNumberPanel.getChildren().addAll(lblOneThroughFour, lblFiveThroughEight);
+
+        gridButtons = new Button[4];
+        gridButtons[0] = initButton(JourneyThroughEuropePropertyType.GRID1_BUTTON_IMAGE_NAME);
+        gridButtons[1] = initButton(JourneyThroughEuropePropertyType.GRID2_BUTTON_IMAGE_NAME);
+        gridButtons[2] = initButton(JourneyThroughEuropePropertyType.GRID3_BUTTON_IMAGE_NAME);
+        gridButtons[3] = initButton(JourneyThroughEuropePropertyType.GRID4_BUTTON_IMAGE_NAME);
+
+        gridButtonsFirstColumnBox.getChildren().addAll(gridButtons[0], gridButtons[2]);
+        gridButtonsSecondColumnBox.getChildren().addAll(gridButtons[1], gridButtons[3]);
 
         diePanel = new VBox();
         diePanel.setAlignment(Pos.CENTER);
-        diePanel.setPadding(new Insets(0,0,50,20));
-       
-        die = new Button("\t\t\t\t\t\n\n\n\n\n\n\n");
-        Label lblRollDie = new Label("Roll Die!");
-        diePanel.getChildren().addAll(lblRollDie,die);
+        diePanel.setPadding(new Insets(30, 0, 50, 30));
+
+        die = this.initButton(JourneyThroughEuropePropertyType.DEFAULT_DIE_IMAGE_NAME);
+        Label lblRollDie = this.initLabel(JourneyThroughEuropePropertyType.ROLL_DIE_IMAGE_NAME);
+        diePanel.getChildren().addAll(lblRollDie, die);
         diePanel.setSpacing(5.0);
-        
+
         HBox gridButtonsContainer = new HBox();
         gridButtonsContainer.setAlignment(Pos.CENTER);
         gridButtonsContainer.getChildren().add(mapNumberPanel);
@@ -450,8 +474,49 @@ public class JourneyThroughEuropeUI extends Pane {
 
     }
 
-    private void initStatsScreen() {
+    private void initGameHistoryScreen() {
 
+        gameHistoryToolbar = new HBox();
+        btnGame = initToolbarButton(gameHistoryToolbar, JourneyThroughEuropePropertyType.GAME_IMG_NAME);
+        btnGame.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+                // TODO Auto-generated method stub
+                eventHandler.respondToSwitchScreenRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.PLAY_GAME_STATE);
+            }
+        });
+
+        // WE'LL DISPLAY ALL STATS IN A JEditorPane
+        gameHistoryPane = new JEditorPane();
+        gameHistoryPane.setEditable(false);
+        gameHistoryPane.setContentType("text/html");
+
+        gameHistoryScrollPane = new JScrollPane(gameHistoryPane);
+
+        SwingNode gameHistorySwingNode = new SwingNode();
+        gameHistorySwingNode.setContent(gameHistoryScrollPane);
+
+        // LOAD THE STARTING STATS PAGE, WHICH IS JUST AN OUTLINE
+        // AND DOESN"T HAVE ANY OF THE STATS, SINCE THOSE WILL 
+        // BE DYNAMICALLY ADDED
+        loadPage(gameHistoryPane, JourneyThroughEuropePropertyType.GAME_HISTORY_FILE_NAME);
+        //HTMLDocument statsDoc = (HTMLDocument) gameHistoryPane.getDocument();
+        //docManager.setStatsDoc(statsDoc);
+
+        gameHistoryWebView = new WebView();
+        gameHistoryWebEngine = gameHistoryWebView.getEngine();
+        gameHistoryWebEngine.loadContent(gameHistoryPane.getText());
+
+        gameHistoryScrollPaneFX = new ScrollPane();
+        gameHistoryScrollPaneFX.setContent(gameHistoryWebView);
+        gameHistoryScrollPaneFX.setFitToHeight(true);
+        gameHistoryScrollPaneFX.setFitToWidth(true);
+
+        gameHistoryScreenContainer.setTop(gameHistoryToolbar);
+        gameHistoryScreenContainer.setCenter(gameHistoryScrollPaneFX);
+
+        workspace.getChildren().add(gameHistoryScreenContainer);
     }
 
     public void changeWorkspace(JourneyThroughEuropeUIState uiScreen) {
@@ -463,26 +528,94 @@ public class JourneyThroughEuropeUI extends Pane {
                 break;
             case PLAY_GAME_STATE:
                 gameScreenContainer.setVisible(true);
+                mainPane.setStyle("-fx-background-color:cb0d11");
                 break;
-            case VIEW_STATS_STATE:
-                //statsScreenContainer.setVisible(true);
+            case VIEW_GAME_HISTORY_STATE:
+                gameHistoryScreenContainer.setVisible(true);
+                mainPane.setStyle("-fx-background-color:white");
                 break;
             case VIEW_ABOUT_STATE:
                 //helpScreenContainer.setVisible(true);
                 break;
             case GAME_SETUP_STATE:
                 gameSetupScreenContainer.setVisible(true);
+                mainPane.setStyle("-fx-background-color:brown");
                 break;
             default:
         }
         mainPane.setCenter(workspace);
     }
 
+    public void loadPage(JEditorPane jep, JourneyThroughEuropePropertyType fileProperty) {
+        // GET THE FILE NAME
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        String fileName = props.getProperty(fileProperty);
+        try {
+            // LOAD THE HTML INTO THE EDITOR PANE
+            String fileHTML = JourneyThroughEuropeFileLoader.loadTextFile(fileName);
+            jep.setText(fileHTML);
+        } catch (IOException ioe) {
+            errorHandler.processError(JourneyThroughEuropePropertyType.INVALID_URL_ERROR_TEXT);
+        }
+    }
+
+    private Button initToolbarButton(HBox toolbar, JourneyThroughEuropePropertyType prop) {
+        // GET THE NAME OF THE IMAGE, WE DO THIS BECAUSE THE
+        // IMAGES WILL BE NAMED DIFFERENT THINGS FOR DIFFERENT LANGUAGES
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        String imageName = props.getProperty(prop);
+
+        // LOAD THE IMAGE
+        Image image = loadImage(imageName);
+        ImageView imageIcon = new ImageView(image);
+
+        // MAKE THE BUTTON
+        Button button = new Button();
+        button.setGraphic(imageIcon);
+        button.setPadding(marginlessInsets);
+
+        // PUT IT IN THE TOOLBAR
+        toolbar.getChildren().add(button);
+
+        // AND SEND BACK THE BUTTON
+        return button;
+    }
+
+    public Button initButton(JourneyThroughEuropePropertyType prop) {
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        String imageName = props.getProperty(prop);
+
+        // LOAD THE IMAGE
+        Image image = loadImage(imageName);
+        ImageView imageIcon = new ImageView(image);
+
+        // MAKE THE BUTTON
+        Button button = new Button();
+        button.setGraphic(imageIcon);
+
+        return button;
+    }
+    
+     public Label initLabel(JourneyThroughEuropePropertyType prop) {
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        String imageName = props.getProperty(prop);
+
+        // LOAD THE IMAGE
+        Image image = loadImage(imageName);
+        ImageView imageIcon = new ImageView(image);
+
+        // MAKE THE BUTTON
+        Label label = new Label();
+        label.setGraphic(imageIcon);
+
+        return label;
+    }
+
     public void disableAllPanes() {
         splashScreenContainer.setVisible(false);
         gameSetupScreenContainer.setVisible(false);
         gameScreenContainer.setVisible(false);
-        //statsScreenContainer.setVisible(false);
+        gameHistoryScreenContainer.setVisible(false);
         //helpScreenContainer.setVisible(false);
     }
 
@@ -542,18 +675,17 @@ public class JourneyThroughEuropeUI extends Pane {
             playerGridPanes[i].setVisible(true);
         }
     }
-    
-       public void setGameToScreen(GameRenderer gameManager) {
+
+    public void setGameToScreen(GameRenderer gameManager) {
         canvas.getChildren().add(gameManager);
     }
-       
-       public void testClick()
-       {
-           System.out.println("Width: " +gamePanel.getWidth() +  "Height: "+gamePanel.getHeight());
-           gameManager = new GameRenderer(gamePanel.getWidth(),gamePanel.getHeight());
-           mouseHandler = new JourneyThroughEuropeMouseHandler(gameManager,primaryStage);
-           setGameToScreen(gameManager);
-           canvas.setOnMouseClicked(mouseHandler);
-       }
+
+    public void testClick() {
+        System.out.println("Width: " + gamePanel.getWidth() + "Height: " + gamePanel.getHeight());
+        gameManager = new GameRenderer(gamePanel.getWidth(), gamePanel.getHeight());
+        mouseHandler = new JourneyThroughEuropeMouseHandler(gameManager, primaryStage);
+        setGameToScreen(gameManager);
+        canvas.setOnMouseClicked(mouseHandler);
+    }
 
 }

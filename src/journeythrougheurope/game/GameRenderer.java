@@ -30,6 +30,8 @@ public class GameRenderer extends Canvas {
         gc = this.getGraphicsContext2D();
         gc.clearRect(0, 0, getWidth(), getHeight());
 
-        gc.strokeRect(x-(18/2), y-(18/2), 18,18);
+       
+        gc.strokeRect(x - (18/2),y-(18/2), 18, 18);
+        gc.strokeText("Hi, this is a test", x + (18/2), y - (18/2),100);
     }
 }

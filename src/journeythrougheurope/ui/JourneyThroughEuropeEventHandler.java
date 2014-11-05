@@ -37,12 +37,16 @@ public class JourneyThroughEuropeEventHandler {
 
     public void respondToStartGameRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState uiState) {
         ui.changeWorkspace(uiState);
-        ui.getMainPane().setStyle("-fx-background-color:cb0d11");
        ui.testClick();
     }
 
     public void respondToLoadGameRequest() {
 
+    }
+    
+    public void respondToGameHistoryRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState uiState)
+    {
+        ui.changeWorkspace(uiState);
     }
 
     public void respondToExitGameRequest(Stage primaryStage) {
@@ -116,7 +120,6 @@ public class JourneyThroughEuropeEventHandler {
 
     public void respondToStartRequest() {
       respondToSwitchScreenRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.GAME_SETUP_STATE);
-       ui.getMainPane().setStyle("-fx-background-color:brown");
     }
 
     public void respondToChangeMapGridRequest() {
