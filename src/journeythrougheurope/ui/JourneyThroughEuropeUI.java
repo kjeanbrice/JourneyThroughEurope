@@ -32,6 +32,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import journeythrougheurope.application.Main;
 import journeythrougheurope.application.Main.JourneyThroughEuropePropertyType;
+import journeythrougheurope.game.GameRenderer;
 import journeythrougheurope.game.JourneyThroughEuropeGameStateManager;
 import properties_manager.PropertiesManager;
 
@@ -41,6 +42,9 @@ import properties_manager.PropertiesManager;
  */
 public class JourneyThroughEuropeUI extends Pane {
 
+    private GameRenderer gameManager;
+    private JourneyThroughEuropeMouseHandler mouseHandler;
+    
     private final int MAX_PLAYERS = 6;
     private Stage primaryStage;
     private BorderPane mainPane;
@@ -76,7 +80,8 @@ public class JourneyThroughEuropeUI extends Pane {
 
     //Game Screen
     private VBox leftPanel;
-    private FlowPane gameGridPanel;
+    private StackPane gamePanel;
+    private Pane canvas;
     private VBox gameOptionPane;
     private Image gameGridImage;
     private ImageView gameGridImageView;
@@ -146,13 +151,13 @@ public class JourneyThroughEuropeUI extends Pane {
         initAboutScreen();
         initStatsScreen();
         initGameScreen();
-        changeWorkspace(JourneyThroughEuropeUIState.PLAY_GAME_STATE);
+        changeWorkspace(JourneyThroughEuropeUIState.SPLASH_SCREEN_STATE);
     }
 
     private void initMainPane() {
         marginlessInsets = new Insets(3, 3, 3, 3);
         mainPane = new BorderPane();
-        mainPane.setStyle("-fx-background-color:cb0d11");
+        mainPane.setStyle("-fx-background-color:blue");
         PropertiesManager props = PropertiesManager.getPropertiesManager();
         paneWidth = Integer.parseInt(props
                 .getProperty(JourneyThroughEuropePropertyType.WINDOW_WIDTH));
@@ -288,7 +293,7 @@ public class JourneyThroughEuropeUI extends Pane {
             @Override
             public void handle(ActionEvent event) {
 
-                eventHandler.respondToStartGameRequest();
+                eventHandler.respondToStartGameRequest(JourneyThroughEuropeUIState.PLAY_GAME_STATE);
             }
         });
 
@@ -332,9 +337,15 @@ public class JourneyThroughEuropeUI extends Pane {
         gameGridImageLabel = new Label();
         gameGridImageLabel.setGraphic(gameGridImageView);
 
-        gameGridPanel = new FlowPane();
-        gameGridPanel.setStyle("-fx-border-color:black;" + "-fx-border-width: 2px;");
-        gameGridPanel.getChildren().add(gameGridImageLabel);
+        gamePanel = new StackPane();
+        gamePanel.setStyle("-fx-border-color:black;" + "-fx-border-width: 2px;");
+        gamePanel.getChildren().add(gameGridImageLabel);
+        //gameGridImageView.fitWidthProperty().bind(gamePanel.widthProperty());
+        //gameGridImageView.fitHeightProperty().bind(gamePanel.heightProperty());
+        
+        
+        canvas = new Pane();
+        gamePanel.getChildren().add(canvas);
 
         playerName = new Button("Player 1");
         playerName.setMaxWidth(Double.MAX_VALUE);
@@ -432,7 +443,7 @@ public class JourneyThroughEuropeUI extends Pane {
         leftPanel.getChildren().add(cardPanel);
         leftPanel.setStyle("-fx-border-color:black;" + "-fx-border-width: 2px;");
 
-        gameScreenContainer.setCenter(gameGridPanel);
+        gameScreenContainer.setCenter(gamePanel);
         gameScreenContainer.setLeft(leftPanel);
         gameScreenContainer.setRight(rightPanel);
         workspace.getChildren().add(gameScreenContainer);
@@ -531,5 +542,18 @@ public class JourneyThroughEuropeUI extends Pane {
             playerGridPanes[i].setVisible(true);
         }
     }
+    
+       public void setGameToScreen(GameRenderer gameManager) {
+        canvas.getChildren().add(gameManager);
+    }
+       
+       public void testClick()
+       {
+           System.out.println("Width: " +gamePanel.getWidth() +  "Height: "+gamePanel.getHeight());
+           gameManager = new GameRenderer(gamePanel.getWidth(),gamePanel.getHeight());
+           mouseHandler = new JourneyThroughEuropeMouseHandler(gameManager,primaryStage);
+           setGameToScreen(gameManager);
+           canvas.setOnMouseClicked(mouseHandler);
+       }
 
 }

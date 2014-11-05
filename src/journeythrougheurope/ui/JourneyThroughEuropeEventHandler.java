@@ -5,6 +5,7 @@
  */
 package journeythrougheurope.ui;
 
+import java.util.ArrayList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -34,8 +35,10 @@ public class JourneyThroughEuropeEventHandler {
        ui.changeWorkspace(uiState);
     }
 
-    public void respondToStartGameRequest() {
-
+    public void respondToStartGameRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState uiState) {
+        ui.changeWorkspace(uiState);
+        ui.getMainPane().setStyle("-fx-background-color:cb0d11");
+       ui.testClick();
     }
 
     public void respondToLoadGameRequest() {
