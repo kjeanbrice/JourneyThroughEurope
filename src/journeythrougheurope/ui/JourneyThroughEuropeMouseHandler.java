@@ -30,13 +30,14 @@ public class JourneyThroughEuropeMouseHandler  implements EventHandler<MouseEven
        switch (event.getEventType().toString()) {
             case "MOUSE_CLICKED":
                 System.out.println("X: " +event.getX() + "     Y: " + event.getY());
-                System.out.println("Width:" + stage.getWidth() + "Height:" +stage.getHeight());
                 gameManager.repaint(event.getX(),event.getY());
                 
                 break;
             case "MOUSE_RELEASED":
                 break;
             case "MOUSE_DRAGGED":
+                System.out.println("X: " +event.getX() + "     Y: " + event.getY());
+                gameManager.repaint(event.getX(),event.getY());
                 break;
         }
     

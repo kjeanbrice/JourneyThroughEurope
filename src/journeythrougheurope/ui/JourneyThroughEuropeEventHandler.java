@@ -32,25 +32,24 @@ public class JourneyThroughEuropeEventHandler {
     }
 
     public void respondToSwitchScreenRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState uiState) {
-       ui.changeWorkspace(uiState);
+        ui.changeWorkspace(uiState);
     }
 
     public void respondToStartGameRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState uiState) {
         ui.changeWorkspace(uiState);
-       ui.testClick();
+        ui.testClick();
     }
 
     public void respondToLoadGameRequest() {
 
     }
-    
-    public void respondToGameHistoryRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState uiState)
-    {
+
+    public void respondToGameHistoryRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState uiState) {
         ui.changeWorkspace(uiState);
     }
 
     public void respondToExitGameRequest(Stage primaryStage) {
-       String options[] = new String[]{
+        String options[] = new String[]{
             "Yes", "No"
         };
         PropertiesManager props = PropertiesManager.getPropertiesManager();
@@ -105,7 +104,6 @@ public class JourneyThroughEuropeEventHandler {
         btnYes.setOnAction(buttonEvent -> {
             System.exit(0);
         });
-        
 
         btnNo.setOnAction(buttonEvent -> {
             // Closes the stage when the user's decision is "No".
@@ -115,23 +113,43 @@ public class JourneyThroughEuropeEventHandler {
     }
 
     public void respondToRollRequest() {
-
+        int roll = (int) ((Math.random() * 6) + 1);
+        System.out.println(roll);
+        switch (roll) {
+            case 1:
+                ui.changeDieImage(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.DIE1_IMAGE_STATE);
+                break;
+            case 2:
+                ui.changeDieImage(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.DIE2_IMAGE_STATE);
+                break;
+            case 3:
+                ui.changeDieImage(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.DIE3_IMAGE_STATE);
+                break;
+            case 4:
+                ui.changeDieImage(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.DIE4_IMAGE_STATE);
+                break;
+            case 5:
+                ui.changeDieImage(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.DIE5_IMAGE_STATE);
+                break;
+            case 6:
+                ui.changeDieImage(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.DIE6_IMAGE_STATE);
+                break;
+        }
     }
 
     public void respondToStartRequest() {
-      respondToSwitchScreenRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.GAME_SETUP_STATE);
+        respondToSwitchScreenRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.GAME_SETUP_STATE);
     }
 
-    public void respondToChangeMapGridRequest() {
-
+    public void respondToChangeGridRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState gameImageState) {
+        ui.changeGridImage(gameImageState);
     }
 
     public void respondToShowWinDialogRequest(Stage primaryStage) {
 
     }
-    
-    public void respondToChangeNumberOfPlayersRequest(int numPlayers)
-    {
+
+    public void respondToChangeNumberOfPlayersRequest(int numPlayers) {
         ui.disablePlayerGridPanes();
         ui.enablePlayerGridPanes(numPlayers);
     }

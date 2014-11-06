@@ -91,10 +91,9 @@ public class JourneyThroughEuropeUI extends Pane {
     private VBox leftPanel;
     private StackPane gamePanel;
     private Pane canvas;
-    private VBox gameOptionPane;
     private Image gameGridImage;
     private ImageView gameGridImageView;
-    private Label gameGridImageLabel;
+    private Label gameGridImageLabels[];
 
     private Button playerName;
     private StackPane cardPanel;
@@ -107,7 +106,7 @@ public class JourneyThroughEuropeUI extends Pane {
     private Button gridButtons[];
 
     private VBox diePanel;
-    private Button die;
+    private Button btnDie;
 
     //Stats Screen
     private HBox gameHistoryToolbar;
@@ -126,7 +125,9 @@ public class JourneyThroughEuropeUI extends Pane {
 
     public enum JourneyThroughEuropeUIState {
 
-        SPLASH_SCREEN_STATE, PLAY_GAME_STATE, VIEW_GAME_HISTORY_STATE, VIEW_ABOUT_STATE, GAME_SETUP_STATE
+        SPLASH_SCREEN_STATE, PLAY_GAME_STATE, VIEW_GAME_HISTORY_STATE, VIEW_ABOUT_STATE, GAME_SETUP_STATE,
+        GRID1_IMAGE_STATE, GRID2_IMAGE_STATE, GRID3_IMAGE_STATE, GRID4_IMAGE_STATE, DIE1_IMAGE_STATE, DIE2_IMAGE_STATE,
+        DIE3_IMAGE_STATE, DIE4_IMAGE_STATE, DIE5_IMAGE_STATE, DIE6_IMAGE_STATE
     }
 
     public JourneyThroughEuropeUI() {
@@ -225,10 +226,10 @@ public class JourneyThroughEuropeUI extends Pane {
         splashScreenImageLabel = new Label();
         splashScreenImageLabel.setGraphic(splashScreenImageView);
 
-        btnStart = new Button("Start");
-        btnLoad = new Button("Load");
-        btnAbout = new Button("About");
-        btnExit = new Button("Exit");
+        btnStart = initButton(JourneyThroughEuropePropertyType.START_IMAGE_NAME);
+        btnLoad = initButton(JourneyThroughEuropePropertyType.LOAD_IMG_NAME);
+        btnAbout = initButton(JourneyThroughEuropePropertyType.ABOUT_SPLASH_IMG_NAME);
+        btnExit = initButton(JourneyThroughEuropePropertyType.EXIT_IMG_NAME);
 
         btnStart.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -346,18 +347,15 @@ public class JourneyThroughEuropeUI extends Pane {
 
     private void initGameScreen() {
 
-        PropertiesManager props = PropertiesManager.getPropertiesManager();
-        String gameGridImagePath = props.getProperty(JourneyThroughEuropePropertyType.GAME_GRID1_IMAGE_NAME);
-
-        gameGridImage = loadImage(gameGridImagePath);
-        gameGridImageView = new ImageView(gameGridImage);
-
-        gameGridImageLabel = new Label();
-        gameGridImageLabel.setGraphic(gameGridImageView);
+        gameGridImageLabels = new Label[4];
+        gameGridImageLabels[0] = initLabel(JourneyThroughEuropePropertyType.GAME_GRID1_IMAGE_NAME);
+        gameGridImageLabels[1] = initLabel(JourneyThroughEuropePropertyType.GAME_GRID2_IMAGE_NAME);
+        gameGridImageLabels[2] = initLabel(JourneyThroughEuropePropertyType.GAME_GRID3_IMAGE_NAME);
+        gameGridImageLabels[3] = initLabel(JourneyThroughEuropePropertyType.GAME_GRID4_IMAGE_NAME);
 
         gamePanel = new StackPane();
         gamePanel.setStyle("-fx-border-color:black;" + "-fx-border-width: 2px;");
-        gamePanel.getChildren().add(gameGridImageLabel);
+        gamePanel.getChildren().add(gameGridImageLabels[0]);
         //gameGridImageView.fitWidthProperty().bind(gamePanel.widthProperty());
         //gameGridImageView.fitHeightProperty().bind(gamePanel.heightProperty());
 
@@ -417,7 +415,7 @@ public class JourneyThroughEuropeUI extends Pane {
 
         VBox mapNumberPanel = new VBox();
         gridButtonsSecondColumnBox.setAlignment(Pos.CENTER);
-        mapNumberPanel.setPadding(new Insets(60,5,0, 0));
+        mapNumberPanel.setPadding(new Insets(60, 5, 0, 0));
         mapNumberPanel.setSpacing(30.0);
         Label lblOneThroughFour = initLabel(JourneyThroughEuropePropertyType.F4_IMAGE_NAME);
         Label lblFiveThroughEight = initLabel(JourneyThroughEuropePropertyType.F8_IMAGE_NAME);
@@ -428,9 +426,44 @@ public class JourneyThroughEuropeUI extends Pane {
 
         gridButtons = new Button[4];
         gridButtons[0] = initButton(JourneyThroughEuropePropertyType.GRID1_BUTTON_IMAGE_NAME);
+        gridButtons[0].setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+
+                eventHandler.respondToChangeGridRequest(JourneyThroughEuropeUIState.GRID1_IMAGE_STATE);
+            }
+        });
+
         gridButtons[1] = initButton(JourneyThroughEuropePropertyType.GRID2_BUTTON_IMAGE_NAME);
+        gridButtons[1].setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+
+                eventHandler.respondToChangeGridRequest(JourneyThroughEuropeUIState.GRID2_IMAGE_STATE);
+            }
+        });
+
         gridButtons[2] = initButton(JourneyThroughEuropePropertyType.GRID3_BUTTON_IMAGE_NAME);
+        gridButtons[2].setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+
+                eventHandler.respondToChangeGridRequest(JourneyThroughEuropeUIState.GRID3_IMAGE_STATE);
+            }
+        });
+
         gridButtons[3] = initButton(JourneyThroughEuropePropertyType.GRID4_BUTTON_IMAGE_NAME);
+        gridButtons[3].setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+
+                eventHandler.respondToChangeGridRequest(JourneyThroughEuropeUIState.GRID4_IMAGE_STATE);
+            }
+        });
 
         gridButtonsFirstColumnBox.getChildren().addAll(gridButtons[0], gridButtons[2]);
         gridButtonsSecondColumnBox.getChildren().addAll(gridButtons[1], gridButtons[3]);
@@ -439,9 +472,18 @@ public class JourneyThroughEuropeUI extends Pane {
         diePanel.setAlignment(Pos.CENTER);
         diePanel.setPadding(new Insets(30, 0, 50, 30));
 
-        die = this.initButton(JourneyThroughEuropePropertyType.DEFAULT_DIE_IMAGE_NAME);
+        btnDie = this.initButton(JourneyThroughEuropePropertyType.DEFAULT_DIE_IMAGE_NAME);
+        btnDie.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+
+                eventHandler.respondToRollRequest();
+            }
+        });
+
         Label lblRollDie = this.initLabel(JourneyThroughEuropePropertyType.ROLL_DIE_IMAGE_NAME);
-        diePanel.getChildren().addAll(lblRollDie, die);
+        diePanel.getChildren().addAll(lblRollDie, btnDie);
         diePanel.setSpacing(5.0);
 
         HBox gridButtonsContainer = new HBox();
@@ -477,7 +519,7 @@ public class JourneyThroughEuropeUI extends Pane {
     private void initGameHistoryScreen() {
 
         gameHistoryToolbar = new HBox();
-        btnGame = initToolbarButton(gameHistoryToolbar, JourneyThroughEuropePropertyType.GAME_IMG_NAME);
+        btnGame = initButton(JourneyThroughEuropePropertyType.GAME_IMG_NAME);
         btnGame.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -513,6 +555,8 @@ public class JourneyThroughEuropeUI extends Pane {
         gameHistoryScrollPaneFX.setFitToHeight(true);
         gameHistoryScrollPaneFX.setFitToWidth(true);
 
+        gameHistoryToolbar.getChildren().add(btnGame);
+
         gameHistoryScreenContainer.setTop(gameHistoryToolbar);
         gameHistoryScreenContainer.setCenter(gameHistoryScrollPaneFX);
 
@@ -546,6 +590,54 @@ public class JourneyThroughEuropeUI extends Pane {
         mainPane.setCenter(workspace);
     }
 
+    public void changeGridImage(JourneyThroughEuropeUIState gridImageState) {
+        switch (gridImageState) {
+            case GRID1_IMAGE_STATE:
+                gamePanel.getChildren().clear();
+                gamePanel.getChildren().add(gameGridImageLabels[0]);
+                gamePanel.getChildren().add(canvas);
+                break;
+            case GRID2_IMAGE_STATE:
+                gamePanel.getChildren().clear();
+                gamePanel.getChildren().add(gameGridImageLabels[1]);
+                gamePanel.getChildren().add(canvas);
+                break;
+            case GRID3_IMAGE_STATE:
+                gamePanel.getChildren().clear();
+                gamePanel.getChildren().add(gameGridImageLabels[2]);
+                gamePanel.getChildren().add(canvas);
+                break;
+            case GRID4_IMAGE_STATE:
+                gamePanel.getChildren().clear();
+                gamePanel.getChildren().add(gameGridImageLabels[3]);
+                gamePanel.getChildren().add(canvas);
+                break;
+        }
+    }
+
+    public void changeDieImage(JourneyThroughEuropeUIState dieImageState) {
+        switch (dieImageState) {
+            case DIE1_IMAGE_STATE:
+                btnDie.setGraphic(setupImageView(JourneyThroughEuropePropertyType.DIE1_IMAGE_NAME));
+                break;
+            case DIE2_IMAGE_STATE:
+                btnDie.setGraphic(setupImageView(JourneyThroughEuropePropertyType.DIE2_IMAGE_NAME));
+                break;
+            case DIE3_IMAGE_STATE:
+                btnDie.setGraphic(setupImageView(JourneyThroughEuropePropertyType.DIE3_IMAGE_NAME));
+                break;
+            case DIE4_IMAGE_STATE:
+                btnDie.setGraphic(setupImageView(JourneyThroughEuropePropertyType.DIE4_IMAGE_NAME));
+                break;
+            case DIE5_IMAGE_STATE:
+                btnDie.setGraphic(setupImageView(JourneyThroughEuropePropertyType.DIE5_IMAGE_NAME));
+                break;
+            case DIE6_IMAGE_STATE:
+                btnDie.setGraphic(setupImageView(JourneyThroughEuropePropertyType.DIE6_IMAGE_NAME));
+                break;
+        }
+    }
+
     public void loadPage(JEditorPane jep, JourneyThroughEuropePropertyType fileProperty) {
         // GET THE FILE NAME
         PropertiesManager props = PropertiesManager.getPropertiesManager();
@@ -559,28 +651,17 @@ public class JourneyThroughEuropeUI extends Pane {
         }
     }
 
-    private Button initToolbarButton(HBox toolbar, JourneyThroughEuropePropertyType prop) {
-        // GET THE NAME OF THE IMAGE, WE DO THIS BECAUSE THE
-        // IMAGES WILL BE NAMED DIFFERENT THINGS FOR DIFFERENT LANGUAGES
-        PropertiesManager props = PropertiesManager.getPropertiesManager();
+    public ImageView setupImageView(JourneyThroughEuropePropertyType prop)
+    {
+           PropertiesManager props = PropertiesManager.getPropertiesManager();
         String imageName = props.getProperty(prop);
 
         // LOAD THE IMAGE
         Image image = loadImage(imageName);
         ImageView imageIcon = new ImageView(image);
-
-        // MAKE THE BUTTON
-        Button button = new Button();
-        button.setGraphic(imageIcon);
-        button.setPadding(marginlessInsets);
-
-        // PUT IT IN THE TOOLBAR
-        toolbar.getChildren().add(button);
-
-        // AND SEND BACK THE BUTTON
-        return button;
+        
+        return imageIcon;
     }
-
     public Button initButton(JourneyThroughEuropePropertyType prop) {
         PropertiesManager props = PropertiesManager.getPropertiesManager();
         String imageName = props.getProperty(prop);
@@ -595,8 +676,8 @@ public class JourneyThroughEuropeUI extends Pane {
 
         return button;
     }
-    
-     public Label initLabel(JourneyThroughEuropePropertyType prop) {
+
+    public Label initLabel(JourneyThroughEuropePropertyType prop) {
         PropertiesManager props = PropertiesManager.getPropertiesManager();
         String imageName = props.getProperty(prop);
 
@@ -686,6 +767,7 @@ public class JourneyThroughEuropeUI extends Pane {
         mouseHandler = new JourneyThroughEuropeMouseHandler(gameManager, primaryStage);
         setGameToScreen(gameManager);
         canvas.setOnMouseClicked(mouseHandler);
+        canvas.setOnMouseDragged(mouseHandler);
     }
 
 }

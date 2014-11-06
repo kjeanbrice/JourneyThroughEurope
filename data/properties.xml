@@ -5,9 +5,10 @@
 -->
 <properties>
     <property_list>   
-        <property name ="START_IMG_NAME" 			value = "Start.png"></property>
+        <property name ="START_IMAGE_NAME" 			value = "Start.png"></property>
 		<property name ="LOAD_IMG_NAME" 			value = "Load.png"></property>
 		<property name ="ABOUT_IMG_NAME"			value = "About.png"></property>
+		<property name ="ABOUT_SPLASH_IMG_NAME"	    value = "AboutSplash.png"></property>
 		<property name ="EXIT_IMG_NAME"				value = "Exit.png"></property>
 		<property name ="RESET_IMG_NAME"			value = "Reset.png"></property>
 		<property name ="HOME_IMG_NAME"			    value = "Home.png"></property>
@@ -38,6 +39,9 @@
         <property name="SPLASH_SCREEN_IMAGE_NAME"   value="SplashScreen.png"></property>
 		<property name="GAME_HISTORY_FILE_NAME"     value="Game_History.html"></property>
 		<property name="GAME_GRID1_IMAGE_NAME"		value="GameGrid1.png"></property>
+		<property name="GAME_GRID2_IMAGE_NAME"		value="GameGrid2.png"></property>
+		<property name="GAME_GRID3_IMAGE_NAME"		value="GameGrid3.png"></property>
+		<property name="GAME_GRID4_IMAGE_NAME"		value="GameGrid4.png"></property>
         <property name="DATA_PATH"                  value="./data/"></property>
         <property name="IMG_PATH"                   value="./images/"></property>
         <property name="LETTERS_FONT_FAMILY"        value="monospaced"></property>
