@@ -17,6 +17,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import journeythrougheurope.application.Main.JourneyThroughEuropePropertyType;
+import journeythrougheurope.game.GameRenderer;
 import properties_manager.PropertiesManager;
 
 /**
@@ -141,8 +142,10 @@ public class JourneyThroughEuropeEventHandler {
         respondToSwitchScreenRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.GAME_SETUP_STATE);
     }
 
-    public void respondToChangeGridRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState gameImageState) {
-        ui.changeGridImage(gameImageState);
+    public void respondToChangeGridRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState gridState) {
+        ui.getGSM().processGridChangeRequest(gridState);
+        ui.changeGridImage(gridState);
+        ui.getGameRenderer().updateCityData();
     }
 
     public void respondToShowWinDialogRequest(Stage primaryStage) {

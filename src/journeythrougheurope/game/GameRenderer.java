@@ -5,8 +5,15 @@
  */
 package journeythrougheurope.game;
 
+import java.util.ArrayList;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import journeythrougheurope.ui.JourneyThroughEuropeUI;
 
 /**
  *
@@ -14,24 +21,59 @@ import javafx.scene.canvas.GraphicsContext;
  */
 public class GameRenderer extends Canvas {
 
+    private final int GRID_IMAGE_WIDTH = 2010;
+    private final int GRID_IMAGE_HEIGHT = 2569;
+    private final int GRID_IMAGE_WIDTH_LARGE = 2010;
+    private final int GRID_IMAGE_HEIGHT_LARGE = 2569;
+    private final int SIDE_LENGTH = 40;
+
+    private JourneyThroughEuropeUI ui;
     private GraphicsContext gc;
+    private ArrayList<JourneyThroughEuropeCity> cityData;
     private double canvasWidth;
     private double canvasHeight;
 
-    public GameRenderer(double canvasWidth, double canvasHeight) {
+    public GameRenderer(double canvasWidth, double canvasHeight, JourneyThroughEuropeUI ui) {
+        this.ui = ui;
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
         setWidth(this.canvasWidth);
         setHeight(this.canvasHeight);
-
+        cityData = ui.getGSM().getCurrentGridData();
     }
 
     public void repaint(double x, double y) {
         gc = this.getGraphicsContext2D();
         gc.clearRect(0, 0, getWidth(), getHeight());
 
-       
-        gc.strokeRect(x - (18/2),y-(18/2), 18, 18);
-        gc.strokeText("Hi, this is a test", x + (18/2), y - (18/2),100);
+        gc.fillOval(x - (SIDE_LENGTH / 2), y - (SIDE_LENGTH / 2), SIDE_LENGTH, SIDE_LENGTH);
+        gc.setFill(Color.RED);
+        
+
+        for (int i = 0; i < cityData.size(); i++) {
+            Rectangle2D temp = new Rectangle2D(x, y, SIDE_LENGTH, SIDE_LENGTH);
+
+            int point[] = this.pointConversion(cityData.get(i).getGridX(), cityData.get(i).getGridY());
+            int cityX = point[0];
+            int cityY = point[1];
+
+            if (temp.intersects(new Rectangle2D(cityX, cityY, SIDE_LENGTH, SIDE_LENGTH))) {
+                gc.setFont(Font.font("Arial",FontWeight.BOLD, 25));
+                gc.setFill(Color.GREEN);
+                gc.fillText(cityData.get(i).getCityName(), x + (36/2), y - (18 / 2));
+            }
+        }
+    }
+
+    public void updateCityData() {
+        cityData = ui.getGSM().getCurrentGridData();
+    }
+
+    private int[] pointConversion(double x, double y) {
+        int point[] = new int[2];
+        point[0] = (int) ((x / GRID_IMAGE_WIDTH_LARGE) * GRID_IMAGE_WIDTH);
+        point[1] = (int) ((y / GRID_IMAGE_HEIGHT_LARGE) * GRID_IMAGE_HEIGHT);
+
+        return point;
     }
 }

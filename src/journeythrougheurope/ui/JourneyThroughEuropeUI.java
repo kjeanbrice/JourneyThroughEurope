@@ -51,7 +51,7 @@ import properties_manager.PropertiesManager;
  */
 public class JourneyThroughEuropeUI extends Pane {
 
-    private GameRenderer gameManager;
+    private GameRenderer gameRenderer;
     private JourneyThroughEuropeMouseHandler mouseHandler;
 
     private final int MAX_PLAYERS = 6;
@@ -91,6 +91,7 @@ public class JourneyThroughEuropeUI extends Pane {
     private VBox leftPanel;
     private StackPane gamePanel;
     private Pane canvas;
+    private ScrollPane gameGridScrollPane;
     private Image gameGridImage;
     private ImageView gameGridImageView;
     private Label gameGridImageLabels[];
@@ -267,7 +268,7 @@ public class JourneyThroughEuropeUI extends Pane {
             }
         });
 
-        VBox container = new VBox();
+        HBox container = new HBox();
 
         container.getChildren().add(btnStart);
         container.getChildren().add(btnLoad);
@@ -352,7 +353,7 @@ public class JourneyThroughEuropeUI extends Pane {
         gameGridImageLabels[1] = initLabel(JourneyThroughEuropePropertyType.GAME_GRID2_IMAGE_NAME);
         gameGridImageLabels[2] = initLabel(JourneyThroughEuropePropertyType.GAME_GRID3_IMAGE_NAME);
         gameGridImageLabels[3] = initLabel(JourneyThroughEuropePropertyType.GAME_GRID4_IMAGE_NAME);
-
+        
         gamePanel = new StackPane();
         gamePanel.setStyle("-fx-border-color:black;" + "-fx-border-width: 2px;");
         gamePanel.getChildren().add(gameGridImageLabels[0]);
@@ -362,6 +363,9 @@ public class JourneyThroughEuropeUI extends Pane {
         canvas = new Pane();
         gamePanel.getChildren().add(canvas);
 
+        gameGridScrollPane = new ScrollPane();
+        gameGridScrollPane.setContent(gamePanel);
+        
         playerName = new Button("Player 1");
         playerName.setMaxWidth(Double.MAX_VALUE);
         playerName.setStyle("-fx-background-color:#000000,"
@@ -509,7 +513,7 @@ public class JourneyThroughEuropeUI extends Pane {
         leftPanel.getChildren().add(cardPanel);
         leftPanel.setStyle("-fx-border-color:black;" + "-fx-border-width: 2px;");
 
-        gameScreenContainer.setCenter(gamePanel);
+        gameScreenContainer.setCenter(gameGridScrollPane);
         gameScreenContainer.setLeft(leftPanel);
         gameScreenContainer.setRight(rightPanel);
         workspace.getChildren().add(gameScreenContainer);
@@ -545,7 +549,7 @@ public class JourneyThroughEuropeUI extends Pane {
         loadPage(gameHistoryPane, JourneyThroughEuropePropertyType.GAME_HISTORY_FILE_NAME);
         //HTMLDocument statsDoc = (HTMLDocument) gameHistoryPane.getDocument();
         //docManager.setStatsDoc(statsDoc);
-
+  
         gameHistoryWebView = new WebView();
         gameHistoryWebEngine = gameHistoryWebView.getEngine();
         gameHistoryWebEngine.loadContent(gameHistoryPane.getText());
@@ -763,11 +767,16 @@ public class JourneyThroughEuropeUI extends Pane {
 
     public void testClick() {
         System.out.println("Width: " + gamePanel.getWidth() + "Height: " + gamePanel.getHeight());
-        gameManager = new GameRenderer(gamePanel.getWidth(), gamePanel.getHeight());
-        mouseHandler = new JourneyThroughEuropeMouseHandler(gameManager, primaryStage);
-        setGameToScreen(gameManager);
+        gameRenderer = new GameRenderer(gamePanel.getWidth(), gamePanel.getHeight(),this);
+        mouseHandler = new JourneyThroughEuropeMouseHandler(gameRenderer, primaryStage);
+        setGameToScreen(gameRenderer);
         canvas.setOnMouseClicked(mouseHandler);
         canvas.setOnMouseDragged(mouseHandler);
+    }
+    
+    public GameRenderer getGameRenderer()
+    {
+        return gameRenderer;
     }
 
 }
