@@ -25,13 +25,14 @@ public class GameRenderer extends Canvas {
     private final int GRID_IMAGE_HEIGHT = 2569;
     private final int GRID_IMAGE_WIDTH_LARGE = 2010;
     private final int GRID_IMAGE_HEIGHT_LARGE = 2569;
-    private final int SIDE_LENGTH = 40;
+    private final int SIDE_LENGTH = 36;
 
     private JourneyThroughEuropeUI ui;
     private GraphicsContext gc;
     private ArrayList<JourneyThroughEuropeCity> cityData;
     private double canvasWidth;
     private double canvasHeight;
+    private boolean intersects;
 
     public GameRenderer(double canvasWidth, double canvasHeight, JourneyThroughEuropeUI ui) {
         this.ui = ui;
@@ -40,15 +41,12 @@ public class GameRenderer extends Canvas {
         setWidth(this.canvasWidth);
         setHeight(this.canvasHeight);
         cityData = ui.getGSM().getCurrentGridData();
+        intersects = false;
     }
 
     public void repaint(double x, double y) {
         gc = this.getGraphicsContext2D();
         gc.clearRect(0, 0, getWidth(), getHeight());
-
-        gc.fillOval(x - (SIDE_LENGTH / 2), y - (SIDE_LENGTH / 2), SIDE_LENGTH, SIDE_LENGTH);
-        gc.setFill(Color.RED);
-        
 
         for (int i = 0; i < cityData.size(); i++) {
             Rectangle2D temp = new Rectangle2D(x, y, SIDE_LENGTH, SIDE_LENGTH);
@@ -58,11 +56,23 @@ public class GameRenderer extends Canvas {
             int cityY = point[1];
 
             if (temp.intersects(new Rectangle2D(cityX, cityY, SIDE_LENGTH, SIDE_LENGTH))) {
-                gc.setFont(Font.font("Arial",FontWeight.BOLD, 25));
+                gc.setFont(Font.font("Arial", FontWeight.BOLD, 25));
                 gc.setFill(Color.GREEN);
-                gc.fillText(cityData.get(i).getCityName(), x + (36/2), y - (18 / 2));
+                gc.fillText(cityData.get(i).getCityName(), x - SIDE_LENGTH, y - SIDE_LENGTH);
+                gc.fillOval(x - (SIDE_LENGTH / 2), y - (SIDE_LENGTH / 2), SIDE_LENGTH, SIDE_LENGTH);
+                gc.strokeOval(cityX - (SIDE_LENGTH / 2) ,cityY - (SIDE_LENGTH / 2),SIDE_LENGTH,SIDE_LENGTH);
+                intersects = true;
+                break;
             }
         }
+        
+        if(!intersects)
+        {
+            gc.setFill(Color.RED);
+            gc.fillOval(x - (SIDE_LENGTH / 2), y - (SIDE_LENGTH / 2), SIDE_LENGTH, SIDE_LENGTH);
+        }
+        else
+            intersects = false;
     }
 
     public void updateCityData() {

@@ -31,6 +31,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -118,15 +119,23 @@ public class JourneyThroughEuropeUI extends Pane {
     private WebEngine gameHistoryWebEngine;
     private ScrollPane gameHistoryScrollPaneFX;
 
+    //About Screen
+    private JEditorPane aboutPane;
+    private JScrollPane aboutScrollPane;
+    private BorderPane aboutPanel;
+    private Button btnBack;
+
     //Containers
     private BorderPane splashScreenContainer;
     private BorderPane gameSetupScreenContainer;
     private BorderPane gameScreenContainer;
     private BorderPane gameHistoryScreenContainer;
+    private BorderPane aboutMenuScreenContainer;
+    private BorderPane aboutGameScreenContainer;
 
     public enum JourneyThroughEuropeUIState {
 
-        SPLASH_SCREEN_STATE, PLAY_GAME_STATE, VIEW_GAME_HISTORY_STATE, VIEW_ABOUT_STATE, GAME_SETUP_STATE,
+        SPLASH_SCREEN_STATE, PLAY_GAME_STATE, VIEW_GAME_HISTORY_STATE, VIEW_ABOUT_MENU_STATE, VIEW_ABOUT_GAME_STATE, GAME_SETUP_STATE,
         GRID1_IMAGE_STATE, GRID2_IMAGE_STATE, GRID3_IMAGE_STATE, GRID4_IMAGE_STATE, DIE1_IMAGE_STATE, DIE2_IMAGE_STATE,
         DIE3_IMAGE_STATE, DIE4_IMAGE_STATE, DIE5_IMAGE_STATE, DIE6_IMAGE_STATE
     }
@@ -168,9 +177,10 @@ public class JourneyThroughEuropeUI extends Pane {
         initMainPane();
         initSplashScreen();
         initGameSetupScreen();
-        initAboutScreen();
         initGameHistoryScreen();
         initGameScreen();
+        initAboutMenuScreen();
+        initAboutGameScreen();
         changeWorkspace(JourneyThroughEuropeUIState.SPLASH_SCREEN_STATE);
     }
 
@@ -209,9 +219,12 @@ public class JourneyThroughEuropeUI extends Pane {
         gameHistoryScreenContainer = new BorderPane();
         gameHistoryScreenContainer.setStyle("-fx-background-color:white");
 
-        /*helpScreenContainer = new BorderPane();
-         helpScreenContainer.setStyle("-fx-background-color:white");
-         */
+        aboutMenuScreenContainer = new BorderPane();
+        aboutMenuScreenContainer.setStyle("-fx-background-color:white");
+
+        aboutGameScreenContainer = new BorderPane();
+        aboutGameScreenContainer.setStyle("-fx-background-color:white");
+
     }
 
     public void initSplashScreen() {
@@ -227,10 +240,23 @@ public class JourneyThroughEuropeUI extends Pane {
         splashScreenImageLabel = new Label();
         splashScreenImageLabel.setGraphic(splashScreenImageView);
 
+        Circle circle = new Circle(25);
+
         btnStart = initButton(JourneyThroughEuropePropertyType.START_IMAGE_NAME);
+        btnStart.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );");
+        btnStart.setShape(circle);
+
         btnLoad = initButton(JourneyThroughEuropePropertyType.LOAD_IMG_NAME);
+        btnLoad.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );");
+        btnLoad.setShape(circle);
+
         btnAbout = initButton(JourneyThroughEuropePropertyType.ABOUT_SPLASH_IMG_NAME);
+        btnAbout.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );");
+        btnAbout.setShape(circle);
+
         btnExit = initButton(JourneyThroughEuropePropertyType.EXIT_IMG_NAME);
+        btnExit.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );");
+        btnExit.setShape(circle);
 
         btnStart.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -254,8 +280,7 @@ public class JourneyThroughEuropeUI extends Pane {
 
             @Override
             public void handle(ActionEvent event) {
-
-                //eventHandler.respondToSwitchScreenRequest();
+                eventHandler.respondToSwitchScreenRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.VIEW_ABOUT_MENU_STATE);
             }
         });
 
@@ -285,8 +310,96 @@ public class JourneyThroughEuropeUI extends Pane {
         workspace.getChildren().add(splashScreenContainer);
     }
 
-    private void initAboutScreen() {
+    private void initAboutMenuScreen() {
+        // WE'LL DISPLAY ALL HELP INFORMATION USING HTML
+        aboutPane = new JEditorPane();
+        aboutPane.setEditable(false);
 
+        // NOW LOAD THE HELP HTML
+        aboutPane.setContentType("text/html");
+
+        // LOAD THE HELP PAGE
+        loadPage(aboutPane, JourneyThroughEuropePropertyType.ABOUT_FILE_NAME);
+
+        aboutScrollPane = new JScrollPane(aboutPane);
+        SwingNode aboutSwingNode = new SwingNode();
+        aboutSwingNode.setContent(aboutScrollPane);
+
+        btnBack = this.initButton(JourneyThroughEuropePropertyType.BACK_IMG_NAME);
+        btnBack.setShape(new Circle(1));
+        btnBack.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );");
+
+        // WE'LL PUT THE HOME BUTTON IN A TOOLBAR IN THE NORTH OF THIS SCREEN,
+        // UNDER THE NORTH TOOLBAR THAT'S SHARED BETWEEN THE THREE SCREENS
+        FlowPane aboutToolbar = new FlowPane();
+        aboutToolbar.setPadding(new Insets(5, 5, 5, 5));
+        aboutPanel = new BorderPane();
+        aboutSwingNode.setStyle("-fx-background-color: #FFFFFF");
+        aboutPanel.setCenter(aboutSwingNode);
+        aboutToolbar.getChildren().add(btnBack);
+        aboutToolbar.setStyle("-fx-background-color: #FFFFFF");
+
+        // LET OUR HELP PAGE GO HOME VIA THE HOME BUTTON
+        btnBack.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                // TODO Auto-generated method stub
+                eventHandler.respondToBackRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.SPLASH_SCREEN_STATE);
+            }
+        });
+
+        // LET OUR HELP SCREEN JOURNEY AROUND THE WEB VIA HYPERLINK
+        //aboutPane.addHyperlinkListener(new HelpHyperlinkListener(this));
+        aboutMenuScreenContainer.setTop(aboutToolbar);
+        aboutMenuScreenContainer.setCenter(aboutPanel);
+        workspace.getChildren().add(aboutMenuScreenContainer);
+    }
+
+    private void initAboutGameScreen() {
+
+        // WE'LL DISPLAY ALL HELP INFORMATION USING HTML
+        JEditorPane aboutPane = new JEditorPane();
+        aboutPane.setEditable(false);
+
+        // NOW LOAD THE HELP HTML
+        aboutPane.setContentType("text/html");
+
+        // LOAD THE HELP PAGE
+        loadPage(aboutPane, JourneyThroughEuropePropertyType.ABOUT_FILE_NAME);
+
+        JScrollPane aboutScrollPane = new JScrollPane(aboutPane);
+        SwingNode aboutSwingNode = new SwingNode();
+        aboutSwingNode.setContent(aboutScrollPane);
+
+        Button btnGameAbout = this.initButton(JourneyThroughEuropePropertyType.GAME_IMG_NAME);
+        btnGameAbout.setShape(new Circle(1));
+        btnGameAbout.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );");
+
+        btnGameAbout.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+
+                eventHandler.respondToGameHistoryRequest(JourneyThroughEuropeUIState.PLAY_GAME_STATE);
+            }
+        });
+
+        // WE'LL PUT THE HOME BUTTON IN A TOOLBAR IN THE NORTH OF THIS SCREEN,
+        // UNDER THE NORTH TOOLBAR THAT'S SHARED BETWEEN THE THREE SCREENS
+        FlowPane aboutToolbar = new FlowPane();
+        aboutToolbar.setPadding(new Insets(5, 5, 5, 5));
+        BorderPane aboutPanel = new BorderPane();
+        aboutSwingNode.setStyle("-fx-background-color: #FFFFFF");
+        aboutPanel.setCenter(aboutSwingNode);
+        aboutToolbar.getChildren().add(btnGameAbout);
+        aboutToolbar.setStyle("-fx-background-color: #FFFFFF");
+
+    
+        // LET OUR HELP SCREEN JOURNEY AROUND THE WEB VIA HYPERLINK
+        //aboutPane.addHyperlinkListener(new HelpHyperlinkListener(this));
+        aboutGameScreenContainer.setTop(aboutToolbar);
+        aboutGameScreenContainer.setCenter(aboutPanel);
+        workspace.getChildren().add(aboutGameScreenContainer);
     }
 
     private void initGameSetupScreen() {
@@ -308,6 +421,8 @@ public class JourneyThroughEuropeUI extends Pane {
         Label lblPlayerSelection = new Label("Number of Players :");
 
         btnGo = new Button("GO!");
+        btnGo.setShape(new Circle(1));
+        btnGo.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );");
         btnGo.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -353,10 +468,11 @@ public class JourneyThroughEuropeUI extends Pane {
         gameGridImageLabels[1] = initLabel(JourneyThroughEuropePropertyType.GAME_GRID2_IMAGE_NAME);
         gameGridImageLabels[2] = initLabel(JourneyThroughEuropePropertyType.GAME_GRID3_IMAGE_NAME);
         gameGridImageLabels[3] = initLabel(JourneyThroughEuropePropertyType.GAME_GRID4_IMAGE_NAME);
-        
+
         gamePanel = new StackPane();
         gamePanel.setStyle("-fx-border-color:black;" + "-fx-border-width: 2px;");
         gamePanel.getChildren().add(gameGridImageLabels[0]);
+        gamePanel.setFocusTraversable(true);
         //gameGridImageView.fitWidthProperty().bind(gamePanel.widthProperty());
         //gameGridImageView.fitHeightProperty().bind(gamePanel.heightProperty());
 
@@ -365,7 +481,9 @@ public class JourneyThroughEuropeUI extends Pane {
 
         gameGridScrollPane = new ScrollPane();
         gameGridScrollPane.setContent(gamePanel);
-        
+        gameGridScrollPane.setFitToHeight(true);
+        gameGridScrollPane.setFitToWidth(true);
+
         playerName = new Button("Player 1");
         playerName.setMaxWidth(Double.MAX_VALUE);
         playerName.setStyle("-fx-background-color:#000000,"
@@ -387,6 +505,8 @@ public class JourneyThroughEuropeUI extends Pane {
         gameButtonsPanel.setAlignment(Pos.TOP_CENTER);
 
         btnGameHistory = this.initButton(JourneyThroughEuropePropertyType.GAME_HISTORY_IMAGE_NAME);
+        btnGameHistory.setShape(new Circle(1));
+        btnGameHistory.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );");
         btnGameHistory.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -397,6 +517,17 @@ public class JourneyThroughEuropeUI extends Pane {
         });
 
         btnAboutPlay = this.initButton(JourneyThroughEuropePropertyType.ABOUT_IMAGE_NAME);
+        btnAboutPlay.setShape(new Circle(1));
+        btnAboutPlay.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );");
+        btnAboutPlay.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+
+                eventHandler.respondToSwitchScreenRequest(JourneyThroughEuropeUIState.VIEW_ABOUT_GAME_STATE);
+            }
+        });
+
         VBox gameHistoryPanel = new VBox();
         gameHistoryPanel.setAlignment(Pos.CENTER);
 
@@ -430,6 +561,7 @@ public class JourneyThroughEuropeUI extends Pane {
 
         gridButtons = new Button[4];
         gridButtons[0] = initButton(JourneyThroughEuropePropertyType.GRID1_BUTTON_IMAGE_NAME);
+        gridButtons[0].setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );");
         gridButtons[0].setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -440,6 +572,7 @@ public class JourneyThroughEuropeUI extends Pane {
         });
 
         gridButtons[1] = initButton(JourneyThroughEuropePropertyType.GRID2_BUTTON_IMAGE_NAME);
+        gridButtons[1].setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );");
         gridButtons[1].setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -450,6 +583,7 @@ public class JourneyThroughEuropeUI extends Pane {
         });
 
         gridButtons[2] = initButton(JourneyThroughEuropePropertyType.GRID3_BUTTON_IMAGE_NAME);
+        gridButtons[2].setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );");
         gridButtons[2].setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -460,6 +594,7 @@ public class JourneyThroughEuropeUI extends Pane {
         });
 
         gridButtons[3] = initButton(JourneyThroughEuropePropertyType.GRID4_BUTTON_IMAGE_NAME);
+        gridButtons[3].setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );");
         gridButtons[3].setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -477,6 +612,7 @@ public class JourneyThroughEuropeUI extends Pane {
         diePanel.setPadding(new Insets(30, 0, 50, 30));
 
         btnDie = this.initButton(JourneyThroughEuropePropertyType.DEFAULT_DIE_IMAGE_NAME);
+        btnDie.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );");
         btnDie.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -523,7 +659,12 @@ public class JourneyThroughEuropeUI extends Pane {
     private void initGameHistoryScreen() {
 
         gameHistoryToolbar = new HBox();
+        gameHistoryToolbar.setPadding(new Insets(5, 5, 5, 5));
+
         btnGame = initButton(JourneyThroughEuropePropertyType.GAME_IMG_NAME);
+        btnGame.setShape(new Circle(1));
+        btnGame.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );");
+
         btnGame.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -549,7 +690,7 @@ public class JourneyThroughEuropeUI extends Pane {
         loadPage(gameHistoryPane, JourneyThroughEuropePropertyType.GAME_HISTORY_FILE_NAME);
         //HTMLDocument statsDoc = (HTMLDocument) gameHistoryPane.getDocument();
         //docManager.setStatsDoc(statsDoc);
-  
+
         gameHistoryWebView = new WebView();
         gameHistoryWebEngine = gameHistoryWebView.getEngine();
         gameHistoryWebEngine.loadContent(gameHistoryPane.getText());
@@ -573,6 +714,7 @@ public class JourneyThroughEuropeUI extends Pane {
         switch (uiScreen) {
             case SPLASH_SCREEN_STATE:
                 splashScreenContainer.setVisible(true);
+                mainPane.setStyle("-fx-background-color:blue");
                 break;
             case PLAY_GAME_STATE:
                 gameScreenContainer.setVisible(true);
@@ -580,10 +722,15 @@ public class JourneyThroughEuropeUI extends Pane {
                 break;
             case VIEW_GAME_HISTORY_STATE:
                 gameHistoryScreenContainer.setVisible(true);
-                mainPane.setStyle("-fx-background-color:white");
+                mainPane.setStyle("-fx-background-color:black");
                 break;
-            case VIEW_ABOUT_STATE:
-                //helpScreenContainer.setVisible(true);
+            case VIEW_ABOUT_MENU_STATE:
+                aboutMenuScreenContainer.setVisible(true);
+                mainPane.setStyle("-fx-background-color:black");
+                break;
+            case VIEW_ABOUT_GAME_STATE:
+                aboutGameScreenContainer.setVisible(true);
+                mainPane.setStyle("-fx-background-color:black");
                 break;
             case GAME_SETUP_STATE:
                 gameSetupScreenContainer.setVisible(true);
@@ -655,17 +802,17 @@ public class JourneyThroughEuropeUI extends Pane {
         }
     }
 
-    public ImageView setupImageView(JourneyThroughEuropePropertyType prop)
-    {
-           PropertiesManager props = PropertiesManager.getPropertiesManager();
+    public ImageView setupImageView(JourneyThroughEuropePropertyType prop) {
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
         String imageName = props.getProperty(prop);
 
         // LOAD THE IMAGE
         Image image = loadImage(imageName);
         ImageView imageIcon = new ImageView(image);
-        
+
         return imageIcon;
     }
+
     public Button initButton(JourneyThroughEuropePropertyType prop) {
         PropertiesManager props = PropertiesManager.getPropertiesManager();
         String imageName = props.getProperty(prop);
@@ -701,7 +848,8 @@ public class JourneyThroughEuropeUI extends Pane {
         gameSetupScreenContainer.setVisible(false);
         gameScreenContainer.setVisible(false);
         gameHistoryScreenContainer.setVisible(false);
-        //helpScreenContainer.setVisible(false);
+        aboutMenuScreenContainer.setVisible(false);
+        aboutGameScreenContainer.setVisible(false);
     }
 
     public HBox setupPlayerGridPane() {
@@ -767,15 +915,14 @@ public class JourneyThroughEuropeUI extends Pane {
 
     public void testClick() {
         System.out.println("Width: " + gamePanel.getWidth() + "Height: " + gamePanel.getHeight());
-        gameRenderer = new GameRenderer(gamePanel.getWidth(), gamePanel.getHeight(),this);
+        gameRenderer = new GameRenderer(gamePanel.getWidth(), gamePanel.getHeight(), this);
         mouseHandler = new JourneyThroughEuropeMouseHandler(gameRenderer, primaryStage);
         setGameToScreen(gameRenderer);
         canvas.setOnMouseClicked(mouseHandler);
         canvas.setOnMouseDragged(mouseHandler);
     }
-    
-    public GameRenderer getGameRenderer()
-    {
+
+    public GameRenderer getGameRenderer() {
         return gameRenderer;
     }
 

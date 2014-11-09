@@ -36,7 +36,7 @@ public class JourneyThroughEuropeGameStateManager {
 
     private void initGrids() {
         grids = new ArrayList<ArrayList<JourneyThroughEuropeCity>>();
-        for (int i = 1; i <= MAX_GRIDS; i++) {
+        for (int i = 0; i < MAX_GRIDS; i++) {
             grids.add(JourneyThroughEuropeFileLoader.loadMapGridData(i));
             
         }

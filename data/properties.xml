@@ -13,6 +13,7 @@
 		<property name ="RESET_IMG_NAME"			value = "Reset.png"></property>
 		<property name ="HOME_IMG_NAME"			    value = "Home.png"></property>
 		<property name ="GAME_IMG_NAME"             value = "Game.png"></property>
+		<property name ="BACK_IMG_NAME"             value = "Back.png"></property>
 		<property name ="GRID1_BUTTON_IMAGE_NAME"   value = "Grid1ButtonImage.png"></property>
 		<property name ="GRID2_BUTTON_IMAGE_NAME"   value = "Grid2ButtonImage.png"></property>
 		<property name ="GRID3_BUTTON_IMAGE_NAME"   value = "Grid3ButtonImage.png"></property>
@@ -38,6 +39,7 @@
 		<property name="IMAGE_HEIGHT"               value="665"></property>
         <property name="SPLASH_SCREEN_IMAGE_NAME"   value="SplashScreen.png"></property>
 		<property name="GAME_HISTORY_FILE_NAME"     value="Game_History.html"></property>
+		<property name="ABOUT_FILE_NAME"            value="About.html"></property>
 		<property name="GAME_GRID1_IMAGE_NAME"		value="GameGrid1.png"></property>
 		<property name="GAME_GRID2_IMAGE_NAME"		value="GameGrid2.png"></property>
 		<property name="GAME_GRID3_IMAGE_NAME"		value="GameGrid3.png"></property>

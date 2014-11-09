@@ -48,6 +48,10 @@ public class JourneyThroughEuropeEventHandler {
     public void respondToGameHistoryRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState uiState) {
         ui.changeWorkspace(uiState);
     }
+    
+     public void respondToBackRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState uiState) {
+        ui.changeWorkspace(uiState);
+    }
 
     public void respondToExitGameRequest(Stage primaryStage) {
         String options[] = new String[]{

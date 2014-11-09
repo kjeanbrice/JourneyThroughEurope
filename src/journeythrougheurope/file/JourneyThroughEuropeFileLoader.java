@@ -67,7 +67,7 @@ public class JourneyThroughEuropeFileLoader {
                 double gridX = fileScan.nextDouble();
                 double gridY = fileScan.nextDouble();
 
-                if (gridLocation == mapGrid) {
+                if (gridLocation == (mapGrid+1)) {
                     cityData.add(new JourneyThroughEuropeCity(cityName.toUpperCase(), cardColor.toUpperCase(), gridLocation, gridX, gridY));
                     System.out.println("City Name:" + cityName + "\nCard Color:" + cardColor + " \nGrid Location: " + gridLocation + "\nGrid X: " + gridX + ""
                             + "\nGrid Y: " + gridY + "\n");
