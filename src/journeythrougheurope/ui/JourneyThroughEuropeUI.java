@@ -84,7 +84,7 @@ public class JourneyThroughEuropeUI extends Pane {
     private ComboBox playerSelectionComboBox;
     private HBox northPanel;
     private FlowPane centerPanel;
-    private HBox playerGridPanes[];
+    private VBox playerGridPanes[];
     private StackPane playerGridContainers[];
     private Button btnGo;
 
@@ -394,7 +394,6 @@ public class JourneyThroughEuropeUI extends Pane {
         aboutToolbar.getChildren().add(btnGameAbout);
         aboutToolbar.setStyle("-fx-background-color: #FFFFFF");
 
-    
         // LET OUR HELP SCREEN JOURNEY AROUND THE WEB VIA HYPERLINK
         //aboutPane.addHyperlinkListener(new HelpHyperlinkListener(this));
         aboutGameScreenContainer.setTop(aboutToolbar);
@@ -410,6 +409,8 @@ public class JourneyThroughEuropeUI extends Pane {
         playerSelectionComboBox = new ComboBox();
         playerSelectionComboBox.getItems().addAll("1", "2", "3", "4", "5", "6");
         playerSelectionComboBox.setValue("1");
+        playerSelectionComboBox.setShape(new Circle(1));
+        playerSelectionComboBox.setStyle("-fx-font-size: 16px;");
 
         playerSelectionComboBox.valueProperty().addListener(new ChangeListener<String>() {
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -418,11 +419,11 @@ public class JourneyThroughEuropeUI extends Pane {
             }
         });
 
-        Label lblPlayerSelection = new Label("Number of Players :");
+        Label lblPlayerSelection = this.initLabel(JourneyThroughEuropePropertyType.NUM_PLAYERS_IMG_NAME);
 
-        btnGo = new Button("GO!");
+        btnGo = this.initButton(JourneyThroughEuropePropertyType.GO_IMG_NAME);
         btnGo.setShape(new Circle(1));
-        btnGo.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );");
+        btnGo.setStyle("-fx-effect: dropshadow( one-pass-box , sandybrown , 10 , 0 , 0 , 0 );");
         btnGo.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -433,7 +434,7 @@ public class JourneyThroughEuropeUI extends Pane {
         });
 
         northPanel.setSpacing(10);
-        northPanel.setPadding(new Insets(10, 10, 10, 10));
+        northPanel.setPadding(new Insets(10, 0, 10, 50));
         northPanel.setAlignment(Pos.CENTER_LEFT);
         northPanel.getChildren().add(lblPlayerSelection);
         northPanel.getChildren().add(playerSelectionComboBox);
@@ -444,11 +445,11 @@ public class JourneyThroughEuropeUI extends Pane {
         centerPanel.setVgap(5.0);
         centerPanel.setHgap(5.0);
 
-        playerGridPanes = new HBox[MAX_PLAYERS];
+        playerGridPanes = new VBox[MAX_PLAYERS];
         playerGridContainers = new StackPane[MAX_PLAYERS];
 
         for (int i = 0; i < playerGridPanes.length; i++) {
-            playerGridPanes[i] = setupPlayerGridPane();
+            playerGridPanes[i] = setupPlayerGridPane(i);
             playerGridContainers[i] = setupPlayerGridContainers();
             playerGridContainers[i].getChildren().add(playerGridPanes[i]);
             centerPanel.getChildren().add(playerGridContainers[i]);
@@ -852,7 +853,38 @@ public class JourneyThroughEuropeUI extends Pane {
         aboutGameScreenContainer.setVisible(false);
     }
 
-    public HBox setupPlayerGridPane() {
+    public VBox setupPlayerGridPane(int flagColor) {
+        VBox playerPaneContainer = new VBox();
+        playerPaneContainer.setAlignment(Pos.CENTER);
+        playerPaneContainer.setPadding(new Insets(0, 0, 80, 0));
+        playerPaneContainer.setSpacing(15.0);
+
+        HBox flagLabelPane = new HBox();
+        flagLabelPane.setAlignment(Pos.CENTER);
+        flagLabelPane.setPadding(new Insets(0, 0, 0, 55));
+        Label flagLabel = this.initLabel(JourneyThroughEuropePropertyType.BLUE_FLAG);
+        switch (flagColor) {
+            case 0:
+                flagLabel = this.initLabel(JourneyThroughEuropePropertyType.BLUE_FLAG);
+                break;
+            case 1:
+                flagLabel = this.initLabel(JourneyThroughEuropePropertyType.GREEN_FLAG);
+                break;
+            case 2:
+                flagLabel = this.initLabel(JourneyThroughEuropePropertyType.GRAY_FLAG);
+                break;
+            case 3:
+                flagLabel = this.initLabel(JourneyThroughEuropePropertyType.LIGHTBLUE_FLAG);
+                break;
+            case 4:
+                flagLabel = this.initLabel(JourneyThroughEuropePropertyType.RED_FLAG);
+                break;
+            case 5:
+                flagLabel = this.initLabel(JourneyThroughEuropePropertyType.PURPLE_FLAG);
+                break;
+        }
+        flagLabelPane.getChildren().add(flagLabel);
+
         HBox playerPane = new HBox();
         playerPane.setAlignment(Pos.CENTER);
         playerPane.setPadding(marginlessInsets);
@@ -884,7 +916,9 @@ public class JourneyThroughEuropeUI extends Pane {
         playerPane.getChildren().add(playerTypePane);
         playerPane.getChildren().add(playerNamePane);
 
-        return playerPane;
+        playerPaneContainer.getChildren().add(flagLabelPane);
+        playerPaneContainer.getChildren().add(playerPane);
+        return playerPaneContainer;
     }
 
     public StackPane setupPlayerGridContainers() {

@@ -14,6 +14,8 @@
 		<property name ="HOME_IMG_NAME"			    value = "Home.png"></property>
 		<property name ="GAME_IMG_NAME"             value = "Game.png"></property>
 		<property name ="BACK_IMG_NAME"             value = "Back.png"></property>
+		<property name ="GO_IMG_NAME"               value = "Go.png"></property>
+		<property name ="NUM_PLAYERS_IMG_NAME"      value = "NumPlayersLabel.png"></property>
 		<property name ="GRID1_BUTTON_IMAGE_NAME"   value = "Grid1ButtonImage.png"></property>
 		<property name ="GRID2_BUTTON_IMAGE_NAME"   value = "Grid2ButtonImage.png"></property>
 		<property name ="GRID3_BUTTON_IMAGE_NAME"   value = "Grid3ButtonImage.png"></property>
@@ -32,6 +34,12 @@
 		<property name ="DF_IMAGE_NAME"             value = "DFLabel.png"></property>
 		<property name ="F4_IMAGE_NAME"             value = "14Label.png"></property>
 		<property name ="F8_IMAGE_NAME"             value = "58Label.png"></property>
+		<property name ="BLUE_FLAG"                 value = "BlueFlag.png"></property>
+		<property name ="LIGHTBLUE_FLAG"            value = "LightBlueFlag.png"></property>
+		<property name ="GRAY_FLAG"                 value = "GrayFlag.png"></property>
+		<property name ="GREEN_FLAG"                value = "GreenFlag.png"></property>
+		<property name ="RED_FLAG"                  value = "RedFlag.png"></property>
+		<property name ="PURPLE_FLAG"                 value = "PurpleFlag.png"></property>
         <property name="SPLASH_SCREEN_TITLE_TEXT"   value="Journey Through Europe"></property>
         <property name="WINDOW_WIDTH"               value="1034"></property>
         <property name="WINDOW_HEIGHT"              value="690"></property>
