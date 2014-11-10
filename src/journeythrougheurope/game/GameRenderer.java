@@ -21,11 +21,9 @@ import journeythrougheurope.ui.JourneyThroughEuropeUI;
  */
 public class GameRenderer extends Canvas {
 
-    private final int GRID_IMAGE_WIDTH = 2010;
-    private final int GRID_IMAGE_HEIGHT = 2569;
-    private final int GRID_IMAGE_WIDTH_LARGE = 2010;
-    private final int GRID_IMAGE_HEIGHT_LARGE = 2569;
-    private final int SIDE_LENGTH = 36;
+   
+    private final double CONVERSION_FACTOR = .60;
+    private final int SIDE_LENGTH = (int)(36 * CONVERSION_FACTOR);
 
     private JourneyThroughEuropeUI ui;
     private GraphicsContext gc;
@@ -51,12 +49,11 @@ public class GameRenderer extends Canvas {
         for (int i = 0; i < cityData.size(); i++) {
             Rectangle2D temp = new Rectangle2D(x, y, SIDE_LENGTH, SIDE_LENGTH);
 
-            int point[] = this.pointConversion(cityData.get(i).getGridX(), cityData.get(i).getGridY());
-            int cityX = point[0];
-            int cityY = point[1];
+            int cityX = (int)cityData.get(i).getGridX();
+            int cityY = (int)cityData.get(i).getGridY();
 
             if (temp.intersects(new Rectangle2D(cityX, cityY, SIDE_LENGTH, SIDE_LENGTH))) {
-                gc.setFont(Font.font("Arial", FontWeight.BOLD, 25));
+                gc.setFont(Font.font("Arial", FontWeight.BOLD, 20));
                 gc.setFill(Color.GREEN);
                 gc.fillText(cityData.get(i).getCityName(), x - SIDE_LENGTH, y - SIDE_LENGTH);
                 gc.fillOval(x - (SIDE_LENGTH / 2), y - (SIDE_LENGTH / 2), SIDE_LENGTH, SIDE_LENGTH);
@@ -77,13 +74,5 @@ public class GameRenderer extends Canvas {
 
     public void updateCityData() {
         cityData = ui.getGSM().getCurrentGridData();
-    }
-
-    private int[] pointConversion(double x, double y) {
-        int point[] = new int[2];
-        point[0] = (int) ((x / GRID_IMAGE_WIDTH_LARGE) * GRID_IMAGE_WIDTH);
-        point[1] = (int) ((y / GRID_IMAGE_HEIGHT_LARGE) * GRID_IMAGE_HEIGHT);
-
-        return point;
     }
 }

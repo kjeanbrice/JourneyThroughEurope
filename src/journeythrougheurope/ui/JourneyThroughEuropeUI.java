@@ -148,7 +148,7 @@ public class JourneyThroughEuropeUI extends Pane {
     }
 
     public BorderPane getMainPane() {
-        return this.mainPane;
+        return mainPane;
     }
 
     public void setStage(Stage stage) {
@@ -174,14 +174,14 @@ public class JourneyThroughEuropeUI extends Pane {
     public void initJourneyThroughEuropeGame() {
         initContainers();
         initWorkspace();
-        initMainPane();
-        initSplashScreen();
+        initMainPane();    
         initGameSetupScreen();
         initGameHistoryScreen();
         initGameScreen();
         initAboutMenuScreen();
         initAboutGameScreen();
-        changeWorkspace(JourneyThroughEuropeUIState.SPLASH_SCREEN_STATE);
+        initSplashScreen();
+        mainPane.setCenter(workspace);
     }
 
     private void initMainPane() {
@@ -243,19 +243,19 @@ public class JourneyThroughEuropeUI extends Pane {
         Circle circle = new Circle(25);
 
         btnStart = initButton(JourneyThroughEuropePropertyType.START_IMAGE_NAME);
-        btnStart.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );");
+        btnStart.setStyle("-fx-effect: dropshadow( three-pass-box , blue , 10 , 0 , 0 , 0 );");
         btnStart.setShape(circle);
 
         btnLoad = initButton(JourneyThroughEuropePropertyType.LOAD_IMG_NAME);
-        btnLoad.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );");
+        btnLoad.setStyle("-fx-effect: dropshadow( three-pass-box , blue , 10 , 0 , 0 , 0 );");
         btnLoad.setShape(circle);
 
         btnAbout = initButton(JourneyThroughEuropePropertyType.ABOUT_SPLASH_IMG_NAME);
-        btnAbout.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );");
+        btnAbout.setStyle("-fx-effect: dropshadow( three-pass-box , blue , 10 , 0 , 0 , 0 );");
         btnAbout.setShape(circle);
 
         btnExit = initButton(JourneyThroughEuropePropertyType.EXIT_IMG_NAME);
-        btnExit.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );");
+        btnExit.setStyle("-fx-effect: dropshadow( three-pass-box , blue , 10 , 0 , 0 , 0 );");
         btnExit.setShape(circle);
 
         btnStart.setOnAction(new EventHandler<ActionEvent>() {
@@ -423,7 +423,7 @@ public class JourneyThroughEuropeUI extends Pane {
 
         btnGo = this.initButton(JourneyThroughEuropePropertyType.GO_IMG_NAME);
         btnGo.setShape(new Circle(1));
-        btnGo.setStyle("-fx-effect: dropshadow( one-pass-box , sandybrown , 10 , 0 , 0 , 0 );");
+        btnGo.setStyle("-fx-effect: dropshadow( three-pass-box , sandybrown , 10 , 0 , 0 , 0 );");
         btnGo.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -488,9 +488,9 @@ public class JourneyThroughEuropeUI extends Pane {
         playerName = new Button("Player 1");
         playerName.setMaxWidth(Double.MAX_VALUE);
         playerName.setStyle("-fx-background-color:#000000,"
-                + " linear-gradient(#7ebcea, #2f4b8f),"
-                + " linear-gradient(#426ab7, #263e75),"
-                + " linear-gradient(#395cab, #223768);"
+                + " linear-gradient(#7db9e8, #304b8e),"
+                + " linear-gradient(#3e66b0, #233c74),"
+                + " linear-gradient(#3256a7, #1e3361);"
                 + " -fx-background-insets: 0,1,2,3;"
                 + " -fx-background-radius: 3,2,2,2;"
                 + " -fx-padding: 3,4,3,4;"
@@ -507,7 +507,7 @@ public class JourneyThroughEuropeUI extends Pane {
 
         btnGameHistory = this.initButton(JourneyThroughEuropePropertyType.GAME_HISTORY_IMAGE_NAME);
         btnGameHistory.setShape(new Circle(1));
-        btnGameHistory.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );");
+        btnGameHistory.setStyle("-fx-effect: dropshadow( three-pass-box , black , 10 , 0 , 0 , 0 );");
         btnGameHistory.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -519,7 +519,7 @@ public class JourneyThroughEuropeUI extends Pane {
 
         btnAboutPlay = this.initButton(JourneyThroughEuropePropertyType.ABOUT_IMAGE_NAME);
         btnAboutPlay.setShape(new Circle(1));
-        btnAboutPlay.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );");
+        btnAboutPlay.setStyle("-fx-effect: dropshadow( three-pass-box , black , 10 , 0 , 0 , 0 );");
         btnAboutPlay.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -539,19 +539,21 @@ public class JourneyThroughEuropeUI extends Pane {
 
         VBox gridButtonsFirstColumnBox = new VBox();
         gridButtonsFirstColumnBox.setAlignment(Pos.CENTER);
+        gridButtonsFirstColumnBox.setSpacing(3);
         Label lblAC = initLabel(JourneyThroughEuropePropertyType.AC_IMAGE_NAME);
         lblAC.setPadding(new Insets(0, 0, 5, 0));
         gridButtonsFirstColumnBox.getChildren().add(lblAC);
 
         VBox gridButtonsSecondColumnBox = new VBox();
         gridButtonsSecondColumnBox.setAlignment(Pos.CENTER);
+        gridButtonsSecondColumnBox.setSpacing(3);
         Label lblDF = initLabel(JourneyThroughEuropePropertyType.DF_IMAGE_NAME);
         lblDF.setPadding(new Insets(0, 0, 5, 0));
         gridButtonsSecondColumnBox.getChildren().add(lblDF);
 
         VBox mapNumberPanel = new VBox();
         gridButtonsSecondColumnBox.setAlignment(Pos.CENTER);
-        mapNumberPanel.setPadding(new Insets(60, 5, 0, 0));
+        mapNumberPanel.setPadding(new Insets(65, 5, 0, 0));
         mapNumberPanel.setSpacing(30.0);
         Label lblOneThroughFour = initLabel(JourneyThroughEuropePropertyType.F4_IMAGE_NAME);
         Label lblFiveThroughEight = initLabel(JourneyThroughEuropePropertyType.F8_IMAGE_NAME);
@@ -562,7 +564,7 @@ public class JourneyThroughEuropeUI extends Pane {
 
         gridButtons = new Button[4];
         gridButtons[0] = initButton(JourneyThroughEuropePropertyType.GRID1_BUTTON_IMAGE_NAME);
-        gridButtons[0].setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );");
+        gridButtons[0].setStyle("-fx-effect: dropshadow( three-pass-box , black , 10 , 0 , 0 , 0 );");
         gridButtons[0].setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -573,7 +575,7 @@ public class JourneyThroughEuropeUI extends Pane {
         });
 
         gridButtons[1] = initButton(JourneyThroughEuropePropertyType.GRID2_BUTTON_IMAGE_NAME);
-        gridButtons[1].setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );");
+        gridButtons[1].setStyle("-fx-effect: dropshadow( three-pass-box , black , 10 , 0 , 0 , 0 );");
         gridButtons[1].setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -584,7 +586,7 @@ public class JourneyThroughEuropeUI extends Pane {
         });
 
         gridButtons[2] = initButton(JourneyThroughEuropePropertyType.GRID3_BUTTON_IMAGE_NAME);
-        gridButtons[2].setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );");
+        gridButtons[2].setStyle("-fx-effect: dropshadow( three-pass-box , black , 10 , 0 , 0 , 0 );");
         gridButtons[2].setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -595,7 +597,7 @@ public class JourneyThroughEuropeUI extends Pane {
         });
 
         gridButtons[3] = initButton(JourneyThroughEuropePropertyType.GRID4_BUTTON_IMAGE_NAME);
-        gridButtons[3].setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );");
+        gridButtons[3].setStyle("-fx-effect: dropshadow( three-pass-box , black , 10 , 0 , 0 , 0 );");
         gridButtons[3].setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -613,7 +615,7 @@ public class JourneyThroughEuropeUI extends Pane {
         diePanel.setPadding(new Insets(30, 0, 50, 30));
 
         btnDie = this.initButton(JourneyThroughEuropePropertyType.DEFAULT_DIE_IMAGE_NAME);
-        btnDie.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );");
+        btnDie.setStyle("-fx-effect: dropshadow( three-pass-box , black , 10 , 0 , 0 , 0 );");
         btnDie.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -629,9 +631,11 @@ public class JourneyThroughEuropeUI extends Pane {
 
         HBox gridButtonsContainer = new HBox();
         gridButtonsContainer.setAlignment(Pos.CENTER);
+        gridButtonsContainer.setSpacing(2);
         gridButtonsContainer.getChildren().add(mapNumberPanel);
         gridButtonsContainer.getChildren().add(gridButtonsFirstColumnBox);
         gridButtonsContainer.getChildren().add(gridButtonsSecondColumnBox);
+        
 
         gameButtonsPanel.getChildren().add(diePanel);
         gameButtonsPanel.getChildren().add(gridButtonsContainer);
@@ -739,7 +743,6 @@ public class JourneyThroughEuropeUI extends Pane {
                 break;
             default:
         }
-        mainPane.setCenter(workspace);
     }
 
     public void changeGridImage(JourneyThroughEuropeUIState gridImageState) {

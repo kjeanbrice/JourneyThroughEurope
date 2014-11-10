@@ -26,6 +26,7 @@ import properties_manager.PropertiesManager;
 public class JourneyThroughEuropeFileLoader {
 
     private static final String CITY_DATA_FILE = "data/cities.txt";
+    private static final double CONVERSION_FACTOR = .60;
 
     public static String loadTextFile(String textFile) throws IOException {
         // ADD THE PATH TO THE FILE
@@ -64,8 +65,8 @@ public class JourneyThroughEuropeFileLoader {
                 String cityName = fileScan.next();
                 String cardColor = fileScan.next();
                 int gridLocation = fileScan.nextInt();
-                double gridX = fileScan.nextDouble();
-                double gridY = fileScan.nextDouble();
+                double gridX = fileScan.nextDouble() * CONVERSION_FACTOR;
+                double gridY = fileScan.nextDouble() * CONVERSION_FACTOR;
 
                 if (gridLocation == (mapGrid+1)) {
                     cityData.add(new JourneyThroughEuropeCity(cityName.toUpperCase(), cardColor.toUpperCase(), gridLocation, gridX, gridY));
