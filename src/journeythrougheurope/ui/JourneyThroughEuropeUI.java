@@ -20,6 +20,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -86,7 +87,9 @@ public class JourneyThroughEuropeUI extends Pane {
     private FlowPane centerPanel;
     private VBox playerGridPanes[];
     private StackPane playerGridContainers[];
+    private int numPlayers;
     private Button btnGo;
+    private ArrayList<PlayerManager> playersManager;
 
     //Game Screen
     private VBox leftPanel;
@@ -96,6 +99,7 @@ public class JourneyThroughEuropeUI extends Pane {
     private Image gameGridImage;
     private ImageView gameGridImageView;
     private Label gameGridImageLabels[];
+    private StackPane gameAndCardPanel;
 
     private Button playerName;
     private StackPane cardPanel;
@@ -174,7 +178,7 @@ public class JourneyThroughEuropeUI extends Pane {
     public void initJourneyThroughEuropeGame() {
         initContainers();
         initWorkspace();
-        initMainPane();    
+        initMainPane();
         initGameSetupScreen();
         initGameHistoryScreen();
         initGameScreen();
@@ -263,7 +267,7 @@ public class JourneyThroughEuropeUI extends Pane {
             @Override
             public void handle(ActionEvent event) {
 
-                eventHandler.respondToStartRequest();
+                eventHandler.respondToGameSetupRequest();
             }
         });
 
@@ -405,6 +409,8 @@ public class JourneyThroughEuropeUI extends Pane {
 
         northPanel = new HBox();
         centerPanel = new FlowPane();
+        numPlayers = 1;
+        playersManager = new ArrayList<PlayerManager>();
 
         playerSelectionComboBox = new ComboBox();
         playerSelectionComboBox.getItems().addAll("1", "2", "3", "4", "5", "6");
@@ -414,7 +420,7 @@ public class JourneyThroughEuropeUI extends Pane {
 
         playerSelectionComboBox.valueProperty().addListener(new ChangeListener<String>() {
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                int numPlayers = Integer.parseInt(playerSelectionComboBox.getValue().toString());
+                numPlayers = Integer.parseInt(playerSelectionComboBox.getValue().toString());
                 eventHandler.respondToChangeNumberOfPlayersRequest(numPlayers);
             }
         });
@@ -452,6 +458,7 @@ public class JourneyThroughEuropeUI extends Pane {
             playerGridPanes[i] = setupPlayerGridPane(i);
             playerGridContainers[i] = setupPlayerGridContainers();
             playerGridContainers[i].getChildren().add(playerGridPanes[i]);
+            playersManager.get(i).setPlayerName("Player " + (i+1));
             centerPanel.getChildren().add(playerGridContainers[i]);
         }
 
@@ -635,7 +642,6 @@ public class JourneyThroughEuropeUI extends Pane {
         gridButtonsContainer.getChildren().add(mapNumberPanel);
         gridButtonsContainer.getChildren().add(gridButtonsFirstColumnBox);
         gridButtonsContainer.getChildren().add(gridButtonsSecondColumnBox);
-        
 
         gameButtonsPanel.getChildren().add(diePanel);
         gameButtonsPanel.getChildren().add(gridButtonsContainer);
@@ -654,8 +660,12 @@ public class JourneyThroughEuropeUI extends Pane {
         leftPanel.getChildren().add(cardPanel);
         leftPanel.setStyle("-fx-border-color:black;" + "-fx-border-width: 2px;");
 
-        gameScreenContainer.setCenter(gameGridScrollPane);
-        gameScreenContainer.setLeft(leftPanel);
+        gameAndCardPanel = new StackPane();
+        BorderPane gameAndCardPanelContainer = new BorderPane();
+        gameAndCardPanelContainer.setCenter(gameGridScrollPane);
+        gameAndCardPanelContainer.setLeft(leftPanel);
+        gameAndCardPanel.getChildren().add(gameAndCardPanelContainer);
+        gameScreenContainer.setCenter(gameAndCardPanel);
         gameScreenContainer.setRight(rightPanel);
         workspace.getChildren().add(gameScreenContainer);
 
@@ -916,11 +926,28 @@ public class JourneyThroughEuropeUI extends Pane {
         playerTypePane.getChildren().add(computer);
         playerTypePane.setSpacing(5);
 
+        
+        PlayerManager temp = new PlayerManager(txtName,true);
+        playersManager.add(temp);
+        group.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            public void changed(ObservableValue<? extends Toggle> ov,
+                    Toggle old_toggle, Toggle new_toggle) {
+                if (group.getSelectedToggle() != null) {
+                    String playerStatus = ((RadioButton)group.getSelectedToggle()).getText();
+                    if(playerStatus.equalsIgnoreCase("Player"))
+                        temp.setHuman(true);
+                    if(playerStatus.equalsIgnoreCase("Computer"))
+                        temp.setHuman(false);
+                }
+            }
+        });
+
         playerPane.getChildren().add(playerTypePane);
         playerPane.getChildren().add(playerNamePane);
 
         playerPaneContainer.getChildren().add(flagLabelPane);
         playerPaneContainer.getChildren().add(playerPane);
+
         return playerPaneContainer;
     }
 
@@ -961,6 +988,21 @@ public class JourneyThroughEuropeUI extends Pane {
 
     public GameRenderer getGameRenderer() {
         return gameRenderer;
+    }
+    
+    public ArrayList<PlayerManager> getPlayers()
+    {
+        return playersManager;
+    }
+    
+    public void setCurrentPlayer(int player)
+    {
+        playerName.setText(playersManager.get(0).getPlayerName());
+    }
+    
+    public int getNumPlayers()
+    {
+        return numPlayers;
     }
 
 }

@@ -5,6 +5,8 @@
  */
 package journeythrougheurope.game;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author Karl
@@ -16,6 +18,8 @@ public class JourneyThroughEuropeCity {
     private int gridLocation;
     private double gridX;
     private double gridY;
+    private ArrayList<String> neighboringLandCities;
+    private ArrayList<String> neighboringSeaCities;
 
     public JourneyThroughEuropeCity(String cityName, String cardColor, int gridLocation, double gridX, double gridY) {
          this.cityName = cityName;
@@ -23,6 +27,8 @@ public class JourneyThroughEuropeCity {
          this.gridLocation = gridLocation;
          this.gridX = gridX;
          this.gridY = gridY;
+         neighboringLandCities = new ArrayList<String>();
+         neighboringSeaCities = new ArrayList<String>();
     }
 
     public JourneyThroughEuropeCity() {
@@ -71,6 +77,37 @@ public class JourneyThroughEuropeCity {
 
     public String toString() {
         return "City Name: " + cityName + "\nCard Color: " + cardColor + "\nGrid Location: " + gridLocation + "\nX: " + gridX
-                + "\nY: " + gridY;
+                + "\nY: " + gridY + "\nNeighboring Land Cities: " + neighboringLandCities.toString() + "\nNeighboring Sea Cities: " + neighboringSeaCities.toString();
     }
+    
+    public void addNeighboringLandCity(String city)
+    {
+        neighboringLandCities.add(city);
+    }
+    
+    public void addNeighboringSeaCity(String city)
+    {
+        neighboringSeaCities.add(city);
+    }
+    
+    public ArrayList<String> getNeighboringLandCities(String city)
+    {
+       return neighboringLandCities;
+    }
+    
+    public ArrayList<String> getNeighboringSeaCities(String city)
+    {
+       return neighboringSeaCities;
+    }
+    
+    public void setNeighboringSeaCities(ArrayList<String> neighboringSeaCities)
+    {
+        this.neighboringSeaCities =  neighboringSeaCities;
+    }
+    
+    public void setNeighboringLandCities(ArrayList<String> neighboringLandCities)
+    {
+        this.neighboringLandCities =  neighboringLandCities;
+    }
+    
 }

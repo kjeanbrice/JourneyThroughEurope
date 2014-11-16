@@ -39,6 +39,21 @@ public class JourneyThroughEuropeEventHandler {
     public void respondToStartGameRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState uiState) {
         ui.changeWorkspace(uiState);
         ui.testClick();
+
+        ArrayList<PlayerManager> players = ui.getPlayers();
+        int maxPlayers = players.size();
+        for (int i = 0; i < maxPlayers; i++) {
+            if (i < ui.getNumPlayers()) {
+                if (players.get(i).getPlayerName().equals("")) {
+                    players.get(i).setPlayerName("Player " + (i + 1));
+                }
+            }
+            else
+                players.remove(players.size()-1);
+
+            
+        }
+        ui.setCurrentPlayer(0);
     }
 
     public void respondToLoadGameRequest() {
@@ -48,8 +63,8 @@ public class JourneyThroughEuropeEventHandler {
     public void respondToGameHistoryRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState uiState) {
         ui.changeWorkspace(uiState);
     }
-    
-     public void respondToBackRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState uiState) {
+
+    public void respondToBackRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState uiState) {
         ui.changeWorkspace(uiState);
     }
 
@@ -142,7 +157,7 @@ public class JourneyThroughEuropeEventHandler {
         }
     }
 
-    public void respondToStartRequest() {
+    public void respondToGameSetupRequest() {
         respondToSwitchScreenRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.GAME_SETUP_STATE);
     }
 
