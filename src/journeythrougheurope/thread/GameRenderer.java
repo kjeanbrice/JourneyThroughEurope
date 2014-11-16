@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package journeythrougheurope.game;
+package journeythrougheurope.thread;
 
 import java.util.ArrayList;
 import javafx.geometry.Rectangle2D;
@@ -15,6 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import journeythrougheurope.game.JourneyThroughEuropeCity;
 import journeythrougheurope.ui.JourneyThroughEuropeUI;
 
 /**

@@ -9,7 +9,7 @@ import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import journeythrougheurope.game.GameRenderer;
+import journeythrougheurope.thread.GameRenderer;
 
 /**
  *

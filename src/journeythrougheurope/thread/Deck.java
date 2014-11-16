@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package journeythrougheurope.game;
+package journeythrougheurope.thread;
 
 import java.util.ArrayList;
 
@@ -13,6 +13,7 @@ import java.util.ArrayList;
  */
 public class Deck {
 
+    private final int RANDOM = 0;
     private final int RED = 1;
     private final int GREEN = 2;
     private final int YELLOW = 3;
@@ -26,18 +27,28 @@ public class Deck {
         yellowCities = new ArrayList<String>();
     }
 
-    public String dealCard() {
+    public String dealCard(int deckColor) {
         int upperBound = 3;
-        if(redCities.isEmpty())
+        if (redCities.isEmpty()) {
             upperBound--;
-        if(greenCities.isEmpty())
+        }
+        if (greenCities.isEmpty()) {
             upperBound--;
-        if(yellowCities.isEmpty())
+        }
+        if (yellowCities.isEmpty()) {
             upperBound--;
-        if(upperBound == 0)
+        }
+        if (upperBound == 0) {
             throw new NullPointerException("There are no more cards in this deck");
+        }
+
+        int randomNumber;
+        if (deckColor == RANDOM) {
+            randomNumber = (int) ((Math.random() * upperBound) + 1);
+        } else {
+            randomNumber = deckColor;
+        }
         
-        int randomNumber = (int)((Math.random() * upperBound) + 1);
         String cardName = "";
         switch (randomNumber) {
             case RED:

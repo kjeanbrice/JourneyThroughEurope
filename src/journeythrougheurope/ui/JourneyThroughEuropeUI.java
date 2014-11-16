@@ -43,7 +43,7 @@ import javax.swing.text.html.HTMLDocument;
 import journeythrougheurope.application.Main;
 import journeythrougheurope.application.Main.JourneyThroughEuropePropertyType;
 import journeythrougheurope.file.JourneyThroughEuropeFileLoader;
-import journeythrougheurope.game.GameRenderer;
+import journeythrougheurope.thread.GameRenderer;
 import journeythrougheurope.game.JourneyThroughEuropeGameStateManager;
 import properties_manager.PropertiesManager;
 

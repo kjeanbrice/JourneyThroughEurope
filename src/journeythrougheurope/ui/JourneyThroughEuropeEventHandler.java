@@ -17,7 +17,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import journeythrougheurope.application.Main.JourneyThroughEuropePropertyType;
-import journeythrougheurope.game.GameRenderer;
+import journeythrougheurope.thread.GameRenderer;
 import properties_manager.PropertiesManager;
 
 /**
