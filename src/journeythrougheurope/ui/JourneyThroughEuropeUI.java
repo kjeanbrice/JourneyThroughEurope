@@ -45,6 +45,7 @@ import journeythrougheurope.application.Main.JourneyThroughEuropePropertyType;
 import journeythrougheurope.file.JourneyThroughEuropeFileLoader;
 import journeythrougheurope.thread.GameRenderer;
 import journeythrougheurope.game.JourneyThroughEuropeGameStateManager;
+import journeythrougheurope.thread.CardRenderer;
 import properties_manager.PropertiesManager;
 
 /**
@@ -54,6 +55,7 @@ import properties_manager.PropertiesManager;
 public class JourneyThroughEuropeUI extends Pane {
 
     private GameRenderer gameRenderer;
+    private CardRenderer cardRenderer;
     private JourneyThroughEuropeMouseHandler mouseHandler;
 
     private final int MAX_PLAYERS = 6;
@@ -94,7 +96,8 @@ public class JourneyThroughEuropeUI extends Pane {
     //Game Screen
     private VBox leftPanel;
     private StackPane gamePanel;
-    private Pane canvas;
+    private Pane gameCanvas;
+    private Pane cardCanvas;
     private ScrollPane gameGridScrollPane;
     private Image gameGridImage;
     private ImageView gameGridImageView;
@@ -484,8 +487,8 @@ public class JourneyThroughEuropeUI extends Pane {
         //gameGridImageView.fitWidthProperty().bind(gamePanel.widthProperty());
         //gameGridImageView.fitHeightProperty().bind(gamePanel.heightProperty());
 
-        canvas = new Pane();
-        gamePanel.getChildren().add(canvas);
+        gameCanvas = new Pane();
+        gamePanel.getChildren().add(gameCanvas);
 
         gameGridScrollPane = new ScrollPane();
         gameGridScrollPane.setContent(gamePanel);
@@ -507,7 +510,10 @@ public class JourneyThroughEuropeUI extends Pane {
                 + " -fx-font-weight: bold;");
 
         cardPanel = new StackPane();
-        cardPanel.getChildren().add(new Rectangle(242, 636, Color.WHITE));
+        cardCanvas = new Pane();
+        cardPanel.getChildren().add(new Rectangle(242, 656, Color.WHITE));
+        cardPanel.getChildren().add(cardCanvas);
+        
 
         gameButtonsPanel = new VBox();
         gameButtonsPanel.setAlignment(Pos.TOP_CENTER);
@@ -760,22 +766,22 @@ public class JourneyThroughEuropeUI extends Pane {
             case GRID1_IMAGE_STATE:
                 gamePanel.getChildren().clear();
                 gamePanel.getChildren().add(gameGridImageLabels[0]);
-                gamePanel.getChildren().add(canvas);
+                gamePanel.getChildren().add(gameCanvas);
                 break;
             case GRID2_IMAGE_STATE:
                 gamePanel.getChildren().clear();
                 gamePanel.getChildren().add(gameGridImageLabels[1]);
-                gamePanel.getChildren().add(canvas);
+                gamePanel.getChildren().add(gameCanvas);
                 break;
             case GRID3_IMAGE_STATE:
                 gamePanel.getChildren().clear();
                 gamePanel.getChildren().add(gameGridImageLabels[2]);
-                gamePanel.getChildren().add(canvas);
+                gamePanel.getChildren().add(gameCanvas);
                 break;
             case GRID4_IMAGE_STATE:
                 gamePanel.getChildren().clear();
                 gamePanel.getChildren().add(gameGridImageLabels[3]);
-                gamePanel.getChildren().add(canvas);
+                gamePanel.getChildren().add(gameCanvas);
                 break;
         }
     }
@@ -973,17 +979,21 @@ public class JourneyThroughEuropeUI extends Pane {
         }
     }
 
-    public void setGameToScreen(GameRenderer gameManager) {
-        canvas.getChildren().add(gameManager);
+    public void setGameToScreen(GameRenderer gameRenderer, CardRenderer cardRenderer) {
+        gameCanvas.getChildren().add(gameRenderer);
+        cardCanvas.getChildren().add(cardRenderer);
     }
 
-    public void testClick() {
+    
+    public void testClick(CardRenderer cardRenderer) {
         System.out.println("Width: " + gamePanel.getWidth() + "Height: " + gamePanel.getHeight());
         gameRenderer = new GameRenderer(gamePanel.getWidth(), gamePanel.getHeight(), this);
+        this.cardRenderer = cardRenderer;
         mouseHandler = new JourneyThroughEuropeMouseHandler(gameRenderer, primaryStage);
-        setGameToScreen(gameRenderer);
-        canvas.setOnMouseClicked(mouseHandler);
-        canvas.setOnMouseDragged(mouseHandler);
+        setGameToScreen(gameRenderer,this.cardRenderer);
+        gameCanvas.setOnMouseClicked(mouseHandler);
+        gameCanvas.setOnMouseDragged(mouseHandler);
+        //cardRenderer.repaint(playersManager.get(0));
     }
 
     public GameRenderer getGameRenderer() {
@@ -997,12 +1007,17 @@ public class JourneyThroughEuropeUI extends Pane {
     
     public void setCurrentPlayer(int player)
     {
-        playerName.setText(playersManager.get(0).getPlayerName());
+        playerName.setText(playersManager.get(player).getPlayerName());
     }
     
     public int getNumPlayers()
     {
         return numPlayers;
+    }
+    
+    public StackPane getCardPanel()
+    {
+        return cardPanel;
     }
 
 }

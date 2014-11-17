@@ -17,6 +17,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import journeythrougheurope.application.Main.JourneyThroughEuropePropertyType;
+import journeythrougheurope.thread.CardThread;
 import journeythrougheurope.thread.GameRenderer;
 import properties_manager.PropertiesManager;
 
@@ -27,6 +28,7 @@ import properties_manager.PropertiesManager;
 public class JourneyThroughEuropeEventHandler {
 
     private JourneyThroughEuropeUI ui;
+    private CardThread test;
 
     public JourneyThroughEuropeEventHandler(JourneyThroughEuropeUI ui) {
         this.ui = ui;
@@ -38,7 +40,6 @@ public class JourneyThroughEuropeEventHandler {
 
     public void respondToStartGameRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState uiState) {
         ui.changeWorkspace(uiState);
-        ui.testClick();
 
         ArrayList<PlayerManager> players = ui.getPlayers();
         int maxPlayers = players.size();
@@ -47,13 +48,16 @@ public class JourneyThroughEuropeEventHandler {
                 if (players.get(i).getPlayerName().equals("")) {
                     players.get(i).setPlayerName("Player " + (i + 1));
                 }
+            } else {
+                players.remove(players.size() - 1);
             }
-            else
-                players.remove(players.size()-1);
 
-            
         }
         ui.setCurrentPlayer(0);
+
+        CardThread test = new CardThread(ui);
+        ui.testClick(test.getCardRenderer());
+        test.startCardThread();
     }
 
     public void respondToLoadGameRequest() {

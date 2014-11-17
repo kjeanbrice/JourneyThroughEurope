@@ -5,6 +5,8 @@
  */
 package journeythrougheurope.ui;
 
+import java.util.ArrayList;
+import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
@@ -16,11 +18,15 @@ public class PlayerManager
 {
     private TextField playerName;
     private boolean human;
+    private ArrayList<String> cards;
+    private ArrayList<Point2D> cardLocations;
     
     public PlayerManager(TextField playerName,boolean human)
     {
         this.playerName = playerName;
         this.human = human;
+        cards = new ArrayList<String>();
+        cardLocations = new ArrayList<Point2D>();
     }
     
     public String getPlayerName()
@@ -41,6 +47,21 @@ public class PlayerManager
     public boolean isHuman()
     {
         return human;
+    }
+    
+    public void addCard(String city)
+    {
+        cards.add(city);
+    }
+    
+    public ArrayList<String> getCards()
+    {
+        return cards;
+    }
+    
+    public ArrayList<Point2D> getCardLocations()
+    {
+        return cardLocations;
     }
     
     public String toString()

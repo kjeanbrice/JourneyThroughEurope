@@ -12,7 +12,7 @@ import journeythrougheurope.ui.JourneyThroughEuropeUI;
  *
  * @author Karl
  */
-public class JourneyThroughEuropeGameThread implements Runnable
+public class GameThread implements Runnable
 {
     
     private JourneyThroughEuropeUI ui;

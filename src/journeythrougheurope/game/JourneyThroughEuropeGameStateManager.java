@@ -135,4 +135,8 @@ public class JourneyThroughEuropeGameStateManager {
         currentGameState = JourneyThroughEuropeGameState.GAME_IN_PROGRESS;
     }
 
+    public Deck getDeck()
+    {
+        return deck;
+    }
 }
