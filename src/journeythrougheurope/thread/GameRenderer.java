@@ -24,9 +24,9 @@ import journeythrougheurope.ui.JourneyThroughEuropeUI;
  */
 public class GameRenderer extends Canvas {
 
-    private static String IMAGE_PATH_GREEN = "file:images/green/";
-    private static String IMAGE_PATH_RED = "file:images/red/";
-    private static String IMAGE_PATH_YELLOW = "file:images/yellow/";
+    private static String IMAGE_PATH_GREEN = "file:images/cards/";
+    private static String IMAGE_PATH_RED = "file:images/cards/";
+    private static String IMAGE_PATH_YELLOW = "file:images/cards/";
 
     private final double CONVERSION_FACTOR = .60;
     private final int SIDE_LENGTH = (int) (36 * CONVERSION_FACTOR);

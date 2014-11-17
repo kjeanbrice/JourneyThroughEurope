@@ -5,7 +5,7 @@
  */
 package journeythrougheurope.thread;
 
-import journeythrougheurope.ui.JourneyThroughEuropeMouseHandler;
+import journeythrougheurope.ui.GameMouseHandler;
 import journeythrougheurope.ui.JourneyThroughEuropeUI;
 
 /**
@@ -16,7 +16,7 @@ public class GameThread implements Runnable
 {
     
     private JourneyThroughEuropeUI ui;
-    private JourneyThroughEuropeMouseHandler mouseHandler;
+    private GameMouseHandler mouseHandler;
 
     @Override
     public void run() {

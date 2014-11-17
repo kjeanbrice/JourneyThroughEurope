@@ -15,11 +15,11 @@ import journeythrougheurope.thread.GameRenderer;
  *
  * @author Karl
  */
-public class JourneyThroughEuropeMouseHandler  implements EventHandler<MouseEvent> {
+public class GameMouseHandler  implements EventHandler<MouseEvent> {
 
     private GameRenderer gameManager;
     private Stage stage;
-    public JourneyThroughEuropeMouseHandler(GameRenderer gameManager,Stage stage) 
+    public GameMouseHandler(GameRenderer gameManager,Stage stage) 
     {
          this.gameManager = gameManager;
          this.stage = stage;

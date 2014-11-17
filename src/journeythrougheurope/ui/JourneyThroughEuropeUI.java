@@ -56,7 +56,7 @@ public class JourneyThroughEuropeUI extends Pane {
 
     private GameRenderer gameRenderer;
     private CardRenderer cardRenderer;
-    private JourneyThroughEuropeMouseHandler mouseHandler;
+    private GameMouseHandler mouseHandler;
 
     private final int MAX_PLAYERS = 6;
     private Stage primaryStage;
@@ -483,7 +483,7 @@ public class JourneyThroughEuropeUI extends Pane {
         gamePanel = new StackPane();
         gamePanel.setStyle("-fx-border-color:black;" + "-fx-border-width: 2px;");
         gamePanel.getChildren().add(gameGridImageLabels[0]);
-        gamePanel.setFocusTraversable(true);
+        //gamePanel.setFocusTraversable(true);
         //gameGridImageView.fitWidthProperty().bind(gamePanel.widthProperty());
         //gameGridImageView.fitHeightProperty().bind(gamePanel.heightProperty());
 
@@ -494,6 +494,9 @@ public class JourneyThroughEuropeUI extends Pane {
         gameGridScrollPane.setContent(gamePanel);
         gameGridScrollPane.setFitToHeight(true);
         gameGridScrollPane.setFitToWidth(true);
+        
+        
+        
 
         playerName = new Button("Player 1");
         playerName.setMaxWidth(Double.MAX_VALUE);
@@ -989,7 +992,7 @@ public class JourneyThroughEuropeUI extends Pane {
         System.out.println("Width: " + gamePanel.getWidth() + "Height: " + gamePanel.getHeight());
         gameRenderer = new GameRenderer(gamePanel.getWidth(), gamePanel.getHeight(), this);
         this.cardRenderer = cardRenderer;
-        mouseHandler = new JourneyThroughEuropeMouseHandler(gameRenderer, primaryStage);
+        mouseHandler = new GameMouseHandler(gameRenderer, primaryStage);
         setGameToScreen(gameRenderer,this.cardRenderer);
         gameCanvas.setOnMouseClicked(mouseHandler);
         gameCanvas.setOnMouseDragged(mouseHandler);
@@ -1018,6 +1021,11 @@ public class JourneyThroughEuropeUI extends Pane {
     public StackPane getCardPanel()
     {
         return cardPanel;
+    }
+    
+    public ScrollPane getGameScrollPane()
+    {
+        return gameGridScrollPane;
     }
 
 }
