@@ -55,9 +55,9 @@ public class JourneyThroughEuropeEventHandler {
         }
         ui.setCurrentPlayer(0);
 
-        CardThread test = new CardThread(ui);
-        ui.testClick(test.getCardRenderer());
-        test.startCardThread();
+      
+        ui.testClick();
+        ui.getGSM().startNewGame();
     }
 
     public void respondToLoadGameRequest() {

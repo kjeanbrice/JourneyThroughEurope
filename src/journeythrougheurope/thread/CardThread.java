@@ -6,8 +6,6 @@
 package journeythrougheurope.thread;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import journeythrougheurope.ui.CardMouseHandler;
@@ -55,7 +53,7 @@ public class CardThread extends AnimationTimer {
         setupPlayerHands();
         initCardManagers();
 
-        cardMouseHandler = new CardMouseHandler(cardManager[0].getPlayerManager(), cardRenderer,this.ui.getCardPanel().getWidth());
+        cardMouseHandler = new CardMouseHandler(cardManager[0].getPlayerManager(), cardRenderer, this.ui.getCardPanel().getWidth());
         ui.getCardPanel().setOnMouseClicked(cardMouseHandler);
     }
 
@@ -68,7 +66,25 @@ public class CardThread extends AnimationTimer {
     }
 
     public void startCardThread() {
+        ui.setCardToScreen(cardRenderer);
         start();
+
+        /*Timeline animation = new Timeline();
+         KeyFrame temp = new KeyFrame(Duration.millis(1400), new EventHandler<ActionEvent>() {
+
+         public void handle(ActionEvent event) {
+         int x = (int) ((Math.random() * 500) + 1);
+         int y = (int) ((Math.random() * 400) + 1);
+         ui.getGameScrollPane().setHvalue((Math.random()));
+         ui.getGameScrollPane().setVvalue((Math.random()));
+         System.out.println(ui.getGameScrollPane().getHvalue());
+         System.out.println(ui.getGameScrollPane().getVvalue());
+         }
+         });
+
+         animation.getKeyFrames().add(temp);
+         animation.setCycleCount(Timeline.INDEFINITE);
+         animation.play();*/
     }
 
     public void stopCardThread() {
@@ -102,12 +118,6 @@ public class CardThread extends AnimationTimer {
             render();
         }
 
-        //int x = (int) ((Math.random() * 500) + 1);
-        //int y = (int) ((Math.random() * 400) + 1);
-       // ui.getGameScrollPane().setHvalue((Math.random()));
-        //ui.getGameScrollPane().setVvalue((Math.random()));
-        //System.out.println(ui.getGameScrollPane().getHvalue());
-        //System.out.println(ui.getGameScrollPane().getVvalue());
     }
 
     public boolean dealFirstCard() {
@@ -115,20 +125,22 @@ public class CardThread extends AnimationTimer {
         if (currentPlayer == cardManager.length) {
             currentPlayer = 0;
             currentCardManager = cardManager[currentPlayer];
-           
+
             cardMouseHandler.setPlayer(currentCardManager.getPlayerManager());
             ui.setCurrentPlayer(currentPlayer);
-            
+
             yFinalLocation += Y_INCREMENT;
             currentCard++;
             return false;
         } else {
-           
+
             currentCardManager = cardManager[currentPlayer];
             cardMouseHandler.setPlayer(currentCardManager.getPlayerManager());
-           
+
             ui.setCurrentPlayer(currentPlayer);
             if (currentCardManager.getPlayerManager().getCardLocations().get(0).getY() == yFinalLocation) {
+                ui.getGameScrollPane().setHvalue((Math.random()));
+                ui.getGameScrollPane().setVvalue((Math.random()));
                 currentPlayer++;
             }
             return true;

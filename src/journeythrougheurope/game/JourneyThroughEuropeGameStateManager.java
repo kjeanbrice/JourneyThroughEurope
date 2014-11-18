@@ -33,6 +33,7 @@ public class JourneyThroughEuropeGameStateManager {
     private ArrayList<JourneyThroughEuropeCity> currentGrid;
     private ArrayList<ArrayList<JourneyThroughEuropeCity>> grids;
 
+    // private
     public JourneyThroughEuropeGameStateManager(JourneyThroughEuropeUI ui) {
         this.ui = ui;
         initGrids();
@@ -65,7 +66,7 @@ public class JourneyThroughEuropeGameStateManager {
                 }
             }
         }
-      
+
         deck.setRedDeck(redCities);
         deck.setGreenDeck(greenCities);
         deck.setYellowDeck(yellowCities);
@@ -125,18 +126,35 @@ public class JourneyThroughEuropeGameStateManager {
         return currentGrid;
     }
 
+    public void startNewGame() {
+        if (!isGameNotStarted() && (!gamesHistory.contains(gameInProgress))) {
+            gamesHistory.add(gameInProgress);
+        }
+
+        if (isGameInProgress() && !gameInProgress.isWon()) {
+            // QUIT THE GAME, WHICH SETS THE END TIME
+            gameInProgress.giveUp();
+            //ui.getDocManager().updateStatsDoc();
+        }
+
+        // AND NOW MAKE A NEW GAME
+        makeNewGame();
+
+        // AND MAKE SURE THE UI REFLECTS A NEW GAME
+        //ui.resetUI();
+    }
+
     public void makeNewGame() {
 
-        //gamesHistory =  
         //ui.getDocManager().updateStatsDoc();
-        // gameInProgress = new SokobanGameData(ui, level);
-        //gameInProgress.startGame();
+        gameInProgress = new JourneyThroughEuropeGameData(ui);
+        gameInProgress.startGame();
+
         // THE GAME IS OFFICIALLY UNDERWAY
         currentGameState = JourneyThroughEuropeGameState.GAME_IN_PROGRESS;
     }
 
-    public Deck getDeck()
-    {
+    public Deck getDeck() {
         return deck;
     }
 }
