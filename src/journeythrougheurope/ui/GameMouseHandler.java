@@ -17,12 +17,11 @@ import journeythrougheurope.thread.GameRenderer;
  */
 public class GameMouseHandler  implements EventHandler<MouseEvent> {
 
-    private GameRenderer gameManager;
-    private Stage stage;
-    public GameMouseHandler(GameRenderer gameManager,Stage stage) 
+    private GameRenderer gameRenderer;
+    
+    public GameMouseHandler(GameRenderer gameManager) 
     {
-         this.gameManager = gameManager;
-         this.stage = stage;
+         this.gameRenderer = gameManager;
     }
 
 
@@ -30,14 +29,14 @@ public class GameMouseHandler  implements EventHandler<MouseEvent> {
        switch (event.getEventType().toString()) {
             case "MOUSE_CLICKED":
                 System.out.println("X: " +event.getX() + "     Y: " + event.getY());
-                gameManager.repaint(event.getX(),event.getY());
+                //gameRenderer.repaint(event.getX(),event.getY());
                 
                 break;
             case "MOUSE_RELEASED":
                 break;
             case "MOUSE_DRAGGED":
                 System.out.println("X: " +event.getX() + "     Y: " + event.getY());
-                gameManager.repaint(event.getX(),event.getY());
+                //gameRenderer.repaint(event.getX(),event.getY());
                 break;
         }
     

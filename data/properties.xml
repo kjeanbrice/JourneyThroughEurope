@@ -20,6 +20,7 @@
 		<property name ="GRID2_BUTTON_IMAGE_NAME"   value = "Grid2ButtonImage.png"></property>
 		<property name ="GRID3_BUTTON_IMAGE_NAME"   value = "Grid3ButtonImage.png"></property>
 		<property name ="GRID4_BUTTON_IMAGE_NAME"   value = "Grid4ButtonImage.png"></property>
+		<property name ="MAP_IMAGE_NAME"            value = "Map.png"></property>
 		<property name ="ABOUT_IMAGE_NAME"          value = "About.png"></property>
 		<property name ="GAME_HISTORY_IMAGE_NAME"   value = "GameHistory.png"></property>
 		<property name ="ROLL_DIE_IMAGE_NAME"       value = "RollDie.png"></property>

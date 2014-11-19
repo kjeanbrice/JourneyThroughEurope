@@ -5,10 +5,26 @@
  */
 package journeythrougheurope.thread;
 
+import journeythrougheurope.ui.PlayerManager;
+
 /**
  *
  * @author Karl
  */
-public class GameManager {
+public class GameManager 
+{
+ 
+   private PlayerManager player;
+   
+   public GameManager(PlayerManager player)
+   {
+       this.player = player;
+   }
+   
+   
+   public PlayerManager getPlayerManager()
+   {
+       return player;
+   }
     
 }

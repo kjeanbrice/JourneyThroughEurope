@@ -37,7 +37,9 @@ public class CardRenderer extends Canvas {
         gc.clearRect(0, 0, getWidth(), getHeight());
 
         for (int i = 0; i < numCardsToDeal; i++) {
-            gc.drawImage(new Image(IMAGE_PATH + player.getCards().get(i) + ".jpg"), player.getCardLocations().get(i).getX(),
+            //gc.drawImage(new Image(IMAGE_PATH + player.getCards().get(i) + ".jpg"), player.getCardLocations().get(i).getX(),
+                   // player.getCardLocations().get(i).getY(), DEFAULT_CARD_WIDTH, DEFAULT_CARD_HEIGHT);
+            gc.drawImage(ui.getGSM().processGetCityRequest(player.getCards().get(i)).getFront(), player.getCardLocations().get(i).getX(),
                     player.getCardLocations().get(i).getY(), DEFAULT_CARD_WIDTH, DEFAULT_CARD_HEIGHT);
             //gc.strokeRect(player.getCardLocations().get(i).getX(), player.getCardLocations().get(i).getY(), DEFAULT_CARD_WIDTH, 57.0);
         }
@@ -49,12 +51,12 @@ public class CardRenderer extends Canvas {
 
         for (int i = 0; i < player.getCards().size(); i++) {
             if (i != showCard) {
-                gc.drawImage(new Image(IMAGE_PATH + player.getCards().get(i) + ".jpg"), player.getCardLocations().get(i).getX(),
+                gc.drawImage(ui.getGSM().processGetCityRequest(player.getCards().get(i)).getFront(), player.getCardLocations().get(i).getX(),
                         player.getCardLocations().get(i).getY(), DEFAULT_CARD_WIDTH, DEFAULT_CARD_HEIGHT);
             }
         }
 
-        gc.drawImage(new Image(IMAGE_PATH + player.getCards().get(showCard) + ".jpg"), player.getCardLocations().get(showCard).getX(),
+        gc.drawImage(ui.getGSM().processGetCityRequest(player.getCards().get(showCard)).getFront(), player.getCardLocations().get(showCard).getX(),
                 player.getCardLocations().get(showCard).getY(), DEFAULT_CARD_WIDTH, DEFAULT_CARD_HEIGHT);
         gc.setStroke(Color.ROYALBLUE);
         gc.setLineWidth(5);

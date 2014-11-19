@@ -6,6 +6,8 @@
 package journeythrougheurope.game;
 
 import java.util.ArrayList;
+import javafx.geometry.Point2D;
+import javafx.scene.image.Image;
 
 /**
  *
@@ -13,6 +15,7 @@ import java.util.ArrayList;
  */
 public class JourneyThroughEuropeCity {
 
+    private Image front;
     private String cityName;
     private String cardColor;
     private int gridLocation;
@@ -35,6 +38,16 @@ public class JourneyThroughEuropeCity {
         this("","",-1,-1,-1);
     }
 
+    public void setFront(String imageName)
+    {
+        front = new Image("file:images/cards/" + imageName + ".jpg");
+    }
+    
+    public Image getFront()
+    {
+        return front;
+    }
+    
     public String getCityName() {
         return cityName;
     }
@@ -74,6 +87,11 @@ public class JourneyThroughEuropeCity {
     public void setGridY(double gridY) {
         this.gridY = gridY;
     }
+    
+    public Point2D getPoint()
+    {
+        return new Point2D(gridX,gridY);
+    }
 
     public String toString() {
         return "City Name: " + cityName + "\nCard Color: " + cardColor + "\nGrid Location: " + gridLocation + "\nX: " + gridX
@@ -90,13 +108,12 @@ public class JourneyThroughEuropeCity {
         neighboringSeaCities.add(city);
     }
     
-    public ArrayList<String> getNeighboringLandCities(String city)
+    public ArrayList<String> getNeighboringLandCities()
     {
        return neighboringLandCities;
     }
     
-    public ArrayList<String> getNeighboringSeaCities(String city)
-    {
+    public ArrayList<String> getNeighboringSeaCities(){
        return neighboringSeaCities;
     }
     

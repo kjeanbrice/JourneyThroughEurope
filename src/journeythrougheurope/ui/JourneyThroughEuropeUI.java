@@ -54,6 +54,11 @@ import properties_manager.PropertiesManager;
  */
 public class JourneyThroughEuropeUI extends Pane {
 
+    public final int GRID1_IMAGE_STATE = 1;
+    public final int GRID2_IMAGE_STATE = 2;
+    public final int GRID3_IMAGE_STATE = 3;
+    public final int GRID4_IMAGE_STATE = 4;
+
     private GameRenderer gameRenderer;
     private CardRenderer cardRenderer;
     private GameMouseHandler mouseHandler;
@@ -102,7 +107,9 @@ public class JourneyThroughEuropeUI extends Pane {
     private Image gameGridImage;
     private ImageView gameGridImageView;
     private Label gameGridImageLabels[];
+    private ImageView[] gameGridImageViews;
     private StackPane gameAndCardPanel;
+    private int currentGrid;
 
     private Button playerName;
     private StackPane cardPanel;
@@ -143,8 +150,7 @@ public class JourneyThroughEuropeUI extends Pane {
     public enum JourneyThroughEuropeUIState {
 
         SPLASH_SCREEN_STATE, PLAY_GAME_STATE, VIEW_GAME_HISTORY_STATE, VIEW_ABOUT_MENU_STATE, VIEW_ABOUT_GAME_STATE, GAME_SETUP_STATE,
-        GRID1_IMAGE_STATE, GRID2_IMAGE_STATE, GRID3_IMAGE_STATE, GRID4_IMAGE_STATE, DIE1_IMAGE_STATE, DIE2_IMAGE_STATE,
-        DIE3_IMAGE_STATE, DIE4_IMAGE_STATE, DIE5_IMAGE_STATE, DIE6_IMAGE_STATE
+        DIE1_IMAGE_STATE, DIE2_IMAGE_STATE, DIE3_IMAGE_STATE, DIE4_IMAGE_STATE, DIE5_IMAGE_STATE, DIE6_IMAGE_STATE
     }
 
     public JourneyThroughEuropeUI() {
@@ -461,7 +467,7 @@ public class JourneyThroughEuropeUI extends Pane {
             playerGridPanes[i] = setupPlayerGridPane(i);
             playerGridContainers[i] = setupPlayerGridContainers();
             playerGridContainers[i].getChildren().add(playerGridPanes[i]);
-            playersManager.get(i).setPlayerName("Player " + (i+1));
+            playersManager.get(i).setPlayerName("Player " + (i + 1));
             centerPanel.getChildren().add(playerGridContainers[i]);
         }
 
@@ -474,16 +480,31 @@ public class JourneyThroughEuropeUI extends Pane {
 
     private void initGameScreen() {
 
+        currentGrid = -1;
+
+        gameGridImageViews = new ImageView[4];
+        gameGridImageViews[0] = initImageView(JourneyThroughEuropePropertyType.MAP_IMAGE_NAME);
+        gameGridImageViews[1] = initImageView(JourneyThroughEuropePropertyType.MAP_IMAGE_NAME);
+        gameGridImageViews[2] = initImageView(JourneyThroughEuropePropertyType.MAP_IMAGE_NAME);
+        gameGridImageViews[3] = initImageView(JourneyThroughEuropePropertyType.MAP_IMAGE_NAME);
+
         gameGridImageLabels = new Label[4];
-        gameGridImageLabels[0] = initLabel(JourneyThroughEuropePropertyType.GAME_GRID1_IMAGE_NAME);
-        gameGridImageLabels[1] = initLabel(JourneyThroughEuropePropertyType.GAME_GRID2_IMAGE_NAME);
-        gameGridImageLabels[2] = initLabel(JourneyThroughEuropePropertyType.GAME_GRID3_IMAGE_NAME);
-        gameGridImageLabels[3] = initLabel(JourneyThroughEuropePropertyType.GAME_GRID4_IMAGE_NAME);
+        gameGridImageLabels[0] = new Label();
+        gameGridImageLabels[0].setGraphic(gameGridImageViews[0]);
+       
+        gameGridImageLabels[1] = new Label();
+        gameGridImageLabels[1].setGraphic(gameGridImageViews[1]);
+        
+        gameGridImageLabels[2] = new Label();
+        gameGridImageLabels[2].setGraphic(gameGridImageViews[2]);
+        
+        gameGridImageLabels[3] = new Label();
+        gameGridImageLabels[3].setGraphic(gameGridImageViews[3]);
 
         gamePanel = new StackPane();
         gamePanel.setStyle("-fx-border-color:black;" + "-fx-border-width: 2px;");
         gamePanel.getChildren().add(gameGridImageLabels[0]);
-        //gamePanel.setFocusTraversable(true);
+        gamePanel.setFocusTraversable(true);
         //gameGridImageView.fitWidthProperty().bind(gamePanel.widthProperty());
         //gameGridImageView.fitHeightProperty().bind(gamePanel.heightProperty());
 
@@ -494,9 +515,6 @@ public class JourneyThroughEuropeUI extends Pane {
         gameGridScrollPane.setContent(gamePanel);
         gameGridScrollPane.setFitToHeight(true);
         gameGridScrollPane.setFitToWidth(true);
-        
-        
-        
 
         playerName = new Button("Player 1");
         playerName.setMaxWidth(Double.MAX_VALUE);
@@ -516,7 +534,6 @@ public class JourneyThroughEuropeUI extends Pane {
         cardCanvas = new Pane();
         cardPanel.getChildren().add(new Rectangle(242, 656, Color.WHITE));
         cardPanel.getChildren().add(cardCanvas);
-        
 
         gameButtonsPanel = new VBox();
         gameButtonsPanel.setAlignment(Pos.TOP_CENTER);
@@ -586,7 +603,7 @@ public class JourneyThroughEuropeUI extends Pane {
             @Override
             public void handle(ActionEvent event) {
 
-                eventHandler.respondToChangeGridRequest(JourneyThroughEuropeUIState.GRID1_IMAGE_STATE);
+                eventHandler.respondToChangeGridRequest(GRID1_IMAGE_STATE);
             }
         });
 
@@ -597,7 +614,7 @@ public class JourneyThroughEuropeUI extends Pane {
             @Override
             public void handle(ActionEvent event) {
 
-                eventHandler.respondToChangeGridRequest(JourneyThroughEuropeUIState.GRID2_IMAGE_STATE);
+                eventHandler.respondToChangeGridRequest(GRID2_IMAGE_STATE);
             }
         });
 
@@ -608,7 +625,7 @@ public class JourneyThroughEuropeUI extends Pane {
             @Override
             public void handle(ActionEvent event) {
 
-                eventHandler.respondToChangeGridRequest(JourneyThroughEuropeUIState.GRID3_IMAGE_STATE);
+                eventHandler.respondToChangeGridRequest(GRID3_IMAGE_STATE);
             }
         });
 
@@ -619,7 +636,7 @@ public class JourneyThroughEuropeUI extends Pane {
             @Override
             public void handle(ActionEvent event) {
 
-                eventHandler.respondToChangeGridRequest(JourneyThroughEuropeUIState.GRID4_IMAGE_STATE);
+                eventHandler.respondToChangeGridRequest(GRID4_IMAGE_STATE);
             }
         });
 
@@ -674,7 +691,13 @@ public class JourneyThroughEuropeUI extends Pane {
         gameAndCardPanelContainer.setCenter(gameGridScrollPane);
         gameAndCardPanelContainer.setLeft(leftPanel);
         gameAndCardPanel.getChildren().add(gameAndCardPanelContainer);
-        gameScreenContainer.setCenter(gameAndCardPanel);
+
+        gameGridScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        gameGridScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        gameGridScrollPane.setPannable(true);
+
+        gameScreenContainer.setLeft(leftPanel);
+        gameScreenContainer.setCenter(gameGridScrollPane);
         gameScreenContainer.setRight(rightPanel);
         workspace.getChildren().add(gameScreenContainer);
 
@@ -764,27 +787,32 @@ public class JourneyThroughEuropeUI extends Pane {
         }
     }
 
-    public void changeGridImage(JourneyThroughEuropeUIState gridImageState) {
+    public void changeGridImage(int gridImageState) {
         switch (gridImageState) {
             case GRID1_IMAGE_STATE:
                 gamePanel.getChildren().clear();
                 gamePanel.getChildren().add(gameGridImageLabels[0]);
                 gamePanel.getChildren().add(gameCanvas);
+                currentGrid = 1;
+
                 break;
             case GRID2_IMAGE_STATE:
                 gamePanel.getChildren().clear();
                 gamePanel.getChildren().add(gameGridImageLabels[1]);
                 gamePanel.getChildren().add(gameCanvas);
+                currentGrid = 2;
                 break;
             case GRID3_IMAGE_STATE:
                 gamePanel.getChildren().clear();
                 gamePanel.getChildren().add(gameGridImageLabels[2]);
                 gamePanel.getChildren().add(gameCanvas);
+                currentGrid = 3;
                 break;
             case GRID4_IMAGE_STATE:
                 gamePanel.getChildren().clear();
                 gamePanel.getChildren().add(gameGridImageLabels[3]);
                 gamePanel.getChildren().add(gameCanvas);
+                currentGrid = 4;
                 break;
         }
     }
@@ -866,6 +894,48 @@ public class JourneyThroughEuropeUI extends Pane {
         return label;
     }
 
+    public ImageView initImageView(JourneyThroughEuropePropertyType prop) {
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        String imageName = props.getProperty(prop);
+
+        // LOAD THE IMAGE
+        Image image = loadImage(imageName);
+        ImageView imageIcon = new ImageView(image);
+
+        return imageIcon;
+    }
+
+    public Image initFlagImage(int imageNum) {
+
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        String imageName = "";
+
+        switch (imageNum) {
+            case 0:
+                imageName = props.getProperty(JourneyThroughEuropePropertyType.BLUE_FLAG);
+                break;
+            case 1:
+                imageName = props.getProperty(JourneyThroughEuropePropertyType.GREEN_FLAG);
+                break;
+            case 2:
+                imageName = props.getProperty(JourneyThroughEuropePropertyType.GRAY_FLAG);
+                break;
+            case 3:
+                imageName = props.getProperty(JourneyThroughEuropePropertyType.LIGHTBLUE_FLAG);
+                break;
+            case 4:
+                imageName = props.getProperty(JourneyThroughEuropePropertyType.RED_FLAG);
+                break;
+            case 5:
+                imageName = props.getProperty(JourneyThroughEuropePropertyType.PURPLE_FLAG);
+                break;
+        }
+
+        Image image = loadImage(imageName);
+        return image;
+
+    }
+
     public void disableAllPanes() {
         splashScreenContainer.setVisible(false);
         gameSetupScreenContainer.setVisible(false);
@@ -935,18 +1005,19 @@ public class JourneyThroughEuropeUI extends Pane {
         playerTypePane.getChildren().add(computer);
         playerTypePane.setSpacing(5);
 
-        
-        PlayerManager temp = new PlayerManager(txtName,true);
+        PlayerManager temp = new PlayerManager(txtName, true);
         playersManager.add(temp);
         group.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             public void changed(ObservableValue<? extends Toggle> ov,
                     Toggle old_toggle, Toggle new_toggle) {
                 if (group.getSelectedToggle() != null) {
-                    String playerStatus = ((RadioButton)group.getSelectedToggle()).getText();
-                    if(playerStatus.equalsIgnoreCase("Player"))
+                    String playerStatus = ((RadioButton) group.getSelectedToggle()).getText();
+                    if (playerStatus.equalsIgnoreCase("Player")) {
                         temp.setHuman(true);
-                    if(playerStatus.equalsIgnoreCase("Computer"))
+                    }
+                    if (playerStatus.equalsIgnoreCase("Computer")) {
                         temp.setHuman(false);
+                    }
                 }
             }
         });
@@ -986,51 +1057,46 @@ public class JourneyThroughEuropeUI extends Pane {
         gameCanvas.getChildren().clear();
         gameCanvas.getChildren().add(gameRenderer);
     }
-    
-    public void setCardToScreen(CardRenderer cardRenderer)
-    {
-         cardCanvas.getChildren().clear();
-         cardCanvas.getChildren().add(cardRenderer);
-    }
 
-    
-    public void testClick() {
-        System.out.println("Width: " + gamePanel.getWidth() + "Height: " + gamePanel.getHeight());
-        gameRenderer = new GameRenderer(gamePanel.getWidth(), gamePanel.getHeight(), this);
-        mouseHandler = new GameMouseHandler(gameRenderer, primaryStage);
-        setGameToScreen(gameRenderer);
-        gameCanvas.setOnMouseClicked(mouseHandler);
-        gameCanvas.setOnMouseDragged(mouseHandler);
-        
+    public void setCardToScreen(CardRenderer cardRenderer) {
+        cardCanvas.getChildren().clear();
+        cardCanvas.getChildren().add(cardRenderer);
     }
 
     public GameRenderer getGameRenderer() {
         return gameRenderer;
     }
-    
-    public ArrayList<PlayerManager> getPlayers()
-    {
+
+    public ArrayList<PlayerManager> getPlayers() {
         return playersManager;
     }
-    
-    public void setCurrentPlayer(int player)
-    {
+
+    public void setCurrentPlayer(int player) {
         playerName.setText(playersManager.get(player).getPlayerName());
     }
-    
-    public int getNumPlayers()
-    {
+
+    public int getNumPlayers() {
         return numPlayers;
     }
-    
-    public StackPane getCardPanel()
-    {
+
+    public StackPane getCardPanel() {
         return cardPanel;
     }
-    
-    public ScrollPane getGameScrollPane()
-    {
+
+    public StackPane getGamePanel() {
+        return gamePanel;
+    }
+
+    public ScrollPane getGameScrollPane() {
         return gameGridScrollPane;
+    }
+
+    public int getCurrentGrid() {
+        return currentGrid;
+    }
+
+    public ImageView[] getGameGridImages() {
+        return gameGridImageViews;
     }
 
 }

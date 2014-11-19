@@ -6,6 +6,7 @@
 package journeythrougheurope.thread;
 
 import java.util.ArrayList;
+import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -33,66 +34,117 @@ public class GameRenderer extends Canvas {
 
     private JourneyThroughEuropeUI ui;
     private GraphicsContext gc;
-    private ArrayList<JourneyThroughEuropeCity> cityData;
+    //private ArrayList<JourneyThroughEuropeCity> cityData;
+
+    private GameManager[] gameManagers;
+    private int currentPlayer;
+
     private double canvasWidth;
     private double canvasHeight;
     private boolean intersects;
 
-    public GameRenderer(double canvasWidth, double canvasHeight, JourneyThroughEuropeUI ui) {
+    public GameRenderer(double canvasWidth, double canvasHeight, JourneyThroughEuropeUI ui, GameManager[] gameManagers) {
         this.ui = ui;
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
         setWidth(this.canvasWidth);
         setHeight(this.canvasHeight);
-        cityData = ui.getGSM().getCurrentGridData();
+        //cityData = ui.getGSM().getCurrentGridData();
         intersects = false;
+        this.gameManagers = gameManagers;
+        currentPlayer = -1;
     }
 
-    public void repaint(double x, double y) {
+    public void repaint() {
         gc = this.getGraphicsContext2D();
         gc.clearRect(0, 0, getWidth(), getHeight());
 
-        for (int i = 0; i < cityData.size(); i++) {
-            Rectangle2D temp = new Rectangle2D(x, y, SIDE_LENGTH, SIDE_LENGTH);
+        int currentGrid = ui.getCurrentGrid();
 
-            int cityX = (int) cityData.get(i).getGridX();
-            int cityY = (int) cityData.get(i).getGridY();
-
-            if (temp.intersects(new Rectangle2D(cityX, cityY, SIDE_LENGTH, SIDE_LENGTH))) {
-              
-                switch (cityData.get(i).getCardColor().toUpperCase()) {
-                    case "RED":
-                        Image test = new Image(IMAGE_PATH_RED + cityData.get(i).getCityName());
-                        
-                        gc.drawImage(new Image(IMAGE_PATH_RED + cityData.get(i).getCityName() + ".jpg"), x - SIDE_LENGTH, y-SIDE_LENGTH,200,300);
-                        break;
-                    case "GREEN":
-                        gc.drawImage(new Image(IMAGE_PATH_GREEN + cityData.get(i).getCityName() + ".jpg"), x - SIDE_LENGTH, y-SIDE_LENGTH,200,300);
-                        break;
-                    case "YELLOW":
-                        gc.drawImage(new Image(IMAGE_PATH_YELLOW + cityData.get(i).getCityName() + ".jpg"), x - SIDE_LENGTH, y-SIDE_LENGTH,200,300);
-                        System.out.println(cityData.get(i).getCityName());
-                        break;
-                }
-                gc.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        for (int i = 0; i < gameManagers.length; i++) {
+            if (gameManagers[i].getPlayerManager().getCurrentGridLocation() == currentGrid) {
                 gc.setFill(Color.GREEN);
-                gc.fillText(cityData.get(i).getCityName(), x - SIDE_LENGTH, y - SIDE_LENGTH);
-                gc.fillOval(x - (SIDE_LENGTH / 2), y - (SIDE_LENGTH / 2), SIDE_LENGTH, SIDE_LENGTH);
-                gc.strokeOval(cityX - (SIDE_LENGTH / 2), cityY - (SIDE_LENGTH / 2), SIDE_LENGTH, SIDE_LENGTH);
-                intersects = true;
-                break;
+                gc.fillOval(gameManagers[i].getPlayerManager().getCurrentLocation().getX() - (SIDE_LENGTH / 2),
+                        gameManagers[i].getPlayerManager().getCurrentLocation().getY() - (SIDE_LENGTH / 2), SIDE_LENGTH, SIDE_LENGTH);
+            }
+
+            if (gameManagers[i].getPlayerManager().getHomeGridLocation() == currentGrid) {
+                gc.drawImage(gameManagers[i].getPlayerManager().getHomeImage(), ui.getGSM().processGetCityRequest(gameManagers[i].getPlayerManager().getHomeCity()).getGridX() - 5, ui.getGSM().processGetCityRequest(gameManagers[i].getPlayerManager().getHomeCity()).getGridY() - 70);
             }
         }
 
-        if (!intersects) {
-            gc.setFill(Color.RED);
-            gc.fillOval(x - (SIDE_LENGTH / 2), y - (SIDE_LENGTH / 2), SIDE_LENGTH, SIDE_LENGTH);
-        } else {
-            intersects = false;
+        if (currentPlayer != -1) {
+            if (ui.getCurrentGrid() == gameManagers[currentPlayer].getPlayerManager().getCurrentGridLocation()) {
+                ArrayList<String> neighboringLandCities = ui.getGSM().processGetCityRequest(gameManagers[currentPlayer].getPlayerManager().getCurrentCity()).getNeighboringLandCities();
+                for (int i = 0; i < neighboringLandCities.size(); i++) {
+                    Point2D startLocation = ui.getGSM().processGetCityRequest(gameManagers[currentPlayer].getPlayerManager().getCurrentCity()).getPoint();
+                    Point2D endLocation = ui.getGSM().processGetCityRequest(neighboringLandCities.get(i)).getPoint();
+                    gc.setStroke(Color.RED);
+                    gc.setLineWidth(4);
+                    gc.strokeLine(startLocation.getX(), startLocation.getY(), endLocation.getX(), endLocation.getY());
+                }
+
+                ArrayList<String> neighboringSeaCities = ui.getGSM().processGetCityRequest(gameManagers[currentPlayer].getPlayerManager().getCurrentCity()).getNeighboringSeaCities();
+                for (int i = 0; i < neighboringSeaCities.size(); i++) {
+                    Point2D startLocation = ui.getGSM().processGetCityRequest(gameManagers[currentPlayer].getPlayerManager().getCurrentCity()).getPoint();
+                    Point2D endLocation = ui.getGSM().processGetCityRequest(neighboringSeaCities.get(i)).getPoint();
+                    gc.setStroke(Color.RED);
+                    gc.setLineWidth(4);
+                    gc.strokeLine(startLocation.getX(), startLocation.getY(), endLocation.getX(), endLocation.getY());
+                }
+            }
         }
+
     }
 
-    public void updateCityData() {
-        cityData = ui.getGSM().getCurrentGridData();
+    public void setCurrentPlayer(int currentPlayer) {
+        this.currentPlayer = currentPlayer;
     }
 }
+        //switch(u)
+        /*
+ for (int i = 0; i < cityData.size(); i++) {
+ Rectangle2D temp = new Rectangle2D(x, y, SIDE_LENGTH, SIDE_LENGTH);
+
+ int cityX = (int) cityData.get(i).getGridX();
+ int cityY = (int) cityData.get(i).getGridY();
+
+ if (temp.intersects(new Rectangle2D(cityX, cityY, SIDE_LENGTH, SIDE_LENGTH))) {
+              
+ switch (cityData.get(i).getCardColor().toUpperCase()) {
+ case "RED":
+ Image test = new Image(IMAGE_PATH_RED + cityData.get(i).getCityName());
+                        
+ gc.drawImage(new Image(IMAGE_PATH_RED + cityData.get(i).getCityName() + ".jpg"), x - SIDE_LENGTH, y-SIDE_LENGTH,200,300);
+ break;
+ case "GREEN":
+ gc.drawImage(new Image(IMAGE_PATH_GREEN + cityData.get(i).getCityName() + ".jpg"), x - SIDE_LENGTH, y-SIDE_LENGTH,200,300);
+ break;
+ case "YELLOW":
+ gc.drawImage(new Image(IMAGE_PATH_YELLOW + cityData.get(i).getCityName() + ".jpg"), x - SIDE_LENGTH, y-SIDE_LENGTH,200,300);
+ System.out.println(cityData.get(i).getCityName());
+ break;
+ }
+ gc.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+ gc.setFill(Color.GREEN);
+ gc.fillText(cityData.get(i).getCityName(), x - SIDE_LENGTH, y - SIDE_LENGTH);
+ gc.fillOval(x - (SIDE_LENGTH / 2), y - (SIDE_LENGTH / 2), SIDE_LENGTH, SIDE_LENGTH);
+ gc.strokeOval(cityX - (SIDE_LENGTH / 2), cityY - (SIDE_LENGTH / 2), SIDE_LENGTH, SIDE_LENGTH);
+ intersects = true;
+ break;
+ }
+ }
+
+ if (!intersects) {
+ gc.setFill(Color.RED);
+ gc.fillOval(x - (SIDE_LENGTH / 2), y - (SIDE_LENGTH / 2), SIDE_LENGTH, SIDE_LENGTH);
+ } else {
+ intersects = false;
+ }
+ */
+
+
+/*
+ public void updateCityData() {
+ cityData = ui.getGSM().getCurrentGridData();
+ }*/

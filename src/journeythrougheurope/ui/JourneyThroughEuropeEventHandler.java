@@ -26,21 +26,21 @@ import properties_manager.PropertiesManager;
  * @author Karl
  */
 public class JourneyThroughEuropeEventHandler {
-
+    
     private JourneyThroughEuropeUI ui;
     private CardThread test;
-
+    
     public JourneyThroughEuropeEventHandler(JourneyThroughEuropeUI ui) {
         this.ui = ui;
     }
-
+    
     public void respondToSwitchScreenRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState uiState) {
         ui.changeWorkspace(uiState);
     }
-
+    
     public void respondToStartGameRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState uiState) {
         ui.changeWorkspace(uiState);
-
+        
         ArrayList<PlayerManager> players = ui.getPlayers();
         int maxPlayers = players.size();
         for (int i = 0; i < maxPlayers; i++) {
@@ -48,30 +48,28 @@ public class JourneyThroughEuropeEventHandler {
                 if (players.get(i).getPlayerName().equals("")) {
                     players.get(i).setPlayerName("Player " + (i + 1));
                 }
+                players.get(i).setHomeImage(ui.initFlagImage(i));
             } else {
                 players.remove(players.size() - 1);
             }
-
+            
         }
         ui.setCurrentPlayer(0);
-
-      
-        ui.testClick();
         ui.getGSM().startNewGame();
     }
-
+    
     public void respondToLoadGameRequest() {
-
+        
     }
-
+    
     public void respondToGameHistoryRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState uiState) {
         ui.changeWorkspace(uiState);
     }
-
+    
     public void respondToBackRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState uiState) {
         ui.changeWorkspace(uiState);
     }
-
+    
     public void respondToExitGameRequest(Stage primaryStage) {
         String options[] = new String[]{
             "Yes", "No"
@@ -94,30 +92,30 @@ public class JourneyThroughEuropeEventHandler {
         dialogStage.initModality(Modality.WINDOW_MODAL);
         dialogStage.initOwner(primaryStage);
         BorderPane resetPane = new BorderPane();
-
+        
         HBox optionPane = new HBox();
         Button btnYes = new Button(options[0]);
         Button btnNo = new Button(options[1]);
-
+        
         optionPane.setPadding(new Insets(2, 2, 10, 2));
         optionPane.setSpacing(5.0);
         optionPane.getChildren().addAll(btnYes, btnNo);
         optionPane.setAlignment(Pos.TOP_CENTER);
-
+        
         Label resetLabel = new Label("Are you sure you want to exit?");
         VBox resetLabelPane = new VBox();
         resetLabelPane.setPadding(new Insets(10, 2, 5, 2));
         resetLabelPane.getChildren().addAll(resetLabel);
         resetLabelPane.setAlignment(Pos.BOTTOM_CENTER);
-
+        
         VBox container = new VBox();
         container.getChildren().addAll(resetLabelPane, optionPane);
         container.setAlignment(Pos.CENTER);
-
+        
         resetPane.setCenter(container);
-
+        
         Scene scene = new Scene(resetPane);
-
+        
         dialogStage.setWidth(280);
         dialogStage.setHeight(110);
         dialogStage.setResizable(false);
@@ -128,53 +126,64 @@ public class JourneyThroughEuropeEventHandler {
         btnYes.setOnAction(buttonEvent -> {
             System.exit(0);
         });
-
+        
         btnNo.setOnAction(buttonEvent -> {
             // Closes the stage when the user's decision is "No".
             dialogStage.close();
         });
-
+        
     }
-
+    
     public void respondToRollRequest() {
         int roll = (int) ((Math.random() * 6) + 1);
-        System.out.println(roll);
         switch (roll) {
             case 1:
                 ui.changeDieImage(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.DIE1_IMAGE_STATE);
+                if(ui.getGSM().isGameInProgress())
+                    ui.getGSM().processDieRollRequest(1);
+                
                 break;
             case 2:
                 ui.changeDieImage(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.DIE2_IMAGE_STATE);
+                if(ui.getGSM().isGameInProgress())
+                    ui.getGSM().processDieRollRequest(2);
                 break;
             case 3:
                 ui.changeDieImage(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.DIE3_IMAGE_STATE);
+                if(ui.getGSM().isGameInProgress())
+                    ui.getGSM().processDieRollRequest(3);
                 break;
             case 4:
                 ui.changeDieImage(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.DIE4_IMAGE_STATE);
+                if(ui.getGSM().isGameInProgress())
+                    ui.getGSM().processDieRollRequest(4);
                 break;
             case 5:
                 ui.changeDieImage(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.DIE5_IMAGE_STATE);
+                if(ui.getGSM().isGameInProgress())
+                    ui.getGSM().processDieRollRequest(5);
                 break;
             case 6:
                 ui.changeDieImage(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.DIE6_IMAGE_STATE);
+                if(ui.getGSM().isGameInProgress())
+                    ui.getGSM().processDieRollRequest(6);
                 break;
         }
     }
-
+    
     public void respondToGameSetupRequest() {
         respondToSwitchScreenRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.GAME_SETUP_STATE);
     }
-
-    public void respondToChangeGridRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState gridState) {
+    
+    public void respondToChangeGridRequest(int gridState) {
         ui.getGSM().processGridChangeRequest(gridState);
         ui.changeGridImage(gridState);
-        ui.getGameRenderer().updateCityData();
     }
-
+    
     public void respondToShowWinDialogRequest(Stage primaryStage) {
-
+        
     }
-
+    
     public void respondToChangeNumberOfPlayersRequest(int numPlayers) {
         ui.disablePlayerGridPanes();
         ui.enablePlayerGridPanes(numPlayers);

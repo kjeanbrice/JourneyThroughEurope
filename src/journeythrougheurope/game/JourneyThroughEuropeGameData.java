@@ -18,23 +18,25 @@ public class JourneyThroughEuropeGameData {
     private JourneyThroughEuropeUI ui;
     private CardThread cardThread;
     private GameThread gameThread;
+    private int currentPlayer;
     private boolean won;
 
     public JourneyThroughEuropeGameData(JourneyThroughEuropeUI ui) {
         this.ui = ui;
-        gameThread = new GameThread(ui);
+        currentPlayer = 0;
         cardThread = new CardThread(this.ui);
+        gameThread = new GameThread(this.ui);
         won = false;
     }
 
     public void startGame() {
         cardThread.startCardThread();
-        // gameThread.startGameThread();
+        gameThread.startGameThread();
     }
 
     private void stopGame() {
         cardThread.stopCardThread();
-        //gameThread.stopGameThread();
+        gameThread.stopGameThread();
     }
 
     public boolean isWon() {
@@ -49,5 +51,22 @@ public class JourneyThroughEuropeGameData {
     {
         stopGame();
     }
+    
+    public void incrementPlayer()
+    {  
+        currentPlayer++;
+        if(currentPlayer == ui.getPlayers().size())
+         currentPlayer = 0;
+    }
 
+    public void updateDieRolledRequest(int die)
+    {
+        gameThread.updateRemainingMoves(die);
+    }
+    
+    public void startTurn()
+    {
+        gameThread.updatePlayer(currentPlayer);
+        cardThread.updatePlayer(currentPlayer);
+    }
 }

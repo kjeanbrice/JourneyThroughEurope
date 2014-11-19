@@ -107,5 +107,10 @@ public class XMLCityReader {
         }
         return temp;
     }
+    
+    public HashMap<String,JourneyThroughEuropeCity> getCityHashMap()
+    {
+        return cityHashMap;
+    }
 
 }

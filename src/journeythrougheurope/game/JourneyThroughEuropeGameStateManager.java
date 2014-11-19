@@ -7,8 +7,10 @@ package journeythrougheurope.game;
 
 import journeythrougheurope.thread.Deck;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import journeythrougheurope.file.JourneyThroughEuropeFileLoader;
+import journeythrougheurope.reader.XMLCityReader;
 import journeythrougheurope.ui.JourneyThroughEuropeUI;
 
 /**
@@ -22,6 +24,7 @@ public class JourneyThroughEuropeGameStateManager {
         GAME_NOT_STARTED, GAME_IN_PROGRESS, GAME_OVER,
     }
 
+    private final String XML_CITY_FILE_PATH = "data/cityneighbors.xml";
     private JourneyThroughEuropeUI ui;
     private JourneyThroughEuropeGameState currentGameState;
     private ArrayList<JourneyThroughEuropeGameData> gamesHistory;
@@ -30,19 +33,28 @@ public class JourneyThroughEuropeGameStateManager {
 
     private final int MAX_GRIDS = 4;
     private final int DEFAULT_GRID = 0;
+
+    private XMLCityReader cities;
+    private HashMap<String, JourneyThroughEuropeCity> cityHashMap;
     private ArrayList<JourneyThroughEuropeCity> currentGrid;
     private ArrayList<ArrayList<JourneyThroughEuropeCity>> grids;
 
     // private
     public JourneyThroughEuropeGameStateManager(JourneyThroughEuropeUI ui) {
         this.ui = ui;
+        buildHashMap();
         initGrids();
         initDeck();
         currentGrid = grids.get(DEFAULT_GRID);
         currentGameState = JourneyThroughEuropeGameState.GAME_NOT_STARTED;
         gamesHistory = new ArrayList<JourneyThroughEuropeGameData>();
         gameInProgress = null;
+    }
 
+    private void buildHashMap() {
+        cities = new XMLCityReader(XML_CITY_FILE_PATH);
+        cities.buildCityHashMap();
+        cityHashMap = cities.getCityHashMap();
     }
 
     private void initDeck() {
@@ -75,8 +87,7 @@ public class JourneyThroughEuropeGameStateManager {
     private void initGrids() {
         grids = new ArrayList<ArrayList<JourneyThroughEuropeCity>>();
         for (int i = 0; i < MAX_GRIDS; i++) {
-            grids.add(JourneyThroughEuropeFileLoader.loadMapGridData(i));
-
+            grids.add(JourneyThroughEuropeFileLoader.loadMapGridData(i, cities));
         }
     }
 
@@ -104,19 +115,19 @@ public class JourneyThroughEuropeGameStateManager {
         return currentGameState == JourneyThroughEuropeGameState.GAME_IN_PROGRESS;
     }
 
-    public void processGridChangeRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState gridState) {
+    public void processGridChangeRequest(int gridState) {
 
         switch (gridState) {
-            case GRID1_IMAGE_STATE:
+            case 1:
                 currentGrid = grids.get(0);
                 break;
-            case GRID2_IMAGE_STATE:
+            case 2:
                 currentGrid = grids.get(1);
                 break;
-            case GRID3_IMAGE_STATE:
+            case 3:
                 currentGrid = grids.get(2);
                 break;
-            case GRID4_IMAGE_STATE:
+            case 4:
                 currentGrid = grids.get(3);
                 break;
         }
@@ -156,5 +167,39 @@ public class JourneyThroughEuropeGameStateManager {
 
     public Deck getDeck() {
         return deck;
+    }
+    
+    public JourneyThroughEuropeCity processGetCityRequest(String cityName)
+    {
+        JourneyThroughEuropeCity temp = cityHashMap.get(cityName.toUpperCase().trim());
+        if (temp == null) {
+            System.out.println("The requested city is not contained in this hashmap.\t" + cityName);
+            throw new NullPointerException("The requested city is not contained in this hashmap.\t" + cityName);
+        }
+        return temp;
+    }
+    
+    public void processStartTurnRequest()
+    {
+        if(isGameInProgress())
+        {
+            gameInProgress.startTurn();
+        }
+    }
+    
+    public void processIncrementPlayerRequest()
+    {
+        if(isGameInProgress())
+        {
+            gameInProgress.incrementPlayer();
+        }
+    }
+    
+    public void processDieRollRequest(int die)
+    {
+        if(isGameInProgress())
+        {
+            gameInProgress.updateDieRolledRequest(die);
+        }
     }
 }
