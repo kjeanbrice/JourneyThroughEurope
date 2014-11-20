@@ -23,7 +23,7 @@ public class PlayerManager {
     private ArrayList<Point2D> cardLocations;
     private String currentCity;
     private String homeCity;
-    private Point2D currentLocation;
+    private Point2D currentPosition;
     private int currentGridLocation;
     private int homeGridLocation;
     
@@ -36,7 +36,7 @@ public class PlayerManager {
         cardLocations = new ArrayList<Point2D>();
         currentCity = "";
         homeCity = "";
-        currentLocation = null;
+        currentPosition = null;
         currentGridLocation = -1;
     }
 
@@ -68,12 +68,12 @@ public class PlayerManager {
         return homeImage;
     }
 
-    public void setCurrentLocation(Point2D point) {
-        currentLocation = point;
+    public void setCurrentPosition(Point2D point) {
+        currentPosition = point;
     }
 
-    public Point2D getCurrentLocation() {
-        return currentLocation;
+   public Point2D getCurrentPosition() {
+        return currentPosition;
     }
 
     public String getPlayerName() {
@@ -138,7 +138,7 @@ public class PlayerManager {
     public String toString() {
         return "Player name: " + playerName.getText() + "\nIs Human: " + human + "\nHand: " + cards.toString() + ""
                 + "\nCurrent City: " + currentCity + "\nReturn City: " + homeCity + "\nCurrent Location: "
-                + currentLocation.toString();
+                + currentPosition.toString();
     }
 
 }

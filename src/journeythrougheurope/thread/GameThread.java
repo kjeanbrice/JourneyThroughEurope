@@ -25,7 +25,7 @@ public class GameThread extends AnimationTimer {
     private GameRenderer gameRenderer;
     private GameManager currentGameManager;
     private int remainingMoves;
-    
+
     private int currentPlayer;
 
     private boolean won;
@@ -34,28 +34,25 @@ public class GameThread extends AnimationTimer {
         this.ui = ui;
         currentPlayer = -1;
         remainingMoves = 0;
-       
+
         players = this.ui.getPlayers();
         initGameManagers();
-        
-        gameRenderer = new GameRenderer(this.ui.getGamePanel().getWidth(), this.ui.getGamePanel().getHeight(),this.ui,gameManager);
-        mouseHandler = new GameMouseHandler(gameRenderer);
+
+        gameRenderer = new GameRenderer(this.ui.getGamePanel().getWidth(), this.ui.getGamePanel().getHeight(), this.ui, gameManager);
+        mouseHandler = new GameMouseHandler();
         this.ui.getGamePanel().setOnMouseClicked(mouseHandler);
         this.ui.getGamePanel().setOnMouseDragged(mouseHandler);
-        
+
     }
 
-    public void initGameManagers()
-    {
+    public void initGameManagers() {
         gameManager = new GameManager[players.size()];
-        for(int i = 0; i<players.size(); i++)
-        {     
-            gameManager[i] = new GameManager(players.get(i));        
+        for (int i = 0; i < players.size(); i++) {
+            gameManager[i] = new GameManager(players.get(i), ui);
         }
-        
+
     }
-    
-  
+
     public void startGameThread() {
         ui.setGameToScreen(gameRenderer);
         start();
@@ -65,37 +62,41 @@ public class GameThread extends AnimationTimer {
         stop();
     }
 
-    
     @Override
     public void handle(long now) {
         update();
         render();
         //System.out.println("This is the Game Thread");
     }
-    
-    public void render()
-    {
+
+    public void render() {
         gameRenderer.repaint();
     }
-    
-    public void update()
-    {
-        
+
+    public void update() {
+        if (currentGameManager != null) {
+            if (currentGameManager.isMoveInProgress()) {
+                if (currentGameManager.isScrolling()) {
+                    currentGameManager.scrollBack();
+                } else {
+                    currentGameManager.move();
+                }
+            }
+        }
     }
-    
+
     public boolean isWon() {
         return won;
     }
 
-    public void updatePlayer(int currentPlayer)
-    {
+    public void updatePlayer(int currentPlayer) {
         this.currentPlayer = currentPlayer;
         currentGameManager = gameManager[this.currentPlayer];
         gameRenderer.setCurrentPlayer(this.currentPlayer);
+        mouseHandler.setGameManager(currentGameManager);
     }
-    
-    public void updateRemainingMoves(int moves)
-    {
+
+    public void updateRemainingMoves(int moves) {
         remainingMoves = moves;
         System.out.println("Game Thread - Remaining Moves: " + remainingMoves);
     }

@@ -76,7 +76,7 @@ public class JourneyThroughEuropeFileLoader {
                 switch (gridLocation) {
                     case 1:
                         gridX = fileScan.nextDouble();
-                        gridY = fileScan.nextDouble() * CONVERSION_FACTOR;
+                        gridY = fileScan.nextDouble();
                         break;
                     case 2:
                         gridX = fileScan.nextDouble() + GRID_1_WIDTH;

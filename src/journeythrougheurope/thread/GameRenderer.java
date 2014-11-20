@@ -60,27 +60,14 @@ public class GameRenderer extends Canvas {
         gc.clearRect(0, 0, getWidth(), getHeight());
 
         int currentGrid = ui.getCurrentGrid();
-
-        for (int i = 0; i < gameManagers.length; i++) {
-            if (gameManagers[i].getPlayerManager().getCurrentGridLocation() == currentGrid) {
-                gc.setFill(Color.GREEN);
-                gc.fillOval(gameManagers[i].getPlayerManager().getCurrentLocation().getX() - (SIDE_LENGTH / 2),
-                        gameManagers[i].getPlayerManager().getCurrentLocation().getY() - (SIDE_LENGTH / 2), SIDE_LENGTH, SIDE_LENGTH);
-            }
-
-            if (gameManagers[i].getPlayerManager().getHomeGridLocation() == currentGrid) {
-                gc.drawImage(gameManagers[i].getPlayerManager().getHomeImage(), ui.getGSM().processGetCityRequest(gameManagers[i].getPlayerManager().getHomeCity()).getGridX() - 5, ui.getGSM().processGetCityRequest(gameManagers[i].getPlayerManager().getHomeCity()).getGridY() - 70);
-            }
-        }
-
-        if (currentPlayer != -1) {
-            if (ui.getCurrentGrid() == gameManagers[currentPlayer].getPlayerManager().getCurrentGridLocation()) {
+        
+         if (currentPlayer != -1) {
                 ArrayList<String> neighboringLandCities = ui.getGSM().processGetCityRequest(gameManagers[currentPlayer].getPlayerManager().getCurrentCity()).getNeighboringLandCities();
                 for (int i = 0; i < neighboringLandCities.size(); i++) {
                     Point2D startLocation = ui.getGSM().processGetCityRequest(gameManagers[currentPlayer].getPlayerManager().getCurrentCity()).getPoint();
                     Point2D endLocation = ui.getGSM().processGetCityRequest(neighboringLandCities.get(i)).getPoint();
                     gc.setStroke(Color.RED);
-                    gc.setLineWidth(4);
+                    gc.setLineWidth(5);
                     gc.strokeLine(startLocation.getX(), startLocation.getY(), endLocation.getX(), endLocation.getY());
                 }
 
@@ -89,11 +76,21 @@ public class GameRenderer extends Canvas {
                     Point2D startLocation = ui.getGSM().processGetCityRequest(gameManagers[currentPlayer].getPlayerManager().getCurrentCity()).getPoint();
                     Point2D endLocation = ui.getGSM().processGetCityRequest(neighboringSeaCities.get(i)).getPoint();
                     gc.setStroke(Color.RED);
-                    gc.setLineWidth(4);
+                    gc.setLineWidth(5);
                     gc.strokeLine(startLocation.getX(), startLocation.getY(), endLocation.getX(), endLocation.getY());
                 }
-            }
         }
+
+        for (int i = 0; i < gameManagers.length; i++) {
+           
+                gc.setFill(Color.GREEN);
+                gc.fillOval(gameManagers[i].getPlayerManager().getCurrentPosition().getX() - (SIDE_LENGTH / 2),
+                        gameManagers[i].getPlayerManager().getCurrentPosition().getY() - (SIDE_LENGTH / 2), SIDE_LENGTH, SIDE_LENGTH);    
+                gc.drawImage(gameManagers[i].getPlayerManager().getHomeImage(), ui.getGSM().processGetCityRequest(gameManagers[i].getPlayerManager().getHomeCity()).getGridX() - 5, ui.getGSM().processGetCityRequest(gameManagers[i].getPlayerManager().getHomeCity()).getGridY() - 70);
+            
+        }
+
+       
 
     }
 

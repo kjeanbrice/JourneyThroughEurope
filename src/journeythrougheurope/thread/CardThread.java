@@ -23,8 +23,8 @@ import journeythrougheurope.ui.PlayerManager;
 public class CardThread extends AnimationTimer {
 
     private final int Y_INCREMENT = 61;
-    private final int DEAL_CARD_SPEED = -10;
-    private final int MAX_CARDS = 2;
+    private final int DEAL_CARD_SPEED = -30;
+    private final int MAX_CARDS = 7;
 
     private JourneyThroughEuropeUI ui;
     private Deck deck;
@@ -222,7 +222,7 @@ public class CardThread extends AnimationTimer {
             playersManager.get(i).setHomeCity(firstCard);
             playersManager.get(i).setCurrentGridLocation(ui.getGSM().processGetCityRequest(firstCard).getGridLocation());
             playersManager.get(i).setHomeGridLocation(ui.getGSM().processGetCityRequest(firstCard).getGridLocation());
-            playersManager.get(i).setCurrentLocation(new Point2D(ui.getGSM().processGetCityRequest(firstCard).getGridX(),
+            playersManager.get(i).setCurrentPosition(new Point2D(ui.getGSM().processGetCityRequest(firstCard).getGridX(),
                     ui.getGSM().processGetCityRequest(firstCard).getGridY()));
         }
 
