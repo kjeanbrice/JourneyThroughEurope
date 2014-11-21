@@ -110,6 +110,10 @@ public class CardThread extends AnimationTimer {
             dealRemainingCards = dealRemainingCards();
             currentCardManager.moveCard(currentCard, DEAL_CARD_SPEED, yFinalLocation);
         }
+
+        if (currentCardManager.isScrolling()) {
+            currentCardManager.scrollBack();
+        }
     }
 
     public synchronized void render() {
@@ -126,7 +130,9 @@ public class CardThread extends AnimationTimer {
 
             update();
             render();
-            updatePlayer = false;
+            if (!currentCardManager.isScrolling()) {
+                updatePlayer = false;
+            }
             //TimeUnit.MILLISECONDS.sleep();
         }
 
@@ -136,48 +142,35 @@ public class CardThread extends AnimationTimer {
     public boolean dealFirstCard() {
 
         if (currentCardManager == null) {
-            nextPlayer();
+            nextPlayer(0);
             ui.getEventHandler().respondToChangeGridRequest(currentCardManager.getPlayerManager().getCurrentGridLocation());
-            double x = ui.getGSM().processGetCityRequest(currentCardManager.getPlayerManager().getCurrentCity()).getGridX();
-            double gridWidth = gameGridImageViews[currentCardManager.getPlayerManager().getCurrentGridLocation() - 1].getImage().getWidth();
 
-            double y = ui.getGSM().processGetCityRequest(currentCardManager.getPlayerManager().getCurrentCity()).getGridY();
-            double gridHeight = gameGridImageViews[currentCardManager.getPlayerManager().getCurrentGridLocation() - 1].getImage().getHeight();
+            /*
+             double x = ui.getGSM().processGetCityRequest(currentCardManager.getPlayerManager().getCurrentCity()).getGridX();
+             double gridWidth = gameGridImageViews[currentCardManager.getPlayerManager().getCurrentGridLocation() - 1].getImage().getWidth();
 
-            ui.getGameScrollPane().setHvalue(x / gridWidth);
-            ui.getGameScrollPane().setVvalue(y / gridHeight);
+             double y = ui.getGSM().processGetCityRequest(currentCardManager.getPlayerManager().getCurrentCity()).getGridY();
+             double gridHeight = gameGridImageViews[currentCardManager.getPlayerManager().getCurrentGridLocation() - 1].getImage().getHeight();
+
+             ui.getGameScrollPane().setHvalue(x / gridWidth);
+             ui.getGameScrollPane().setVvalue(y / gridHeight);*/
         }
 
         if (currentPlayer == cardManager.length) {
             resetCurrentPlayer();
-            nextPlayer();
+            nextPlayer(1);
 
             int grid = currentCardManager.getPlayerManager().getCurrentGridLocation();
             ui.getEventHandler().respondToChangeGridRequest(grid);
-            double x = ui.getGSM().processGetCityRequest(currentCardManager.getPlayerManager().getCurrentCity()).getGridX();
-            double gridWidth = gameGridImageViews[currentCardManager.getPlayerManager().getCurrentGridLocation() - 1].getImage().getWidth();
-
-            double y = ui.getGSM().processGetCityRequest(currentCardManager.getPlayerManager().getCurrentCity()).getGridY();
-            double gridHeight = gameGridImageViews[currentCardManager.getPlayerManager().getCurrentGridLocation() - 1].getImage().getHeight();
-
-            ui.getGameScrollPane().setHvalue(x / gridWidth);
-            ui.getGameScrollPane().setVvalue(y / gridHeight);
             yFinalLocation += Y_INCREMENT;
             currentCard++;
             return false;
         } else {
             if (currentCardManager.getPlayerManager().getCardLocations().get(0).getY() == yFinalLocation) {
-                nextPlayer();
-                ui.getEventHandler().respondToChangeGridRequest(currentCardManager.getPlayerManager().getCurrentGridLocation());
-                double x = ui.getGSM().processGetCityRequest(currentCardManager.getPlayerManager().getCurrentCity()).getGridX();
-                double gridWidth = gameGridImageViews[currentCardManager.getPlayerManager().getCurrentGridLocation() - 1].getImage().getWidth();
-
-                double y = ui.getGSM().processGetCityRequest(currentCardManager.getPlayerManager().getCurrentCity()).getGridY();
-                double gridHeight = gameGridImageViews[currentCardManager.getPlayerManager().getCurrentGridLocation() - 1].getImage().getHeight();
-
-                ui.getGameScrollPane().setHvalue(x / gridWidth);
-                ui.getGameScrollPane().setVvalue(y / gridHeight);
-
+                if (!currentCardManager.isScrolling()) {
+                    nextPlayer(0);
+                    ui.getEventHandler().respondToChangeGridRequest(currentCardManager.getPlayerManager().getCurrentGridLocation());
+                }
             }
             return true;
         }
@@ -187,7 +180,7 @@ public class CardThread extends AnimationTimer {
 
         if (currentPlayer == cardManager.length) {
             resetCurrentPlayer();
-            nextPlayer();
+            nextPlayer(1);
             ui.getGSM().processStartTurnRequest();
             currentCard = 0;
             yFinalLocation = 0;
@@ -203,7 +196,7 @@ public class CardThread extends AnimationTimer {
         }
 
         if (currentCard == MAX_CARDS) {
-            nextPlayer();
+            nextPlayer(1);
             yFinalLocation = 60;
             currentCard = 1;
         }
@@ -238,14 +231,21 @@ public class CardThread extends AnimationTimer {
         return currentPlayer;
     }
 
-    public void nextPlayer() {
+    public void nextPlayer(int scroll) {
 
         currentPlayer++;
         if (currentPlayer < cardManager.length) {
             currentCardManager = cardManager[currentPlayer];
             cardMouseHandler.setPlayer(currentCardManager.getPlayerManager());
             ui.setCurrentPlayer(currentPlayer);
-        } 
+            if (scroll == 0) {
+
+                double hValue = ui.getGameScrollPane().getHvalue();
+
+                currentCardManager.setCurrentGameScrollLocation(ui.getGameScrollPane().getHvalue(), ui.getGameScrollPane().getVvalue());
+                currentCardManager.setScrolling(true);
+            }
+        }
     }
 
     public void updatePlayer(int currentPlayer) {
@@ -253,16 +253,10 @@ public class CardThread extends AnimationTimer {
         currentCardManager = cardManager[currentPlayer];
         cardMouseHandler.setPlayer(currentCardManager.getPlayerManager());
         ui.setCurrentPlayer(currentPlayer);
-        
+
         ui.getEventHandler().respondToChangeGridRequest(currentCardManager.getPlayerManager().getCurrentGridLocation());
-        double x = ui.getGSM().processGetCityRequest(currentCardManager.getPlayerManager().getCurrentCity()).getGridX();
-        double gridWidth = gameGridImageViews[currentCardManager.getPlayerManager().getCurrentGridLocation() - 1].getImage().getWidth();
-
-        double y = ui.getGSM().processGetCityRequest(currentCardManager.getPlayerManager().getCurrentCity()).getGridY();
-        double gridHeight = gameGridImageViews[currentCardManager.getPlayerManager().getCurrentGridLocation() - 1].getImage().getHeight();
-
-        ui.getGameScrollPane().setHvalue(x / gridWidth);
-        ui.getGameScrollPane().setVvalue(y / gridHeight);
+        currentCardManager.setCurrentGameScrollLocation(ui.getGameScrollPane().getHvalue(), ui.getGameScrollPane().getVvalue());
+        currentCardManager.setScrolling(true);
         updatePlayer = true;
     }
 

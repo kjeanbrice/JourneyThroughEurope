@@ -195,11 +195,11 @@ public class JourneyThroughEuropeGameStateManager {
         }
     }
     
-    public void processDieRollRequest(int die)
+    public void processRollRequest(int die)
     {
         if(isGameInProgress())
         {
-            gameInProgress.updateDieRolledRequest(die);
+            gameInProgress.updateRollRequest(die);
         }
     }
 }

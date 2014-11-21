@@ -140,33 +140,33 @@ public class JourneyThroughEuropeEventHandler {
             case 1:
                 ui.changeDieImage(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.DIE1_IMAGE_STATE);
                 if(ui.getGSM().isGameInProgress())
-                    ui.getGSM().processDieRollRequest(1);
+                    ui.getGSM().processRollRequest(1);
                 
                 break;
             case 2:
                 ui.changeDieImage(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.DIE2_IMAGE_STATE);
                 if(ui.getGSM().isGameInProgress())
-                    ui.getGSM().processDieRollRequest(2);
+                    ui.getGSM().processRollRequest(2);
                 break;
             case 3:
                 ui.changeDieImage(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.DIE3_IMAGE_STATE);
                 if(ui.getGSM().isGameInProgress())
-                    ui.getGSM().processDieRollRequest(3);
+                    ui.getGSM().processRollRequest(3);
                 break;
             case 4:
                 ui.changeDieImage(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.DIE4_IMAGE_STATE);
                 if(ui.getGSM().isGameInProgress())
-                    ui.getGSM().processDieRollRequest(4);
+                    ui.getGSM().processRollRequest(4);
                 break;
             case 5:
                 ui.changeDieImage(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.DIE5_IMAGE_STATE);
                 if(ui.getGSM().isGameInProgress())
-                    ui.getGSM().processDieRollRequest(5);
+                    ui.getGSM().processRollRequest(5);
                 break;
             case 6:
                 ui.changeDieImage(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.DIE6_IMAGE_STATE);
                 if(ui.getGSM().isGameInProgress())
-                    ui.getGSM().processDieRollRequest(6);
+                    ui.getGSM().processRollRequest(6);
                 break;
         }
     }

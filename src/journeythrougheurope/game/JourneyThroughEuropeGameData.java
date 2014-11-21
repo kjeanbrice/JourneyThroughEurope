@@ -15,15 +15,22 @@ import journeythrougheurope.ui.JourneyThroughEuropeUI;
  */
 public class JourneyThroughEuropeGameData {
 
+    private final int MAX_EXTRA_TURNS = 1;
+    private final int SIX = 6;
+
     private JourneyThroughEuropeUI ui;
     private CardThread cardThread;
     private GameThread gameThread;
     private int currentPlayer;
     private boolean won;
+    private boolean extraTurn;
+    private int extraTurnCount;
 
     public JourneyThroughEuropeGameData(JourneyThroughEuropeUI ui) {
         this.ui = ui;
         currentPlayer = 0;
+        extraTurn = false;
+        extraTurnCount = 0;
         cardThread = new CardThread(this.ui);
         gameThread = new GameThread(this.ui);
         won = false;
@@ -46,27 +53,33 @@ public class JourneyThroughEuropeGameData {
         }
         return won;
     }
-    
-    public void giveUp()
-    {
+
+    public void giveUp() {
         stopGame();
     }
-    
-    public void incrementPlayer()
-    {  
+
+    public void incrementPlayer() {
         currentPlayer++;
-        if(currentPlayer == ui.getPlayers().size())
-         currentPlayer = 0;
+        if (currentPlayer == ui.getPlayers().size()) {
+            currentPlayer = 0;
+        }
     }
 
-    public void updateDieRolledRequest(int die)
-    {
-        gameThread.updateRemainingMoves(die);
+    public void updateRollRequest(int die) {
+        if (!extraTurn && die == SIX) {
+            extraTurn = true;
+            gameThread.updateRemainingMoves(die);
+        } else {
+            gameThread.updateRemainingMoves(die);
+            ui.disableRollButton();
+            extraTurn = false;
+        }
     }
-    
-    public void startTurn()
-    {
+
+    public void startTurn() {
         gameThread.updatePlayer(currentPlayer);
         cardThread.updatePlayer(currentPlayer);
+        ui.enableRollButton();
+        ui.resetRollImage();
     }
 }

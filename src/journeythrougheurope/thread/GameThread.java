@@ -76,10 +76,21 @@ public class GameThread extends AnimationTimer {
     public void update() {
         if (currentGameManager != null) {
             if (currentGameManager.isMoveInProgress()) {
-                if (currentGameManager.isScrolling()) {
-                    currentGameManager.scrollBack();
+                if (currentGameManager.getPlayerManager().getMovesRemaining() != 0) {
+                    if (currentGameManager.isScrolling()) {
+                        currentGameManager.scrollBack();
+                    } else {
+                        if (currentGameManager.move()) {
+                            currentGameManager.getPlayerManager().setMovesRemaining(currentGameManager.getPlayerManager().getMovesRemaining() - 1);
+                            if (currentGameManager.getPlayerManager().getMovesRemaining() == 0 && ui.isRollButtonDisabled()) {
+                                ui.getGSM().processIncrementPlayerRequest();
+                                ui.getGSM().processStartTurnRequest();
+                                //currentGameManager.scrollToNextPlayer(players.get(currentPlayer));
+                            }
+                        }
+                    }
                 } else {
-                    currentGameManager.move();
+                    currentGameManager.setMoveInProgress(false);
                 }
             }
         }
@@ -97,7 +108,7 @@ public class GameThread extends AnimationTimer {
     }
 
     public void updateRemainingMoves(int moves) {
-        remainingMoves = moves;
+        currentGameManager.getPlayerManager().setMovesRemaining(currentGameManager.getPlayerManager().getMovesRemaining() + moves);
         System.out.println("Game Thread - Remaining Moves: " + remainingMoves);
     }
 }

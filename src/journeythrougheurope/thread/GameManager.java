@@ -55,7 +55,7 @@ public class GameManager {
     }
 
     public synchronized void scrollBack() {
-        if (moveInProgress) {
+        
             double destinationX = player.getCurrentPosition().getX();
             double destinationY = player.getCurrentPosition().getY();
 
@@ -74,10 +74,9 @@ public class GameManager {
                 gameScrollPane.setHvalue((gameScrollPane.getHvalue() + ((xScrollOffset / gridWidth) / STEPS)));
                 gameScrollPane.setVvalue((gameScrollPane.getVvalue() + ((YScrollOffset / gridHeight) / STEPS)));
             }
-        }
     }
 
-    public synchronized void move() {
+    public synchronized boolean move() {
         if (moveInProgress) {
 
             System.out.println("Y: " + (int) (this.calculateY(player.getCurrentPosition().getX(), player.getCurrentPosition(), new Point2D(destination.getGridX(), destination.getGridY()))) + "\n");
@@ -101,6 +100,7 @@ public class GameManager {
 
                 destination = null;
                 moveInProgress = false;
+                return true;
 
                 // System.out.println("Game Manager: " + player.toString() + "\n");
             } else {
@@ -118,6 +118,8 @@ public class GameManager {
             }
 
         }
+        
+        return false;
     }
 
     public synchronized boolean isMoveValid(double xPosition, double yPosition) {
@@ -136,7 +138,6 @@ public class GameManager {
                 if (clickedPosition.intersects(cityPosition)) {
                     destination = temp;
                     moveInProgress = true;
-
                     startLocation = player.getCurrentPosition();
 
                     scrolling = true;
@@ -169,6 +170,9 @@ public class GameManager {
         return moveInProgress;
     }
 
+    public void setMoveInProgress(boolean status) {
+         moveInProgress = status;
+    }
     public PlayerManager getPlayerManager() {
         return player;
     }

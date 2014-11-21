@@ -26,6 +26,7 @@ public class PlayerManager {
     private Point2D currentPosition;
     private int currentGridLocation;
     private int homeGridLocation;
+    private int movesRemaining;
     
     private Image homeImage;
 
@@ -38,8 +39,19 @@ public class PlayerManager {
         homeCity = "";
         currentPosition = null;
         currentGridLocation = -1;
+        movesRemaining = 0;
     }
 
+    public void setMovesRemaining(int movesRemaining)
+    {
+        this.movesRemaining = movesRemaining;
+    }
+    
+    public int getMovesRemaining()
+    {
+        return movesRemaining;
+    }
+    
     public void setCurrentGridLocation(int gridLocation) {
         this.currentGridLocation = gridLocation;
     }

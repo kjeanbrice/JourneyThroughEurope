@@ -150,7 +150,7 @@ public class JourneyThroughEuropeUI extends Pane {
     public enum JourneyThroughEuropeUIState {
 
         SPLASH_SCREEN_STATE, PLAY_GAME_STATE, VIEW_GAME_HISTORY_STATE, VIEW_ABOUT_MENU_STATE, VIEW_ABOUT_GAME_STATE, GAME_SETUP_STATE,
-        DIE1_IMAGE_STATE, DIE2_IMAGE_STATE, DIE3_IMAGE_STATE, DIE4_IMAGE_STATE, DIE5_IMAGE_STATE, DIE6_IMAGE_STATE
+        DIE1_IMAGE_STATE, DIE2_IMAGE_STATE, DIE3_IMAGE_STATE, DIE4_IMAGE_STATE, DIE5_IMAGE_STATE, DIE6_IMAGE_STATE,DEFAULT_DIE_IMAGE_NAME
     }
 
     public JourneyThroughEuropeUI() {
@@ -837,6 +837,9 @@ public class JourneyThroughEuropeUI extends Pane {
             case DIE6_IMAGE_STATE:
                 btnDie.setGraphic(setupImageView(JourneyThroughEuropePropertyType.DIE6_IMAGE_NAME));
                 break;
+            case DEFAULT_DIE_IMAGE_NAME:
+                btnDie.setGraphic(setupImageView(JourneyThroughEuropePropertyType.DEFAULT_DIE_IMAGE_NAME));
+                break;
         }
     }
 
@@ -1098,5 +1101,27 @@ public class JourneyThroughEuropeUI extends Pane {
     public ImageView[] getGameGridImages() {
         return gameGridImageViews;
     }
+    
+    public void disableRollButton()
+    {
+        btnDie.setDisable(true);
+    }
+    
+    public void enableRollButton()
+    {
+        btnDie.setDisable(false);
+    }
+    
+    public boolean isRollButtonDisabled()
+    {
+        return btnDie.isDisabled();
+    }
+    
+    public void resetRollImage()
+    {
+        changeDieImage(JourneyThroughEuropeUIState.DEFAULT_DIE_IMAGE_NAME);
+    }
+    
+    
 
 }
