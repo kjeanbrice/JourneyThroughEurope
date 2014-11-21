@@ -648,6 +648,7 @@ public class JourneyThroughEuropeUI extends Pane {
         diePanel.setPadding(new Insets(30, 0, 50, 30));
 
         btnDie = this.initButton(JourneyThroughEuropePropertyType.DEFAULT_DIE_IMAGE_NAME);
+        btnDie.setDisable(true);
         btnDie.setStyle("-fx-effect: dropshadow( three-pass-box , black , 10 , 0 , 0 , 0 );");
         btnDie.setOnAction(new EventHandler<ActionEvent>() {
 

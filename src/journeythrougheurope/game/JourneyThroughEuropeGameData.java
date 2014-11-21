@@ -41,7 +41,7 @@ public class JourneyThroughEuropeGameData {
         gameThread.startGameThread();
     }
 
-    private void stopGame() {
+    public void stopGame() {
         cardThread.stopCardThread();
         gameThread.stopGameThread();
     }
@@ -49,7 +49,6 @@ public class JourneyThroughEuropeGameData {
     public boolean isWon() {
         if (gameThread.isWon()) {
             won = true;
-            stopGame();
         }
         return won;
     }
@@ -79,7 +78,11 @@ public class JourneyThroughEuropeGameData {
     public void startTurn() {
         gameThread.updatePlayer(currentPlayer);
         cardThread.updatePlayer(currentPlayer);
-        ui.enableRollButton();
         ui.resetRollImage();
+    }
+    
+    public void removeCardFromCurrentPlayer(int cityIndex)
+    {
+        cardThread.setRemovingCardStatus(true,cityIndex);
     }
 }

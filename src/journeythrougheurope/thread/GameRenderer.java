@@ -79,6 +79,13 @@ public class GameRenderer extends Canvas {
                     gc.setLineWidth(5);
                     gc.strokeLine(startLocation.getX(), startLocation.getY(), endLocation.getX(), endLocation.getY());
                 }
+                
+                ArrayList<String> cardHand = gameManagers[currentPlayer].getPlayerManager().getCards();
+                 for (int i = 0; i < cardHand.size(); i++) {
+                    Point2D cardLocation = ui.getGSM().processGetCityRequest(cardHand.get(i)).getPoint();
+                    gc.setFill(Color.CORAL);
+                    gc.fillOval(cardLocation.getX() - (SIDE_LENGTH / 2), cardLocation.getY() - (SIDE_LENGTH / 2), SIDE_LENGTH, SIDE_LENGTH);  
+                }
         }
 
         for (int i = 0; i < gameManagers.length; i++) {

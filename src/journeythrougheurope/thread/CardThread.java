@@ -24,7 +24,8 @@ public class CardThread extends AnimationTimer {
 
     private final int Y_INCREMENT = 61;
     private final int DEAL_CARD_SPEED = -30;
-    private final int MAX_CARDS = 7;
+    private final int REMOVE_CARD_SPEED = -15;
+    private final int MAX_CARDS = 2;
 
     private JourneyThroughEuropeUI ui;
     private Deck deck;
@@ -37,21 +38,27 @@ public class CardThread extends AnimationTimer {
     private int yFinalLocation;
     private int currentPlayer;
     private int currentCard;
+    private int cardToRemove;
 
     private CardMouseHandler cardMouseHandler;
     private boolean dealFirstCard;
     private boolean dealRemainingCards;
+    private boolean dealCards;
     private boolean updatePlayer;
+    private boolean removingCard;
 
     public CardThread(JourneyThroughEuropeUI ui) {
         this.ui = ui;
         yFinalLocation = 0;
         currentPlayer = -1;
+        cardToRemove = -1;
         currentCard = 0;
 
         dealFirstCard = true;
         dealRemainingCards = true;
         updatePlayer = false;
+        removingCard = false;
+        dealCards = false;
 
         deck = ui.getGSM().getDeck();
         playersManager = this.ui.getPlayers();
@@ -105,19 +112,34 @@ public class CardThread extends AnimationTimer {
 
         if (dealFirstCard) {
             dealFirstCard = dealFirstCard();
-            currentCardManager.moveCard(currentCard, DEAL_CARD_SPEED, yFinalLocation);
+            currentCardManager.moveCardUp(currentCard, DEAL_CARD_SPEED, yFinalLocation);
         } else if (dealRemainingCards) {
             dealRemainingCards = dealRemainingCards();
-            currentCardManager.moveCard(currentCard, DEAL_CARD_SPEED, yFinalLocation);
+            currentCardManager.moveCardUp(currentCard, DEAL_CARD_SPEED, yFinalLocation);
         }
 
         if (currentCardManager.isScrolling()) {
-            currentCardManager.scrollBack();
+            currentCardManager.scrollToPlayerLocation();
+            ui.getGameScrollPane().setPannable(false);
+        }
+
+        if (removingCard) {
+            removeCard();
+
+        }
+
+        if (dealCards) {
+            dealCards = this.dealCards();
+            currentCardManager.moveCardUp(currentCard, DEAL_CARD_SPEED, yFinalLocation);
         }
     }
 
     public synchronized void render() {
-        cardRenderer.repaint(currentCardManager.getPlayerManager(), MAX_CARDS);
+        if (cardToRemove != -1) {
+            cardRenderer.displayCard(currentCardManager.getPlayerManager(), cardToRemove);
+        } else {
+            cardRenderer.repaint(currentCardManager.getPlayerManager(), currentCardManager.getPlayerManager().getCards().size());
+        }
     }
 
     public CardRenderer getCardRenderer() {
@@ -126,12 +148,16 @@ public class CardThread extends AnimationTimer {
 
     @Override
     public void handle(long now) {
-        if (dealFirstCard || dealRemainingCards || updatePlayer) {
+        if (dealFirstCard || dealRemainingCards || updatePlayer || removingCard || dealCards) {
 
             update();
             render();
-            if (!currentCardManager.isScrolling()) {
-                updatePlayer = false;
+            if (!removingCard && !dealCards) {
+                if (!currentCardManager.isScrolling() && updatePlayer) {
+                    updatePlayer = false;
+                    ui.enableRollButton();
+                    ui.getGameScrollPane().setPannable(true);
+                }
             }
             //TimeUnit.MILLISECONDS.sleep();
         }
@@ -144,16 +170,6 @@ public class CardThread extends AnimationTimer {
         if (currentCardManager == null) {
             nextPlayer(0);
             ui.getEventHandler().respondToChangeGridRequest(currentCardManager.getPlayerManager().getCurrentGridLocation());
-
-            /*
-             double x = ui.getGSM().processGetCityRequest(currentCardManager.getPlayerManager().getCurrentCity()).getGridX();
-             double gridWidth = gameGridImageViews[currentCardManager.getPlayerManager().getCurrentGridLocation() - 1].getImage().getWidth();
-
-             double y = ui.getGSM().processGetCityRequest(currentCardManager.getPlayerManager().getCurrentCity()).getGridY();
-             double gridHeight = gameGridImageViews[currentCardManager.getPlayerManager().getCurrentGridLocation() - 1].getImage().getHeight();
-
-             ui.getGameScrollPane().setHvalue(x / gridWidth);
-             ui.getGameScrollPane().setVvalue(y / gridHeight);*/
         }
 
         if (currentPlayer == cardManager.length) {
@@ -163,7 +179,9 @@ public class CardThread extends AnimationTimer {
             int grid = currentCardManager.getPlayerManager().getCurrentGridLocation();
             ui.getEventHandler().respondToChangeGridRequest(grid);
             yFinalLocation += Y_INCREMENT;
-            currentCard++;
+            if (currentCard < currentCardManager.getPlayerManager().getCards().size() - 1) {
+                currentCard++;
+            }
             return false;
         } else {
             if (currentCardManager.getPlayerManager().getCardLocations().get(0).getY() == yFinalLocation) {
@@ -187,21 +205,34 @@ public class CardThread extends AnimationTimer {
             return false;
         }
 
-        //currentCardManager = cardManager[currentPlayer];
-        //cardMouseHandler.setPlayer(currentCardManager.getPlayerManager());
-        //ui.setCurrentPlayer(currentPlayer);
         if (currentCardManager.getPlayerManager().getCardLocations().get(currentCard).getY() == yFinalLocation) {
             currentCard++;
             yFinalLocation += Y_INCREMENT;
         }
 
-        if (currentCard == MAX_CARDS) {
+        if (currentCard == currentCardManager.getPlayerManager().getCards().size()) {
             nextPlayer(1);
             yFinalLocation = 60;
             currentCard = 1;
         }
         return true;
 
+    }
+
+    public boolean dealCards() {
+
+        if (currentCardManager.getPlayerManager().getCardLocations().get(currentCard).getY() == yFinalLocation) {
+            currentCard++;
+            yFinalLocation += Y_INCREMENT;
+        }
+
+        if (currentCard == currentCardManager.getPlayerManager().getCards().size()) {
+            yFinalLocation = 0;
+            currentCard = 0;
+            return false;
+        }
+
+        return true;
     }
 
     public synchronized void setupPlayerHands() {
@@ -239,9 +270,6 @@ public class CardThread extends AnimationTimer {
             cardMouseHandler.setPlayer(currentCardManager.getPlayerManager());
             ui.setCurrentPlayer(currentPlayer);
             if (scroll == 0) {
-
-                double hValue = ui.getGameScrollPane().getHvalue();
-
                 currentCardManager.setCurrentGameScrollLocation(ui.getGameScrollPane().getHvalue(), ui.getGameScrollPane().getVvalue());
                 currentCardManager.setScrolling(true);
             }
@@ -250,7 +278,7 @@ public class CardThread extends AnimationTimer {
 
     public void updatePlayer(int currentPlayer) {
         this.currentPlayer = currentPlayer;
-        currentCardManager = cardManager[currentPlayer];
+        currentCardManager = cardManager[this.currentPlayer];
         cardMouseHandler.setPlayer(currentCardManager.getPlayerManager());
         ui.setCurrentPlayer(currentPlayer);
 
@@ -258,6 +286,32 @@ public class CardThread extends AnimationTimer {
         currentCardManager.setCurrentGameScrollLocation(ui.getGameScrollPane().getHvalue(), ui.getGameScrollPane().getVvalue());
         currentCardManager.setScrolling(true);
         updatePlayer = true;
+    }
+
+    public void removeCard() {
+        if (currentCardManager.getPlayerManager().getCardLocations().get(cardToRemove).getY() == ui.getCardPanel().getHeight()) {
+            removingCard = false;
+            if (cardToRemove != -1) {
+                currentCardManager.getPlayerManager().getCardLocations().remove(cardToRemove);
+                currentCardManager.getPlayerManager().getCards().remove(cardToRemove);
+                currentCardManager.resetCardLocations();
+                cardToRemove = -1;
+
+                if (currentCardManager.getPlayerManager().getCards().isEmpty()) {
+                    ui.getGSM().processEndGameRequest();
+                }
+                dealCards = true;
+
+            }
+        } else {
+            currentCardManager.moveCardDown(cardToRemove, (-REMOVE_CARD_SPEED), ui.getCardPanel().getHeight());
+            removingCard = true;
+        }
+    }
+
+    public void setRemovingCardStatus(boolean status, int cardIndex) {
+        removingCard = status;
+        cardToRemove = cardIndex;
     }
 
     public void resetCurrentPlayer() {

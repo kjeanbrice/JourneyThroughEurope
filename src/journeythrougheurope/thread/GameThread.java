@@ -76,12 +76,38 @@ public class GameThread extends AnimationTimer {
     public void update() {
         if (currentGameManager != null) {
             if (currentGameManager.isMoveInProgress()) {
+                ui.getGameScrollPane().setPannable(false);
                 if (currentGameManager.getPlayerManager().getMovesRemaining() != 0) {
                     if (currentGameManager.isScrolling()) {
                         currentGameManager.scrollBack();
                     } else {
-                        if (currentGameManager.move()) {
+                           if (currentGameManager.move()) {
                             currentGameManager.getPlayerManager().setMovesRemaining(currentGameManager.getPlayerManager().getMovesRemaining() - 1);
+                            ui.getGameScrollPane().setPannable(true);
+                            if(currentGameManager.getPlayerManager().getCards().size() != 1)
+                            {
+                                for(int i = 1; i<currentGameManager.getPlayerManager().getCards().size(); i++)
+                                {
+                                    String currentCity = currentGameManager.getPlayerManager().getCurrentCity();
+                                    if(currentCity.equalsIgnoreCase(currentGameManager.getPlayerManager().getCards().get(i)))
+                                    {
+                                        this.ui.getGSM().processRemoveCardRequest(i);
+                                    }
+                                }
+                            }else if(currentGameManager.getPlayerManager().getCards().size() == 1)
+                            {
+                                ArrayList<String> cards = currentGameManager.getPlayerManager().getCards();
+                                String currentCity = currentGameManager.getPlayerManager().getCurrentCity();             
+                                if(currentCity.equalsIgnoreCase(cards.get(0)))
+                                {
+                                    won = true;
+                                    
+                                    //stopGameThread();
+                                    System.out.println(currentGameManager.getPlayerManager().getPlayerName() + " has won!");
+                                }
+                            }
+                                
+                                
                             if (currentGameManager.getPlayerManager().getMovesRemaining() == 0 && ui.isRollButtonDisabled()) {
                                 ui.getGSM().processIncrementPlayerRequest();
                                 ui.getGSM().processStartTurnRequest();

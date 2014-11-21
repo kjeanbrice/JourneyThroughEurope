@@ -202,4 +202,21 @@ public class JourneyThroughEuropeGameStateManager {
             gameInProgress.updateRollRequest(die);
         }
     }
+    
+    public void processRemoveCardRequest(int cityIndex)
+    {
+        if(isGameInProgress())
+        {
+            gameInProgress.removeCardFromCurrentPlayer(cityIndex);
+        }
+    }
+    
+    public void processEndGameRequest()
+    {
+        if(isGameInProgress())
+        {
+            if(gameInProgress.isWon())
+                gameInProgress.stopGame();
+        }
+    }
 }

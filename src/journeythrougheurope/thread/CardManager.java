@@ -18,7 +18,7 @@ import journeythrougheurope.ui.PlayerManager;
  */
 public class CardManager {
 
-    public final int STEPS = 100;
+    public final int STEPS = 200;
     private JourneyThroughEuropeUI ui;
     private ArrayList<Point2D> cardLocations;
     private PlayerManager player;
@@ -53,33 +53,30 @@ public class CardManager {
         }
     }
 
-    public synchronized void scrollBack() {
+    public synchronized void scrollToPlayerLocation() {
+        double destinationX = player.getCurrentPosition().getX();
+        double destinationY = player.getCurrentPosition().getY();
 
-        
-            double destinationX = player.getCurrentPosition().getX();
-            double destinationY = player.getCurrentPosition().getY();
+        double xScrollOffset = (destinationX - hValueX);
+        double YScrollOffset = (destinationY - vValueY);
 
-            double xScrollOffset = (destinationX - hValueX);
-            double YScrollOffset = (destinationY - vValueY);
+        Rectangle2D currentScrollLocation = new Rectangle2D(gameScrollPane.getHvalue() * gridWidth, gameScrollPane.getVvalue() * gridHeight, 10, 10);
+        Rectangle2D destinationRectLocation = new Rectangle2D(destinationX, destinationY, 5, 5);
+        if (currentScrollLocation.intersects(destinationRectLocation)) {
+            gameScrollPane.setHvalue((destinationX / gridWidth));
+            gameScrollPane.setVvalue((destinationY / gridHeight));
+            scrolling = false;
+            hValueX = 0;
+            vValueY = 0;
 
-            System.out.println("Card Manager: " + gameScrollPane.getHvalue() + ":" + gameScrollPane.getVvalue());
-            Rectangle2D currentScrollLocation = new Rectangle2D(gameScrollPane.getHvalue() * gridWidth, gameScrollPane.getVvalue() * gridHeight, 10, 10);
-            Rectangle2D destinationRectLocation = new Rectangle2D(destinationX, destinationY, 5, 5);
-            if (currentScrollLocation.intersects(destinationRectLocation)) {
-                gameScrollPane.setHvalue((destinationX / gridWidth));
-                gameScrollPane.setVvalue((destinationY / gridHeight));
-                scrolling = false;
-                hValueX = 0;
-                vValueY = 0;
+        } else {
+            gameScrollPane.setHvalue((gameScrollPane.getHvalue() + ((xScrollOffset / gridWidth) / STEPS)));
+            gameScrollPane.setVvalue((gameScrollPane.getVvalue() + ((YScrollOffset / gridHeight) / STEPS)));
+        }
 
-            } else {
-                gameScrollPane.setHvalue((gameScrollPane.getHvalue() + ((xScrollOffset / gridWidth) / STEPS)));
-                gameScrollPane.setVvalue((gameScrollPane.getVvalue() + ((YScrollOffset / gridHeight) / STEPS)));
-            }
-        
     }
 
-    public void moveCard(int cardIndex, double yOffset, double finalYPosition) {
+    public void moveCardUp(int cardIndex, double yOffset, double finalYPosition) {
         if (cardLocations.get(cardIndex).getY() > finalYPosition) {
             if ((cardLocations.get(cardIndex).getY() + yOffset) < finalYPosition) {
                 cardLocations.set(cardIndex, new Point2D(0, finalYPosition));
@@ -87,7 +84,22 @@ public class CardManager {
                 cardLocations.set(cardIndex, cardLocations.get(cardIndex).add(new Point2D(0, yOffset)));
             }
         }
+    }
 
+    public void moveCardDown(int cardIndex, double yOffset, double finalYPosition) {
+        if (cardLocations.get(cardIndex).getY() < finalYPosition) {
+            if ((cardLocations.get(cardIndex).getY() + yOffset) > finalYPosition) {
+                cardLocations.set(cardIndex, new Point2D(0, finalYPosition));
+            } else {
+                cardLocations.set(cardIndex, cardLocations.get(cardIndex).add(new Point2D(0, yOffset)));
+            }
+        }
+    }
+
+    public void resetCardLocations() {
+        for (int i = 0; i < player.getCards().size(); i++) {
+            cardLocations.set(i, new Point2D(0, canvasHeight));
+        }
     }
 
     public PlayerManager getPlayerManager() {
@@ -98,14 +110,12 @@ public class CardManager {
         this.hValueX = hValue * gridWidth;
         this.vValueY = vValue * gridHeight;
     }
-    
-    public void setScrolling(boolean scrolling)
-    {
+
+    public void setScrolling(boolean scrolling) {
         this.scrolling = scrolling;
     }
-    
-    public boolean isScrolling()
-    {
+
+    public boolean isScrolling() {
         return scrolling;
     }
 
