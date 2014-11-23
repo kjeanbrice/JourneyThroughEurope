@@ -196,12 +196,13 @@ public class JourneyThroughEuropeUI extends Pane {
         initAboutGameScreen();
         initSplashScreen();
         mainPane.setCenter(workspace);
+        changeWorkspace(JourneyThroughEuropeUIState.SPLASH_SCREEN_STATE);
     }
 
     private void initMainPane() {
         marginlessInsets = new Insets(3, 3, 3, 3);
         mainPane = new BorderPane();
-        mainPane.setStyle("-fx-background-color:blue");
+        mainPane.setStyle("-fx-background-color:0010aa");
         PropertiesManager props = PropertiesManager.getPropertiesManager();
         paneWidth = Integer.parseInt(props
                 .getProperty(JourneyThroughEuropePropertyType.WINDOW_WIDTH));
@@ -812,30 +813,47 @@ public class JourneyThroughEuropeUI extends Pane {
     }
 
     public void changeGridImage(int gridImageState) {
+        double gridWidth = gamePanel.getWidth();
+        double gridHeight = gamePanel.getHeight();
         switch (gridImageState) {
             case GRID1_IMAGE_STATE:
                 gamePanel.getChildren().clear();
                 gamePanel.getChildren().add(gameGridImageLabels[0]);
                 gamePanel.getChildren().add(gameCanvas);
+                
+                gameGridScrollPane.setHvalue(0);
+                gameGridScrollPane.setVvalue(0);
+                
                 currentGrid = 1;
-
                 break;
             case GRID2_IMAGE_STATE:
                 gamePanel.getChildren().clear();
                 gamePanel.getChildren().add(gameGridImageLabels[1]);
                 gamePanel.getChildren().add(gameCanvas);
+                
+                gameGridScrollPane.setHvalue(gridWidth/gridWidth);
+                gameGridScrollPane.setVvalue(0);
+                
                 currentGrid = 2;
                 break;
             case GRID3_IMAGE_STATE:
                 gamePanel.getChildren().clear();
                 gamePanel.getChildren().add(gameGridImageLabels[2]);
                 gamePanel.getChildren().add(gameCanvas);
+                
+                gameGridScrollPane.setHvalue(0);
+                gameGridScrollPane.setVvalue(gridHeight/gridHeight);
+                
                 currentGrid = 3;
                 break;
             case GRID4_IMAGE_STATE:
                 gamePanel.getChildren().clear();
                 gamePanel.getChildren().add(gameGridImageLabels[3]);
                 gamePanel.getChildren().add(gameCanvas);
+                
+                gameGridScrollPane.setHvalue(gridWidth/gridWidth);
+                gameGridScrollPane.setVvalue(gridHeight/gridHeight);
+                
                 currentGrid = 4;
                 break;
         }
@@ -1156,6 +1174,18 @@ public class JourneyThroughEuropeUI extends Pane {
         return gameGridImageViews;
     }
     
+    public void disableGridButtons()
+    {
+        for(int i = 0; i<gridButtons.length; i++)
+            gridButtons[i].setDisable(true);
+    }
+    
+    public void enableGridButtons()
+    {
+        for(int i = 0; i<gridButtons.length; i++)
+            gridButtons[i].setDisable(false);
+    }
+            
     public void disableRollButton()
     {
         btnDie.setDisable(true);

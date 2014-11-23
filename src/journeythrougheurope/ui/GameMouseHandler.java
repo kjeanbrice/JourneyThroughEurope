@@ -59,7 +59,7 @@ public class GameMouseHandler implements EventHandler<MouseEvent> {
                     Point2D currentPlayerPosition = currentGameManager.getPlayerManager().getCurrentPosition();
                     Point2D currentDragPosition = new Point2D(event.getX(), event.getY());
 
-                    Rectangle2D currentPlayerRect = new Rectangle2D(currentPlayerPosition.getX(), currentPlayerPosition.getY(), 10, 10);
+                    Rectangle2D currentPlayerRect = new Rectangle2D(currentPlayerPosition.getX(), currentPlayerPosition.getY(), 30, 30);
                     Rectangle2D currentDragRect = new Rectangle2D(currentDragPosition.getX(), currentDragPosition.getY(), 10, 10);
                     if (currentPlayerRect.intersects(currentDragRect) && currentGameManager.getPlayerManager().getMovesRemaining() != 0) {
                         mouseDragged = true;

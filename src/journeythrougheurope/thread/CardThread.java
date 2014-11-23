@@ -120,12 +120,12 @@ public class CardThread extends AnimationTimer {
 
         if (currentCardManager.isScrolling()) {
             currentCardManager.scrollToPlayerLocation();
+            ui.disableGridButtons();
             ui.getGameScrollPane().setPannable(false);
         }
 
         if (removingCard) {
             removeCard();
-
         }
 
         if (dealCards) {
@@ -156,6 +156,7 @@ public class CardThread extends AnimationTimer {
                 if (!currentCardManager.isScrolling() && updatePlayer) {
                     updatePlayer = false;
                     ui.enableRollButton();
+                    ui.enableGridButtons();
                     ui.getGameScrollPane().setPannable(true);
                 }
             }
@@ -169,15 +170,15 @@ public class CardThread extends AnimationTimer {
 
         if (currentCardManager == null) {
             nextPlayer(0);
-            ui.getEventHandler().respondToChangeGridRequest(currentCardManager.getPlayerManager().getCurrentGridLocation());
+            //ui.getEventHandler().respondToChangeGridRequest(currentCardManager.getPlayerManager().getCurrentGridLocation());
         }
 
         if (currentPlayer == cardManager.length) {
             resetCurrentPlayer();
             nextPlayer(1);
 
-            int grid = currentCardManager.getPlayerManager().getCurrentGridLocation();
-            ui.getEventHandler().respondToChangeGridRequest(grid);
+            //int grid = currentCardManager.getPlayerManager().getCurrentGridLocation();
+            //ui.getEventHandler().respondToChangeGridRequest(grid);
             yFinalLocation += Y_INCREMENT;
             if (currentCard < currentCardManager.getPlayerManager().getCards().size() - 1) {
                 currentCard++;
@@ -187,7 +188,7 @@ public class CardThread extends AnimationTimer {
             if (currentCardManager.getPlayerManager().getCardLocations().get(0).getY() == yFinalLocation) {
                 if (!currentCardManager.isScrolling()) {
                     nextPlayer(0);
-                    ui.getEventHandler().respondToChangeGridRequest(currentCardManager.getPlayerManager().getCurrentGridLocation());
+                    //ui.getEventHandler().respondToChangeGridRequest(currentCardManager.getPlayerManager().getCurrentGridLocation());
                 }
             }
             return true;
@@ -299,7 +300,7 @@ public class CardThread extends AnimationTimer {
         cardMouseHandler.setPlayer(currentCardManager.getPlayerManager());
         ui.setCurrentPlayer(currentPlayer);
 
-        ui.getEventHandler().respondToChangeGridRequest(currentCardManager.getPlayerManager().getCurrentGridLocation());
+        ui.disableGridButtons();
         currentCardManager.setCurrentGameScrollLocation(ui.getGameScrollPane().getHvalue(), ui.getGameScrollPane().getVvalue());
         currentCardManager.setScrolling(true);
         updatePlayer = true;

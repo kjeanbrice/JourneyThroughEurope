@@ -20,6 +20,9 @@ import journeythrougheurope.ui.PlayerManager;
  */
 public class GameManager {
 
+    private final String REYKJAVIK = "REYKJAVIK";
+    private final String FAROER = "FAROER";
+   
     private final double CONVERSION_FACTOR = .60;
     private final int SIDE_LENGTH = (int) (20 * CONVERSION_FACTOR);
     private final int STEPS = 70;
@@ -29,6 +32,7 @@ public class GameManager {
     private JourneyThroughEuropeUI ui;
     private JourneyThroughEuropeCity destination;
     private String previousCity;
+    
 
     private ScrollPane gameScrollPane;
     private double hValueX;
@@ -86,7 +90,11 @@ public class GameManager {
             Rectangle2D currentRectLocation = new Rectangle2D(player.getCurrentPosition().getX(), player.getCurrentPosition().getY(), 5, 5);
             Rectangle2D destinationRectLocation = new Rectangle2D(destination.getGridX(), destination.getGridY(), 5, 5);
             if (currentRectLocation.intersects(destinationRectLocation)) {
+               
                 previousCity = player.getCurrentCity();
+                if(previousCity.equalsIgnoreCase(REYKJAVIK) || previousCity.equalsIgnoreCase(FAROER))
+                    previousCity = "";
+                
                 player.setCurrentCity(destination.getCityName());
                 player.setCurrentPosition(destination.getPoint());
 

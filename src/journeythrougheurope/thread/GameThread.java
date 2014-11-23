@@ -80,6 +80,7 @@ public class GameThread extends AnimationTimer {
         if (currentGameManager != null) {
             if (currentGameManager.isMoveInProgress()) {
                 ui.getGameScrollPane().setPannable(false);
+                ui.disableGridButtons();
                 if (currentGameManager.getPlayerManager().getMovesRemaining() != 0) {
                     if (currentGameManager.isScrolling()) {
                         currentGameManager.scrollBack();
@@ -89,6 +90,7 @@ public class GameThread extends AnimationTimer {
                             boolean removingCard = false;
                             currentGameManager.getPlayerManager().setMovesRemaining(currentGameManager.getPlayerManager().getMovesRemaining() - 1);
                             
+                            ui.enableGridButtons();
                             ui.getGameScrollPane().setPannable(true);
                             ui.updateMovesRemaining("Moves Remaining: " + currentGameManager.getPlayerManager().getMovesRemaining());
 

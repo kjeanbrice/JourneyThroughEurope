@@ -62,8 +62,6 @@ public class GameRenderer extends Canvas {
         gc = this.getGraphicsContext2D();
         gc.clearRect(0, 0, getWidth(), getHeight());
 
-        int currentGrid = ui.getCurrentGrid();
-
         if (currentPlayer != -1) {
             ArrayList<String> neighboringLandCities = ui.getGSM().processGetCityRequest(gameManagers[currentPlayer].getPlayerManager().getCurrentCity()).getNeighboringLandCities();
             for (int i = 0; i < neighboringLandCities.size(); i++) {

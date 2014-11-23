@@ -18,7 +18,7 @@ import journeythrougheurope.ui.PlayerManager;
  */
 public class CardManager {
 
-    public final int STEPS = 200;
+    public final int STEPS = 100;
     private JourneyThroughEuropeUI ui;
     private ArrayList<Point2D> cardLocations;
     private PlayerManager player;
