@@ -116,6 +116,7 @@ public class JourneyThroughEuropeUI extends Pane {
 
     private VBox rightPanel;
     private Button btnGameHistory;
+    private Button btnMovesRemaining;
     private Button btnAboutPlay;
     private VBox gameButtonsPanel;
 
@@ -529,6 +530,8 @@ public class JourneyThroughEuropeUI extends Pane {
                 + " -fx-font-size: 15px;"
                 + " -fx-font-family: \"Arial\";"
                 + " -fx-font-weight: bold;");
+        
+        
 
         cardPanel = new StackPane();
         cardCanvas = new Pane();
@@ -643,6 +646,25 @@ public class JourneyThroughEuropeUI extends Pane {
         gridButtonsFirstColumnBox.getChildren().addAll(gridButtons[0], gridButtons[2]);
         gridButtonsSecondColumnBox.getChildren().addAll(gridButtons[1], gridButtons[3]);
 
+        VBox movesRemainingPanel = new VBox();
+        movesRemainingPanel.setAlignment(Pos.CENTER);
+        
+        btnMovesRemaining = new Button("Moves Remaining: 0" );
+        btnMovesRemaining.setMaxWidth(Double.MAX_VALUE);
+        btnMovesRemaining.setStyle("-fx-background-color:#000000,"
+                + " linear-gradient(#7db9e8, #304b8e),"
+                + " linear-gradient(#3e66b0, #233c74),"
+                + " linear-gradient(#3256a7, #1e3361);"
+                + " -fx-background-insets: 0,1,2,3;"
+                + " -fx-background-radius: 3,2,2,2;"
+                + " -fx-padding: 3,4,3,4;"
+                + " -fx-text-fill: white;"
+                + " -fx-font-size: 15px;"
+                + " -fx-font-family: \"Arial\";"
+                + " -fx-font-weight: bold;");
+        
+        movesRemainingPanel.getChildren().add(btnMovesRemaining);
+        
         diePanel = new VBox();
         diePanel.setAlignment(Pos.CENTER);
         diePanel.setPadding(new Insets(30, 0, 50, 30));
@@ -670,6 +692,7 @@ public class JourneyThroughEuropeUI extends Pane {
         gridButtonsContainer.getChildren().add(gridButtonsFirstColumnBox);
         gridButtonsContainer.getChildren().add(gridButtonsSecondColumnBox);
 
+        gameButtonsPanel.getChildren().add(movesRemainingPanel);
         gameButtonsPanel.getChildren().add(diePanel);
         gameButtonsPanel.getChildren().add(gridButtonsContainer);
         gameButtonsPanel.getChildren().add(gameHistoryPanel);
@@ -909,6 +932,37 @@ public class JourneyThroughEuropeUI extends Pane {
         return imageIcon;
     }
 
+    public Image initPlayerImage(int imageNum) {
+
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        String imageName = "";
+
+        switch (imageNum) {
+            case 0:
+                imageName = props.getProperty(JourneyThroughEuropePropertyType.BLUE_BUTTON);
+                break;
+            case 1:
+                imageName = props.getProperty(JourneyThroughEuropePropertyType.GREEN_BUTTON);
+                break;
+            case 2:
+                imageName = props.getProperty(JourneyThroughEuropePropertyType.GRAY_BUTTON);
+                break;
+            case 3:
+                imageName = props.getProperty(JourneyThroughEuropePropertyType.LIGHTBLUE_BUTTON);
+                break;
+            case 4:
+                imageName = props.getProperty(JourneyThroughEuropePropertyType.RED_BUTTON);
+                break;
+            case 5:
+                imageName = props.getProperty(JourneyThroughEuropePropertyType.YELLOW_BUTTON);
+                break;
+        }
+
+        Image image = loadImage(imageName);
+        return image;
+    }
+    
+    
     public Image initFlagImage(int imageNum) {
 
         PropertiesManager props = PropertiesManager.getPropertiesManager();
@@ -931,13 +985,12 @@ public class JourneyThroughEuropeUI extends Pane {
                 imageName = props.getProperty(JourneyThroughEuropePropertyType.RED_FLAG);
                 break;
             case 5:
-                imageName = props.getProperty(JourneyThroughEuropePropertyType.PURPLE_FLAG);
+                imageName = props.getProperty(JourneyThroughEuropePropertyType.YELLOW_FLAG);
                 break;
         }
 
         Image image = loadImage(imageName);
         return image;
-
     }
 
     public void disableAllPanes() {
@@ -976,7 +1029,7 @@ public class JourneyThroughEuropeUI extends Pane {
                 flagLabel = this.initLabel(JourneyThroughEuropePropertyType.RED_FLAG);
                 break;
             case 5:
-                flagLabel = this.initLabel(JourneyThroughEuropePropertyType.PURPLE_FLAG);
+                flagLabel = this.initLabel(JourneyThroughEuropePropertyType.YELLOW_FLAG);
                 break;
         }
         flagLabelPane.getChildren().add(flagLabel);
@@ -1123,6 +1176,9 @@ public class JourneyThroughEuropeUI extends Pane {
         changeDieImage(JourneyThroughEuropeUIState.DEFAULT_DIE_IMAGE_NAME);
     }
     
-    
+    public void updateMovesRemaining(String movesRemaining)
+    {
+        btnMovesRemaining.setText(movesRemaining);
+    }
 
 }

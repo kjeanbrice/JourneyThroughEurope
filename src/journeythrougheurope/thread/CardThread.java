@@ -23,9 +23,9 @@ import journeythrougheurope.ui.PlayerManager;
 public class CardThread extends AnimationTimer {
 
     private final int Y_INCREMENT = 61;
-    private final int DEAL_CARD_SPEED = -30;
-    private final int REMOVE_CARD_SPEED = -15;
-    private final int MAX_CARDS = 2;
+    private final int DEAL_CARD_SPEED = -60;
+    private final int REMOVE_CARD_SPEED = -5;
+    private final int MAX_CARDS = 6;
 
     private JourneyThroughEuropeUI ui;
     private Deck deck;
@@ -229,6 +229,12 @@ public class CardThread extends AnimationTimer {
         if (currentCard == currentCardManager.getPlayerManager().getCards().size()) {
             yFinalLocation = 0;
             currentCard = 0;
+            if (ui.getGSM().processGetWaitRequest()) {
+                ui.getGSM().processSetWaitRequest(false);
+                ui.getGSM().processIncrementPlayerRequest();
+                ui.getGSM().processStartTurnRequest();
+
+            }
             return false;
         }
 
@@ -251,8 +257,19 @@ public class CardThread extends AnimationTimer {
         }
 
         for (int i = 0; i < playersManager.size(); i++) {
-            for (int j = 0; j < MAX_CARDS - 1; j++) {
-                playersManager.get(i).addCard(deck.dealCard(0));
+            for (int j = 1; j < MAX_CARDS; j++) {
+                switch (ui.getGSM().processGetCityRequest(playersManager.get(i).getCards().get(j - 1)).getCardColor().toUpperCase().trim()) {
+                    case "YELLOW":
+                        playersManager.get(i).addCard(deck.dealCard(1));
+                        break;
+                    case "RED":
+                        playersManager.get(i).addCard(deck.dealCard(2));
+                        break;
+                    case "GREEN":
+                        playersManager.get(i).addCard(deck.dealCard(3));
+                        break;
+                }
+
             }
             System.out.println(playersManager.get(i).toString() + "\n");
         }
@@ -319,4 +336,5 @@ public class CardThread extends AnimationTimer {
             currentPlayer = -1;
         }
     }
+
 }

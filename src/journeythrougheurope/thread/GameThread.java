@@ -39,9 +39,10 @@ public class GameThread extends AnimationTimer {
         initGameManagers();
 
         gameRenderer = new GameRenderer(this.ui.getGamePanel().getWidth(), this.ui.getGamePanel().getHeight(), this.ui, gameManager);
-        mouseHandler = new GameMouseHandler();
+        mouseHandler = new GameMouseHandler(this.ui, gameRenderer);
         this.ui.getGamePanel().setOnMouseClicked(mouseHandler);
         this.ui.getGamePanel().setOnMouseDragged(mouseHandler);
+        this.ui.getGamePanel().setOnMouseReleased(mouseHandler);
 
     }
 
@@ -70,7 +71,9 @@ public class GameThread extends AnimationTimer {
     }
 
     public void render() {
-        gameRenderer.repaint();
+        if (!mouseHandler.getMouseDragged()) {
+            gameRenderer.repaint();
+        }
     }
 
     public void update() {
@@ -81,37 +84,41 @@ public class GameThread extends AnimationTimer {
                     if (currentGameManager.isScrolling()) {
                         currentGameManager.scrollBack();
                     } else {
-                           if (currentGameManager.move()) {
+                        if (currentGameManager.move()) {
+                            
+                            boolean removingCard = false;
                             currentGameManager.getPlayerManager().setMovesRemaining(currentGameManager.getPlayerManager().getMovesRemaining() - 1);
+                            
                             ui.getGameScrollPane().setPannable(true);
-                            if(currentGameManager.getPlayerManager().getCards().size() != 1)
-                            {
-                                for(int i = 1; i<currentGameManager.getPlayerManager().getCards().size(); i++)
-                                {
+                            ui.updateMovesRemaining("Moves Remaining: " + currentGameManager.getPlayerManager().getMovesRemaining());
+
+                            if (currentGameManager.getPlayerManager().getCards().size() != 1) {
+                                for (int i = 1; i < currentGameManager.getPlayerManager().getCards().size(); i++) {
                                     String currentCity = currentGameManager.getPlayerManager().getCurrentCity();
-                                    if(currentCity.equalsIgnoreCase(currentGameManager.getPlayerManager().getCards().get(i)))
-                                    {
+                                    if (currentCity.equalsIgnoreCase(currentGameManager.getPlayerManager().getCards().get(i))) {
                                         this.ui.getGSM().processRemoveCardRequest(i);
+                                        removingCard = true;
                                     }
                                 }
-                            }else if(currentGameManager.getPlayerManager().getCards().size() == 1)
-                            {
+                            } else if (currentGameManager.getPlayerManager().getCards().size() == 1) {
                                 ArrayList<String> cards = currentGameManager.getPlayerManager().getCards();
-                                String currentCity = currentGameManager.getPlayerManager().getCurrentCity();             
-                                if(currentCity.equalsIgnoreCase(cards.get(0)))
-                                {
+                                String currentCity = currentGameManager.getPlayerManager().getCurrentCity();
+                                if (currentCity.equalsIgnoreCase(cards.get(0))) {
                                     won = true;
-                                    
+
                                     //stopGameThread();
                                     System.out.println(currentGameManager.getPlayerManager().getPlayerName() + " has won!");
                                 }
                             }
-                                
-                                
+
                             if (currentGameManager.getPlayerManager().getMovesRemaining() == 0 && ui.isRollButtonDisabled()) {
-                                ui.getGSM().processIncrementPlayerRequest();
-                                ui.getGSM().processStartTurnRequest();
-                                //currentGameManager.scrollToNextPlayer(players.get(currentPlayer));
+                                currentGameManager.resetPreviousCity();
+                                if (!removingCard) {
+                                    ui.getGSM().processIncrementPlayerRequest();
+                                    ui.getGSM().processStartTurnRequest();
+                                } else {
+                                    ui.getGSM().processSetWaitRequest(true);
+                                }
                             }
                         }
                     }
@@ -131,10 +138,12 @@ public class GameThread extends AnimationTimer {
         currentGameManager = gameManager[this.currentPlayer];
         gameRenderer.setCurrentPlayer(this.currentPlayer);
         mouseHandler.setGameManager(currentGameManager);
+        ui.updateMovesRemaining("Moves Remaining: " + currentGameManager.getPlayerManager().getMovesRemaining());
     }
 
     public void updateRemainingMoves(int moves) {
         currentGameManager.getPlayerManager().setMovesRemaining(currentGameManager.getPlayerManager().getMovesRemaining() + moves);
+        ui.updateMovesRemaining("Moves Remaining: " + currentGameManager.getPlayerManager().getMovesRemaining());
         System.out.println("Game Thread - Remaining Moves: " + remainingMoves);
     }
 }

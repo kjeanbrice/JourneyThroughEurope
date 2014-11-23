@@ -168,9 +168,8 @@ public class JourneyThroughEuropeGameStateManager {
     public Deck getDeck() {
         return deck;
     }
-    
-    public JourneyThroughEuropeCity processGetCityRequest(String cityName)
-    {
+
+    public JourneyThroughEuropeCity processGetCityRequest(String cityName) {
         JourneyThroughEuropeCity temp = cityHashMap.get(cityName.toUpperCase().trim());
         if (temp == null) {
             System.out.println("The requested city is not contained in this hashmap.\t" + cityName);
@@ -178,45 +177,50 @@ public class JourneyThroughEuropeGameStateManager {
         }
         return temp;
     }
-    
-    public void processStartTurnRequest()
-    {
-        if(isGameInProgress())
-        {
+
+    public void processStartTurnRequest() {
+        if (isGameInProgress()) {
             gameInProgress.startTurn();
         }
     }
-    
-    public void processIncrementPlayerRequest()
-    {
-        if(isGameInProgress())
-        {
+
+
+    public void processIncrementPlayerRequest() {
+        if (isGameInProgress()) {
             gameInProgress.incrementPlayer();
         }
     }
-    
-    public void processRollRequest(int die)
-    {
-        if(isGameInProgress())
-        {
+
+    public void processRollRequest(int die) {
+        if (isGameInProgress()) {
             gameInProgress.updateRollRequest(die);
         }
     }
     
-    public void processRemoveCardRequest(int cityIndex)
-    {
-        if(isGameInProgress())
-        {
+     public void processSetWaitRequest(boolean wait) {
+        if (isGameInProgress()) {
+            gameInProgress.setWait(wait);
+        }
+    }
+     
+      public  boolean processGetWaitRequest() {
+        if (isGameInProgress()) {
+           return gameInProgress.getWait();
+        }
+        return false;
+    }
+
+    public void processRemoveCardRequest(int cityIndex) {
+        if (isGameInProgress()) {
             gameInProgress.removeCardFromCurrentPlayer(cityIndex);
         }
     }
-    
-    public void processEndGameRequest()
-    {
-        if(isGameInProgress())
-        {
-            if(gameInProgress.isWon())
+
+    public void processEndGameRequest() {
+        if (isGameInProgress()) {
+            if (gameInProgress.isWon()) {
                 gameInProgress.stopGame();
+            }
         }
     }
 }

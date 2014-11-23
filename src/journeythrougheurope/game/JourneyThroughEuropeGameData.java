@@ -25,9 +25,11 @@ public class JourneyThroughEuropeGameData {
     private boolean won;
     private boolean extraTurn;
     private int extraTurnCount;
+    private boolean wait;
 
     public JourneyThroughEuropeGameData(JourneyThroughEuropeUI ui) {
         this.ui = ui;
+        wait = false;
         currentPlayer = 0;
         extraTurn = false;
         extraTurnCount = 0;
@@ -41,7 +43,7 @@ public class JourneyThroughEuropeGameData {
         gameThread.startGameThread();
     }
 
-    public void stopGame() {
+    public synchronized void stopGame() {
         cardThread.stopCardThread();
         gameThread.stopGameThread();
     }
@@ -57,14 +59,14 @@ public class JourneyThroughEuropeGameData {
         stopGame();
     }
 
-    public void incrementPlayer() {
+    public synchronized void incrementPlayer() {
         currentPlayer++;
         if (currentPlayer == ui.getPlayers().size()) {
             currentPlayer = 0;
         }
     }
 
-    public void updateRollRequest(int die) {
+    public synchronized void updateRollRequest(int die) {
         if (!extraTurn && die == SIX) {
             extraTurn = true;
             gameThread.updateRemainingMoves(die);
@@ -75,14 +77,25 @@ public class JourneyThroughEuropeGameData {
         }
     }
 
-    public void startTurn() {
-        gameThread.updatePlayer(currentPlayer);
-        cardThread.updatePlayer(currentPlayer);
-        ui.resetRollImage();
+    public synchronized void startTurn() {
+        if (!wait) {
+            gameThread.updatePlayer(currentPlayer);
+            cardThread.updatePlayer(currentPlayer);
+            ui.resetRollImage();
+        }
+    }
+
+    public synchronized void removeCardFromCurrentPlayer(int cityIndex) {
+        cardThread.setRemovingCardStatus(true, cityIndex);
     }
     
-    public void removeCardFromCurrentPlayer(int cityIndex)
+    public void setWait(boolean wait)
     {
-        cardThread.setRemovingCardStatus(true,cityIndex);
+        this.wait = wait;
+    }
+    
+    public boolean getWait()
+    {
+        return wait;
     }
 }

@@ -28,6 +28,7 @@ public class GameManager {
     private Point2D startLocation;
     private JourneyThroughEuropeUI ui;
     private JourneyThroughEuropeCity destination;
+    private String previousCity;
 
     private ScrollPane gameScrollPane;
     private double hValueX;
@@ -45,6 +46,7 @@ public class GameManager {
         moveInProgress = false;
         scrolling = true;
         startLocation = null;
+        previousCity = "";
 
         hValueX = 0;
         vValueY = 0;
@@ -55,37 +57,36 @@ public class GameManager {
     }
 
     public synchronized void scrollBack() {
-        
-            double destinationX = player.getCurrentPosition().getX();
-            double destinationY = player.getCurrentPosition().getY();
 
-            double xScrollOffset = (destinationX - hValueX);
-            double YScrollOffset = (destinationY - vValueY);
+        double destinationX = player.getCurrentPosition().getX();
+        double destinationY = player.getCurrentPosition().getY();
 
-            Rectangle2D currentScrollLocation = new Rectangle2D(gameScrollPane.getHvalue()*gridWidth, gameScrollPane.getVvalue()*gridHeight, 10, 10);
-            Rectangle2D destinationRectLocation = new Rectangle2D(destinationX, destinationY, 5, 5);
-            if (currentScrollLocation.intersects(destinationRectLocation)) {
-                gameScrollPane.setHvalue((destinationX / gridWidth));
-                gameScrollPane.setVvalue((destinationY / gridHeight));
-                scrolling = false;
-                hValueX = 0;
-                vValueY = 0;
-            } else {
-                gameScrollPane.setHvalue((gameScrollPane.getHvalue() + ((xScrollOffset / gridWidth) / STEPS)));
-                gameScrollPane.setVvalue((gameScrollPane.getVvalue() + ((YScrollOffset / gridHeight) / STEPS)));
-            }
+        double xScrollOffset = (destinationX - hValueX);
+        double YScrollOffset = (destinationY - vValueY);
+
+        Rectangle2D currentScrollLocation = new Rectangle2D(gameScrollPane.getHvalue() * gridWidth, gameScrollPane.getVvalue() * gridHeight, 10, 10);
+        Rectangle2D destinationRectLocation = new Rectangle2D(destinationX, destinationY, 5, 5);
+        if (currentScrollLocation.intersects(destinationRectLocation)) {
+            gameScrollPane.setHvalue((destinationX / gridWidth));
+            gameScrollPane.setVvalue((destinationY / gridHeight));
+            scrolling = false;
+            hValueX = 0;
+            vValueY = 0;
+        } else {
+            gameScrollPane.setHvalue((gameScrollPane.getHvalue() + ((xScrollOffset / gridWidth) / STEPS)));
+            gameScrollPane.setVvalue((gameScrollPane.getVvalue() + ((YScrollOffset / gridHeight) / STEPS)));
+        }
     }
 
     public synchronized boolean move() {
         if (moveInProgress) {
-
-            System.out.println("Y: " + (int) (this.calculateY(player.getCurrentPosition().getX(), player.getCurrentPosition(), new Point2D(destination.getGridX(), destination.getGridY()))) + "\n");
             float xOffset = (float) ((destination.getGridX() - startLocation.getX()));
             float yOffset = (float) ((destination.getGridY() - startLocation.getY()));
 
             Rectangle2D currentRectLocation = new Rectangle2D(player.getCurrentPosition().getX(), player.getCurrentPosition().getY(), 5, 5);
             Rectangle2D destinationRectLocation = new Rectangle2D(destination.getGridX(), destination.getGridY(), 5, 5);
             if (currentRectLocation.intersects(destinationRectLocation)) {
+                previousCity = player.getCurrentCity();
                 player.setCurrentCity(destination.getCityName());
                 player.setCurrentPosition(destination.getPoint());
 
@@ -111,14 +112,13 @@ public class GameManager {
 
                 double x = currentLocation.getX();
                 double y = currentLocation.getY();
-               
 
                 ui.getGameScrollPane().setHvalue((x / gridWidth));
                 ui.getGameScrollPane().setVvalue((y / gridHeight));
             }
 
         }
-        
+
         return false;
     }
 
@@ -136,14 +136,16 @@ public class GameManager {
                 JourneyThroughEuropeCity temp = ui.getGSM().processGetCityRequest(neighboringLandCities.get(i));
                 Rectangle2D cityPosition = new Rectangle2D(temp.getGridX() - (SIDE_LENGTH / 2), temp.getGridY() - (SIDE_LENGTH / 2), SIDE_LENGTH, SIDE_LENGTH);
                 if (clickedPosition.intersects(cityPosition)) {
-                    destination = temp;
-                    moveInProgress = true;
-                    startLocation = player.getCurrentPosition();
+                    if (!temp.getCityName().equalsIgnoreCase(previousCity)) {
+                        destination = temp;
+                        moveInProgress = true;
+                        startLocation = player.getCurrentPosition();
 
-                    scrolling = true;
-                    hValueX = gameScrollPane.getHvalue() * gridWidth;
-                    vValueY = gameScrollPane.getVvalue() * gridHeight;
-                    return true;
+                        scrolling = true;
+                        hValueX = gameScrollPane.getHvalue() * gridWidth;
+                        vValueY = gameScrollPane.getVvalue() * gridHeight;
+                        return true;
+                    }
                 }
             }
             ArrayList<String> neighboringSeaCities = playerCity.getNeighboringSeaCities();
@@ -151,15 +153,17 @@ public class GameManager {
                 JourneyThroughEuropeCity temp = ui.getGSM().processGetCityRequest(neighboringSeaCities.get(i));
                 Rectangle2D cityPosition = new Rectangle2D(temp.getGridX() - (SIDE_LENGTH / 2), temp.getGridY() - (SIDE_LENGTH / 2), SIDE_LENGTH, SIDE_LENGTH);
                 if (clickedPosition.intersects(cityPosition)) {
-                    destination = temp;
-                    moveInProgress = true;
-                    
-                    startLocation = player.getCurrentPosition();
-                   
-                    scrolling = true;
-                    hValueX = gameScrollPane.getHvalue() * gridWidth;
-                    vValueY = gameScrollPane.getVvalue() * gridHeight;
-                    return true;
+                    if (!temp.getCityName().equalsIgnoreCase(previousCity)) {
+                        destination = temp;
+                        moveInProgress = true;
+
+                        startLocation = player.getCurrentPosition();
+
+                        scrolling = true;
+                        hValueX = gameScrollPane.getHvalue() * gridWidth;
+                        vValueY = gameScrollPane.getVvalue() * gridHeight;
+                        return true;
+                    }
                 }
             }
             return false;
@@ -171,8 +175,9 @@ public class GameManager {
     }
 
     public void setMoveInProgress(boolean status) {
-         moveInProgress = status;
+        moveInProgress = status;
     }
+
     public PlayerManager getPlayerManager() {
         return player;
     }
@@ -189,6 +194,11 @@ public class GameManager {
         double b = currentPosition.getY() - (dx / dy) * x;
 
         return (dx / dy) * x + b;
+    }
+    
+    public void resetPreviousCity()
+    {
+        previousCity = "";
     }
 
 }

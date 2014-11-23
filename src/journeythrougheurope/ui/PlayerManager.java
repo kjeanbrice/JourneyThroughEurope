@@ -29,6 +29,7 @@ public class PlayerManager {
     private int movesRemaining;
     
     private Image homeImage;
+    private Image playerImage;
 
     public PlayerManager(TextField playerName, boolean human) {
         this.playerName = playerName;
@@ -37,7 +38,10 @@ public class PlayerManager {
         cardLocations = new ArrayList<Point2D>();
         currentCity = "";
         homeCity = "";
+        
         currentPosition = null;
+        homeImage = null;
+        playerImage = null;
         currentGridLocation = -1;
         movesRemaining = 0;
     }
@@ -78,6 +82,16 @@ public class PlayerManager {
     public Image getHomeImage()
     {
         return homeImage;
+    }
+    
+    public void setPlayerImage(Image playerImage)
+    {
+        this.playerImage = playerImage;
+    }
+    
+    public Image getPlayerImage()
+    {
+        return playerImage;
     }
 
     public void setCurrentPosition(Point2D point) {
