@@ -85,23 +85,6 @@ public class CardThread extends AnimationTimer {
     public void startCardThread() {
         ui.setCardToScreen(cardRenderer);
         start();
-
-        /*Timeline animation = new Timeline();
-         KeyFrame temp = new KeyFrame(Duration.millis(1400), new EventHandler<ActionEvent>() {
-
-         public void handle(ActionEvent event) {
-         int x = (int) ((Math.random() * 500) + 1);
-         int y = (int) ((Math.random() * 400) + 1);
-         ui.getGameScrollPane().setHvalue((Math.random()));
-         ui.getGameScrollPane().setVvalue((Math.random()));
-         System.out.println(ui.getGameScrollPane().getHvalue());
-         System.out.println(ui.getGameScrollPane().getVvalue());
-         }
-         });
-
-         animation.getKeyFrames().add(temp);
-         animation.setCycleCount(Timeline.INDEFINITE);
-         animation.play();*/
     }
 
     public void stopCardThread() {
@@ -160,25 +143,18 @@ public class CardThread extends AnimationTimer {
                     ui.getGameScrollPane().setPannable(true);
                 }
             }
-            //TimeUnit.MILLISECONDS.sleep();
         }
-
-        //System.out.println("This is the Card Thread");
     }
 
     public boolean dealFirstCard() {
 
         if (currentCardManager == null) {
             nextPlayer(0);
-            //ui.getEventHandler().respondToChangeGridRequest(currentCardManager.getPlayerManager().getCurrentGridLocation());
         }
 
         if (currentPlayer == cardManager.length) {
             resetCurrentPlayer();
             nextPlayer(1);
-
-            //int grid = currentCardManager.getPlayerManager().getCurrentGridLocation();
-            //ui.getEventHandler().respondToChangeGridRequest(grid);
             yFinalLocation += Y_INCREMENT;
             if (currentCard < currentCardManager.getPlayerManager().getCards().size() - 1) {
                 currentCard++;
@@ -188,7 +164,6 @@ public class CardThread extends AnimationTimer {
             if (currentCardManager.getPlayerManager().getCardLocations().get(0).getY() == yFinalLocation) {
                 if (!currentCardManager.isScrolling()) {
                     nextPlayer(0);
-                    //ui.getEventHandler().respondToChangeGridRequest(currentCardManager.getPlayerManager().getCurrentGridLocation());
                 }
             }
             return true;

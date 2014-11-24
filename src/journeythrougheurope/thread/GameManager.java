@@ -110,11 +110,7 @@ public class GameManager {
                 destination = null;
                 moveInProgress = false;
                 return true;
-
-                // System.out.println("Game Manager: " + player.toString() + "\n");
             } else {
-
-                //System.out.println("Game Manager: " + player.toString() + "\n");
                 Point2D currentLocation = player.getCurrentPosition();
                 player.setCurrentPosition(currentLocation.add(xOffset / STEPS, yOffset / STEPS));
 
@@ -193,17 +189,7 @@ public class GameManager {
     public boolean isScrolling() {
         return scrolling;
     }
-
-    public double calculateY(double x, Point2D currentPosition, Point2D destinationPosition) {
-        double dx = destinationPosition.getX() - currentPosition.getX();
-        double dy = destinationPosition.getY() - currentPosition.getY();
-
-        double slope = dx / dy;
-        double b = currentPosition.getY() - (dx / dy) * x;
-
-        return (dx / dy) * x + b;
-    }
-    
+  
     public void resetPreviousCity()
     {
         previousCity = "";

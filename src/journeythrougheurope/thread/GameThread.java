@@ -67,7 +67,6 @@ public class GameThread extends AnimationTimer {
     public void handle(long now) {
         update();
         render();
-        //System.out.println("This is the Game Thread");
     }
 
     public void render() {
@@ -107,14 +106,16 @@ public class GameThread extends AnimationTimer {
                                 String currentCity = currentGameManager.getPlayerManager().getCurrentCity();
                                 if (currentCity.equalsIgnoreCase(cards.get(0))) {
                                     won = true;
-
-                                    //stopGameThread();
+                                    this.ui.getGSM().processRemoveCardRequest(0);
+                                    removingCard = true;
+                                    stopGameThread();
                                     System.out.println(currentGameManager.getPlayerManager().getPlayerName() + " has won!");
                                 }
                             }
 
-                            if (currentGameManager.getPlayerManager().getMovesRemaining() == 0 && ui.isRollButtonDisabled()) {
+                            if ((currentGameManager.getPlayerManager().getMovesRemaining() == 0 && ui.isRollButtonDisabled()) || removingCard) {
                                 currentGameManager.resetPreviousCity();
+                                currentGameManager.getPlayerManager().setMovesRemaining(0);
                                 if (!removingCard) {
                                     ui.getGSM().processIncrementPlayerRequest();
                                     ui.getGSM().processStartTurnRequest();
