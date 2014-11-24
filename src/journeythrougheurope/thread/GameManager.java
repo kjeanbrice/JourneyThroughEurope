@@ -22,6 +22,9 @@ public class GameManager {
 
     private final String REYKJAVIK = "REYKJAVIK";
     private final String FAROER = "FAROER";
+    private final String BERLIN = "BERLIN";
+    private final String DUBLIN = "DUBLIN";
+    
    
     private final double CONVERSION_FACTOR = .60;
     private final int SIDE_LENGTH = (int) (20 * CONVERSION_FACTOR);
@@ -92,11 +95,13 @@ public class GameManager {
             if (currentRectLocation.intersects(destinationRectLocation)) {
                
                 previousCity = player.getCurrentCity();
-                if(previousCity.equalsIgnoreCase(REYKJAVIK) || previousCity.equalsIgnoreCase(FAROER))
+                if(previousCity.equalsIgnoreCase(REYKJAVIK) || previousCity.equalsIgnoreCase(FAROER) || previousCity.equalsIgnoreCase(BERLIN) 
+                        || previousCity.equalsIgnoreCase(DUBLIN))
                     previousCity = "";
                 
                 player.setCurrentCity(destination.getCityName());
                 player.setCurrentPosition(destination.getPoint());
+                System.out.println(player.getCurrentCity());
 
                 double x = destination.getPoint().getX();
                 double gridWidth = ui.getGameGridImages()[player.getCurrentGridLocation() - 1].getImage().getWidth();

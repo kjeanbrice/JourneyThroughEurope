@@ -326,14 +326,14 @@ public class JourneyThroughEuropeUI extends Pane {
     }
 
     private void initAboutMenuScreen() {
-        // WE'LL DISPLAY ALL HELP INFORMATION USING HTML
+       
         aboutPane = new JEditorPane();
         aboutPane.setEditable(false);
 
-        // NOW LOAD THE HELP HTML
+        
         aboutPane.setContentType("text/html");
 
-        // LOAD THE HELP PAGE
+       
         loadPage(aboutPane, JourneyThroughEuropePropertyType.ABOUT_FILE_NAME);
 
         aboutScrollPane = new JScrollPane(aboutPane);
@@ -354,11 +354,10 @@ public class JourneyThroughEuropeUI extends Pane {
         aboutToolbar.getChildren().add(btnBack);
         aboutToolbar.setStyle("-fx-background-color: #FFFFFF");
 
-        // LET OUR HELP PAGE GO HOME VIA THE HOME BUTTON
         btnBack.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                // TODO Auto-generated method stub
+                
                 eventHandler.respondToBackRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.SPLASH_SCREEN_STATE);
             }
         });
@@ -399,8 +398,6 @@ public class JourneyThroughEuropeUI extends Pane {
             }
         });
 
-        // WE'LL PUT THE HOME BUTTON IN A TOOLBAR IN THE NORTH OF THIS SCREEN,
-        // UNDER THE NORTH TOOLBAR THAT'S SHARED BETWEEN THE THREE SCREENS
         FlowPane aboutToolbar = new FlowPane();
         aboutToolbar.setPadding(new Insets(5, 5, 5, 5));
         BorderPane aboutPanel = new BorderPane();
@@ -409,7 +406,6 @@ public class JourneyThroughEuropeUI extends Pane {
         aboutToolbar.getChildren().add(btnGameAbout);
         aboutToolbar.setStyle("-fx-background-color: #FFFFFF");
 
-        // LET OUR HELP SCREEN JOURNEY AROUND THE WEB VIA HYPERLINK
         //aboutPane.addHyperlinkListener(new HelpHyperlinkListener(this));
         aboutGameScreenContainer.setTop(aboutToolbar);
         aboutGameScreenContainer.setCenter(aboutPanel);
@@ -756,9 +752,7 @@ public class JourneyThroughEuropeUI extends Pane {
         SwingNode gameHistorySwingNode = new SwingNode();
         gameHistorySwingNode.setContent(gameHistoryScrollPane);
 
-        // LOAD THE STARTING STATS PAGE, WHICH IS JUST AN OUTLINE
-        // AND DOESN"T HAVE ANY OF THE STATS, SINCE THOSE WILL 
-        // BE DYNAMICALLY ADDED
+       
         loadPage(gameHistoryPane, JourneyThroughEuropePropertyType.GAME_HISTORY_FILE_NAME);
         //HTMLDocument statsDoc = (HTMLDocument) gameHistoryPane.getDocument();
         //docManager.setStatsDoc(statsDoc);

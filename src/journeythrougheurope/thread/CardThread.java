@@ -25,7 +25,7 @@ public class CardThread extends AnimationTimer {
     private final int Y_INCREMENT = 61;
     private final int DEAL_CARD_SPEED = -60;
     private final int REMOVE_CARD_SPEED = -5;
-    private final int MAX_CARDS = 6;
+    private final int MAX_CARDS = 2;
 
     private JourneyThroughEuropeUI ui;
     private Deck deck;
@@ -292,8 +292,10 @@ public class CardThread extends AnimationTimer {
 
                 if (currentCardManager.getPlayerManager().getCards().isEmpty()) {
                     ui.getGSM().processEndGameRequest();
+                    dealCards = false;
+                } else {
+                    dealCards = true;
                 }
-                dealCards = true;
 
             }
         } else {
