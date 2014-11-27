@@ -24,18 +24,17 @@ public class GameManager {
     private final String FAROER = "FAROER";
     private final String BERLIN = "BERLIN";
     private final String DUBLIN = "DUBLIN";
-    
-   
+
     private final double CONVERSION_FACTOR = .60;
     private final int SIDE_LENGTH = (int) (20 * CONVERSION_FACTOR);
     private final int STEPS = 70;
 
-    private PlayerManager player;
+    private PlayerManager currentPlayer;
+    private ArrayList<PlayerManager> players;
     private Point2D startLocation;
     private JourneyThroughEuropeUI ui;
     private JourneyThroughEuropeCity destination;
     private String previousCity;
-    
 
     private ScrollPane gameScrollPane;
     private double hValueX;
@@ -46,9 +45,9 @@ public class GameManager {
     private boolean moveInProgress;
     private boolean scrolling;
 
-    public GameManager(PlayerManager player, JourneyThroughEuropeUI ui) {
+    public GameManager(PlayerManager currentPlayer, ArrayList<PlayerManager> players, JourneyThroughEuropeUI ui) {
         this.ui = ui;
-        this.player = player;
+        this.currentPlayer = currentPlayer;
         destination = null;
         moveInProgress = false;
         scrolling = true;
@@ -58,15 +57,15 @@ public class GameManager {
         hValueX = 0;
         vValueY = 0;
         gameScrollPane = this.ui.getGameScrollPane();
-        gridWidth = this.ui.getGameGridImages()[player.getCurrentGridLocation() - 1].getImage().getWidth();
-        gridHeight = this.ui.getGameGridImages()[player.getCurrentGridLocation() - 1].getImage().getHeight();
-
+        gridWidth = this.ui.getGameGridImages()[currentPlayer.getCurrentGridLocation() - 1].getImage().getWidth();
+        gridHeight = this.ui.getGameGridImages()[currentPlayer.getCurrentGridLocation() - 1].getImage().getHeight();
+        this.players = players;
     }
 
     public synchronized void scrollBack() {
 
-        double destinationX = player.getCurrentPosition().getX();
-        double destinationY = player.getCurrentPosition().getY();
+        double destinationX = currentPlayer.getCurrentPosition().getX();
+        double destinationY = currentPlayer.getCurrentPosition().getY();
 
         double xScrollOffset = (destinationX - hValueX);
         double YScrollOffset = (destinationY - vValueY);
@@ -90,24 +89,25 @@ public class GameManager {
             float xOffset = (float) ((destination.getGridX() - startLocation.getX()));
             float yOffset = (float) ((destination.getGridY() - startLocation.getY()));
 
-            Rectangle2D currentRectLocation = new Rectangle2D(player.getCurrentPosition().getX(), player.getCurrentPosition().getY(), 5, 5);
+            Rectangle2D currentRectLocation = new Rectangle2D(currentPlayer.getCurrentPosition().getX(), currentPlayer.getCurrentPosition().getY(), 5, 5);
             Rectangle2D destinationRectLocation = new Rectangle2D(destination.getGridX(), destination.getGridY(), 5, 5);
             if (currentRectLocation.intersects(destinationRectLocation)) {
-               
-                previousCity = player.getCurrentCity();
-                if(previousCity.equalsIgnoreCase(REYKJAVIK) || previousCity.equalsIgnoreCase(FAROER) || previousCity.equalsIgnoreCase(BERLIN) 
-                        || previousCity.equalsIgnoreCase(DUBLIN))
+
+                previousCity = currentPlayer.getCurrentCity();
+                if (previousCity.equalsIgnoreCase(REYKJAVIK) || previousCity.equalsIgnoreCase(FAROER) || previousCity.equalsIgnoreCase(BERLIN)
+                        || previousCity.equalsIgnoreCase(DUBLIN)) {
                     previousCity = "";
-                
-                player.setCurrentCity(destination.getCityName());
-                player.setCurrentPosition(destination.getPoint());
-                System.out.println(player.getCurrentCity());
+                }
+
+                currentPlayer.setCurrentCity(destination.getCityName());
+                currentPlayer.setCurrentPosition(destination.getPoint());
+                System.out.println(currentPlayer.getCurrentCity());
 
                 double x = destination.getPoint().getX();
-                double gridWidth = ui.getGameGridImages()[player.getCurrentGridLocation() - 1].getImage().getWidth();
+                double gridWidth = ui.getGameGridImages()[currentPlayer.getCurrentGridLocation() - 1].getImage().getWidth();
 
                 double y = destination.getPoint().getY();
-                double gridHeight = ui.getGameGridImages()[player.getCurrentGridLocation() - 1].getImage().getHeight();
+                double gridHeight = ui.getGameGridImages()[currentPlayer.getCurrentGridLocation() - 1].getImage().getHeight();
 
                 ui.getGameScrollPane().setHvalue((x / gridWidth));
                 ui.getGameScrollPane().setVvalue((y / gridHeight));
@@ -116,8 +116,8 @@ public class GameManager {
                 moveInProgress = false;
                 return true;
             } else {
-                Point2D currentLocation = player.getCurrentPosition();
-                player.setCurrentPosition(currentLocation.add(xOffset / STEPS, yOffset / STEPS));
+                Point2D currentLocation = currentPlayer.getCurrentPosition();
+                currentPlayer.setCurrentPosition(currentLocation.add(xOffset / STEPS, yOffset / STEPS));
 
                 double x = currentLocation.getX();
                 double y = currentLocation.getY();
@@ -136,7 +136,7 @@ public class GameManager {
         if (moveInProgress) {
             return false;
         } else {
-            JourneyThroughEuropeCity playerCity = ui.getGSM().processGetCityRequest(player.getCurrentCity());
+            JourneyThroughEuropeCity playerCity = ui.getGSM().processGetCityRequest(currentPlayer.getCurrentCity());
             Rectangle2D clickedPosition = new Rectangle2D(xPosition - (SIDE_LENGTH / 2), yPosition - (SIDE_LENGTH / 2), SIDE_LENGTH, SIDE_LENGTH);
 
             ArrayList<String> neighboringLandCities = playerCity.getNeighboringLandCities();
@@ -146,9 +146,17 @@ public class GameManager {
                 Rectangle2D cityPosition = new Rectangle2D(temp.getGridX() - (SIDE_LENGTH / 2), temp.getGridY() - (SIDE_LENGTH / 2), SIDE_LENGTH, SIDE_LENGTH);
                 if (clickedPosition.intersects(cityPosition)) {
                     if (!temp.getCityName().equalsIgnoreCase(previousCity)) {
+                        for (int j = 0; j < players.size(); j++) {
+                            if (players.get(j).getCurrentCity().equalsIgnoreCase(temp.getCityName())) {
+                                System.out.println("I got here");
+                                return false;
+                            }
+
+                        }
+
                         destination = temp;
                         moveInProgress = true;
-                        startLocation = player.getCurrentPosition();
+                        startLocation = currentPlayer.getCurrentPosition();
 
                         scrolling = true;
                         hValueX = gameScrollPane.getHvalue() * gridWidth;
@@ -163,10 +171,16 @@ public class GameManager {
                 Rectangle2D cityPosition = new Rectangle2D(temp.getGridX() - (SIDE_LENGTH / 2), temp.getGridY() - (SIDE_LENGTH / 2), SIDE_LENGTH, SIDE_LENGTH);
                 if (clickedPosition.intersects(cityPosition)) {
                     if (!temp.getCityName().equalsIgnoreCase(previousCity)) {
+                        for (int j = 0; j < players.size(); j++) {
+                            if (players.get(j).getCurrentCity().equalsIgnoreCase(temp.getCityName())) {
+                                return false;
+                            }
+                        }
+
                         destination = temp;
                         moveInProgress = true;
 
-                        startLocation = player.getCurrentPosition();
+                        startLocation = currentPlayer.getCurrentPosition();
 
                         scrolling = true;
                         hValueX = gameScrollPane.getHvalue() * gridWidth;
@@ -188,15 +202,14 @@ public class GameManager {
     }
 
     public PlayerManager getPlayerManager() {
-        return player;
+        return currentPlayer;
     }
 
     public boolean isScrolling() {
         return scrolling;
     }
-  
-    public void resetPreviousCity()
-    {
+
+    public void resetPreviousCity() {
         previousCity = "";
     }
 

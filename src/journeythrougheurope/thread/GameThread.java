@@ -49,7 +49,7 @@ public class GameThread extends AnimationTimer {
     public void initGameManagers() {
         gameManager = new GameManager[players.size()];
         for (int i = 0; i < players.size(); i++) {
-            gameManager[i] = new GameManager(players.get(i), ui);
+            gameManager[i] = new GameManager(players.get(i),players ,ui);
         }
 
     }
