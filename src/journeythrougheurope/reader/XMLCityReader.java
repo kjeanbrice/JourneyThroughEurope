@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import journeythrougheurope.botalgorithm.Vertex;
 import journeythrougheurope.game.JourneyThroughEuropeCity;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -94,7 +95,8 @@ public class XMLCityReader {
                         city.addNeighboringSeaCity(citySeaNames.item(0).getNodeValue().toUpperCase().trim());
                     }
                 }
-            }       
+            }
+            city.setVertex(new Vertex(city.getCityName()));
             cityHashMap.put(city.getCityName(),city);
         }
     }

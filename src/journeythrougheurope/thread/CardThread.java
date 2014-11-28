@@ -26,7 +26,7 @@ public class CardThread extends AnimationTimer {
     private final int Y_INCREMENT = 61;
     private final int DEAL_CARD_SPEED = -60;
     private final int REMOVE_CARD_SPEED = -5;
-    private final int MAX_CARDS = 10;
+    private final int MAX_CARDS = 4;
 
     private JourneyThroughEuropeUI ui;
     private Deck deck;
@@ -139,9 +139,11 @@ public class CardThread extends AnimationTimer {
             if (!removingCard && !dealCards) {
                 if (!currentCardManager.isScrolling() && updatePlayer) {
                     updatePlayer = false;
-                    ui.enableRollButton();
-                    ui.enableGridButtons();
-                    ui.getGameScrollPane().setPannable(true);
+                    if (currentCardManager.getPlayerManager().isHuman()) {
+                        ui.enableRollButton();
+                        ui.enableGridButtons();
+                        ui.getGameScrollPane().setPannable(true);
+                    }
                 }
             }
         }
@@ -248,7 +250,7 @@ public class CardThread extends AnimationTimer {
                 }
 
             }
-            System.out.println(playersManager.get(i).toString() + "\n");
+            //System.out.println(playersManager.get(i).toString() + "\n");
         }
     }
 

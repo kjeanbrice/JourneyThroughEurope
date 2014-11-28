@@ -8,6 +8,9 @@ package journeythrougheurope.game;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
+import journeythrougheurope.botalgorithm.Edge;
+import journeythrougheurope.botalgorithm.Vertex;
 import journeythrougheurope.file.JourneyThroughEuropeFileLoader;
 import journeythrougheurope.reader.XMLCityReader;
 import journeythrougheurope.ui.JourneyThroughEuropeUI;
@@ -48,6 +51,33 @@ public class JourneyThroughEuropeGameStateManager {
         currentGameState = JourneyThroughEuropeGameState.GAME_NOT_STARTED;
         gamesHistory = new ArrayList<JourneyThroughEuropeGameData>();
         gameInProgress = null;
+    }
+
+    public void resetVertex() {
+        Set<String> temp = cityHashMap.keySet();
+        String[] tempKeys = new String[cityHashMap.size()];
+        temp.toArray(tempKeys);
+
+        for (int i = 0; i < tempKeys.length; i++) {
+            JourneyThroughEuropeCity city = cityHashMap.get(tempKeys[i]);
+            city.setVertex(new Vertex(city.getCityName()));
+        }
+
+        for (int i = 0; i < tempKeys.length; i++) {
+            JourneyThroughEuropeCity city = cityHashMap.get(tempKeys[i]);
+            int size = city.getNeighboringLandCities().size() + city.getNeighboringSeaCities().size();
+            Edge[] edgeList = new Edge[size];
+            for (int j = 0; j < city.getNeighboringLandCities().size(); j++) {
+                edgeList[j] = new Edge(cities.getCity(city.getNeighboringLandCities().get(j)).getVertex(), 1);
+            }
+
+            int landSize = city.getNeighboringLandCities().size();
+            for (int k = 0; k < city.getNeighboringSeaCities().size(); k++) {
+                edgeList[k + landSize] = new Edge(cities.getCity(city.getNeighboringSeaCities().get(k)).getVertex(), 2);
+            }
+            city.setVertexAdjacencies(edgeList);
+        }
+
     }
 
     private void buildHashMap() {
@@ -183,7 +213,6 @@ public class JourneyThroughEuropeGameStateManager {
         }
     }
 
-
     public void processIncrementPlayerRequest() {
         if (isGameInProgress()) {
             gameInProgress.incrementPlayer();
@@ -195,16 +224,16 @@ public class JourneyThroughEuropeGameStateManager {
             gameInProgress.updateRollRequest(die);
         }
     }
-    
-     public void processSetWaitRequest(boolean wait) {
+
+    public void processSetWaitRequest(boolean wait) {
         if (isGameInProgress()) {
             gameInProgress.setWait(wait);
         }
     }
-     
-      public  boolean processGetWaitRequest() {
+
+    public boolean processGetWaitRequest() {
         if (isGameInProgress()) {
-           return gameInProgress.getWait();
+            return gameInProgress.getWait();
         }
         return false;
     }

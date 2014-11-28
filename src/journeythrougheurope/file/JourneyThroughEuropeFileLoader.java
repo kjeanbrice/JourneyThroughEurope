@@ -16,6 +16,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import journeythrougheurope.application.Main.JourneyThroughEuropePropertyType;
+import journeythrougheurope.botalgorithm.Edge;
 import journeythrougheurope.game.JourneyThroughEuropeCity;
 import journeythrougheurope.reader.XMLCityReader;
 import properties_manager.PropertiesManager;
@@ -99,10 +100,23 @@ public class JourneyThroughEuropeFileLoader {
                     cityTemp.setGridX(gridX * CONVERSION_FACTOR);
                     cityTemp.setGridY(gridY * CONVERSION_FACTOR);
                     cityTemp.setFront(cityName);
-                    cityData.add(cityTemp);
 
-                    System.out.println(cityTemp.toString() + "\n");
+                    int size = cityTemp.getNeighboringLandCities().size() + cityTemp.getNeighboringSeaCities().size() ;
+                    Edge[] edgeList = new Edge[size];
+                    for (int i = 0; i < cityTemp.getNeighboringLandCities().size(); i++) {
+                        edgeList[i] = new Edge(cities.getCity(cityTemp.getNeighboringLandCities().get(i)).getVertex(), 1);
+                    }
+                    
+                    int landSize = cityTemp.getNeighboringLandCities().size();
+                    for (int i = 0; i < cityTemp.getNeighboringSeaCities().size(); i++) {
+                        edgeList[i + landSize] = new Edge(cities.getCity(cityTemp.getNeighboringSeaCities().get(i)).getVertex(), 2);
+                    }
+                    
+                    cityTemp.setVertexAdjacencies(edgeList);         
+                    cityData.add(cityTemp);
+                    
                     System.out.println(cities.getCity(cityName).toString() + "\n");
+
                 }
             }
         } catch (FileNotFoundException ex) {
@@ -111,5 +125,4 @@ public class JourneyThroughEuropeFileLoader {
 
         return cityData;
     }
-
 }

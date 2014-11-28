@@ -15,7 +15,7 @@ import journeythrougheurope.ui.JourneyThroughEuropeUI;
  */
 public class JourneyThroughEuropeGameData {
 
-    private final int MAX_EXTRA_TURNS = 1;
+   
     private final int SIX = 6;
 
     private JourneyThroughEuropeUI ui;
@@ -23,7 +23,7 @@ public class JourneyThroughEuropeGameData {
     private GameThread gameThread;
     private int currentPlayer;
     private boolean won;
-    private boolean extraTurn;
+   
     private int extraTurnCount;
     private boolean wait;
 
@@ -31,7 +31,6 @@ public class JourneyThroughEuropeGameData {
         this.ui = ui;
         wait = false;
         currentPlayer = 0;
-        extraTurn = false;
         extraTurnCount = 0;
         cardThread = new CardThread(this.ui);
         gameThread = new GameThread(this.ui);
@@ -67,13 +66,11 @@ public class JourneyThroughEuropeGameData {
     }
 
     public synchronized void updateRollRequest(int die) {
-        if (!extraTurn && die == SIX) {
-            extraTurn = true;
+        if (die == SIX) {
             gameThread.updateRemainingMoves(die);
         } else {
             gameThread.updateRemainingMoves(die);
             ui.disableRollButton();
-            extraTurn = false;
         }
     }
 

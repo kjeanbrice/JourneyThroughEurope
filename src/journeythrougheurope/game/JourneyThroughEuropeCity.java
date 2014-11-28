@@ -8,6 +8,8 @@ package journeythrougheurope.game;
 import java.util.ArrayList;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
+import journeythrougheurope.botalgorithm.Edge;
+import journeythrougheurope.botalgorithm.Vertex;
 
 /**
  *
@@ -23,31 +25,33 @@ public class JourneyThroughEuropeCity {
     private double gridY;
     private ArrayList<String> neighboringLandCities;
     private ArrayList<String> neighboringSeaCities;
+    private Vertex vertex;
+    private Edge[] adjacencies;
 
     public JourneyThroughEuropeCity(String cityName, String cardColor, int gridLocation, double gridX, double gridY) {
-         this.cityName = cityName;
-         this.cardColor = cardColor;
-         this.gridLocation = gridLocation;
-         this.gridX = gridX;
-         this.gridY = gridY;
-         neighboringLandCities = new ArrayList<String>();
-         neighboringSeaCities = new ArrayList<String>();
+        this.cityName = cityName;
+        this.cardColor = cardColor;
+        this.gridLocation = gridLocation;
+        this.gridX = gridX;
+        this.gridY = gridY;
+        neighboringLandCities = new ArrayList<String>();
+        neighboringSeaCities = new ArrayList<String>();
+        vertex = null;
+        adjacencies = null;
     }
 
     public JourneyThroughEuropeCity() {
-        this("","",-1,-1,-1);
+        this("", "", -1, -1, -1);
     }
 
-    public void setFront(String imageName)
-    {
+    public void setFront(String imageName) {
         front = new Image("file:images/cards/" + imageName + ".jpg");
     }
-    
-    public Image getFront()
-    {
+
+    public Image getFront() {
         return front;
     }
-    
+
     public String getCityName() {
         return cityName;
     }
@@ -87,44 +91,57 @@ public class JourneyThroughEuropeCity {
     public void setGridY(double gridY) {
         this.gridY = gridY;
     }
-    
-    public Point2D getPoint()
-    {
-        return new Point2D(gridX,gridY);
+
+    public Point2D getPoint() {
+        return new Point2D(gridX, gridY);
+    }
+
+    public void addNeighboringLandCity(String city) {
+        neighboringLandCities.add(city);
+    }
+
+    public void addNeighboringSeaCity(String city) {
+        neighboringSeaCities.add(city);
+    }
+
+    public ArrayList<String> getNeighboringLandCities() {
+        return neighboringLandCities;
+    }
+
+    public ArrayList<String> getNeighboringSeaCities() {
+        return neighboringSeaCities;
+    }
+
+    public void setNeighboringSeaCities(ArrayList<String> neighboringSeaCities) {
+        this.neighboringSeaCities = neighboringSeaCities;
+    }
+
+    public void setNeighboringLandCities(ArrayList<String> neighboringLandCities) {
+        this.neighboringLandCities = neighboringLandCities;
+    }
+
+    public void setVertex(Vertex vertex) {
+        this.vertex = vertex;
+    }
+
+    public Vertex getVertex() {
+        return vertex;
+    }
+
+    public void setVertexAdjacencies(Edge[] adjacencies) {
+        this.adjacencies = adjacencies;
+        vertex.setAdjacencies(adjacencies);
     }
 
     public String toString() {
-        return "City Name: " + cityName + "\nCard Color: " + cardColor + "\nGrid Location: " + gridLocation + "\nX: " + gridX
-                + "\nY: " + gridY + "\nNeighboring Land Cities: " + neighboringLandCities.toString() + "\nNeighboring Sea Cities: " + neighboringSeaCities.toString();
+        String output = "";
+        output += "City Name: " + cityName + "\nCard Color: " + cardColor + "\nGrid Location: " + gridLocation + "\nX: " + gridX
+                + "\nY: " + gridY + "\nNeighboring Land Cities: " + neighboringLandCities.toString() + "\nNeighboring Sea Cities: " + neighboringSeaCities.toString() + 
+                "\nVertex: "  + vertex.toString() + "\n";
+        for (int i = 0; i < adjacencies.length; i++) {
+            output += "Edge " + i + ": " + adjacencies[i].toString() + "\n";
+        }
+        
+        return output;
     }
-    
-    public void addNeighboringLandCity(String city)
-    {
-        neighboringLandCities.add(city);
-    }
-    
-    public void addNeighboringSeaCity(String city)
-    {
-        neighboringSeaCities.add(city);
-    }
-    
-    public ArrayList<String> getNeighboringLandCities()
-    {
-       return neighboringLandCities;
-    }
-    
-    public ArrayList<String> getNeighboringSeaCities(){
-       return neighboringSeaCities;
-    }
-    
-    public void setNeighboringSeaCities(ArrayList<String> neighboringSeaCities)
-    {
-        this.neighboringSeaCities =  neighboringSeaCities;
-    }
-    
-    public void setNeighboringLandCities(ArrayList<String> neighboringLandCities)
-    {
-        this.neighboringLandCities =  neighboringLandCities;
-    }
-    
 }

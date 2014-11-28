@@ -29,6 +29,7 @@ public class GameThread extends AnimationTimer {
     private int currentPlayer;
 
     private boolean won;
+    private boolean botRoll;
 
     public GameThread(JourneyThroughEuropeUI ui) {
         this.ui = ui;
@@ -44,12 +45,15 @@ public class GameThread extends AnimationTimer {
         this.ui.getGamePanel().setOnMouseDragged(mouseHandler);
         this.ui.getGamePanel().setOnMouseReleased(mouseHandler);
 
+        botRoll = false;
+        won = false;
+
     }
 
     public void initGameManagers() {
         gameManager = new GameManager[players.size()];
         for (int i = 0; i < players.size(); i++) {
-            gameManager[i] = new GameManager(players.get(i),players ,ui);
+            gameManager[i] = new GameManager(players.get(i), players, ui);
         }
 
     }
@@ -77,6 +81,22 @@ public class GameThread extends AnimationTimer {
 
     public void update() {
         if (currentGameManager != null) {
+            if (!currentGameManager.getPlayerManager().isHuman()) {
+                if (botRoll) {
+                    int roll = (int)((Math.random() * 6) + 1);
+                    ui.setDieImage(roll);
+                    updateRemainingMoves(roll);
+                    ui.disableRollButton();
+                    ui.disableGridButtons();
+                    
+                    if (roll != 6) {
+                        botRoll = false;
+                    }            
+                }
+                if (!currentGameManager.isMoveInProgress()) {
+                    currentGameManager.isBotMoveValid();
+                }
+            }
             if (currentGameManager.isMoveInProgress()) {
                 ui.getGameScrollPane().setPannable(false);
                 ui.disableGridButtons();
@@ -85,10 +105,10 @@ public class GameThread extends AnimationTimer {
                         currentGameManager.scrollBack();
                     } else {
                         if (currentGameManager.move()) {
-                            
+
                             boolean removingCard = false;
                             currentGameManager.getPlayerManager().setMovesRemaining(currentGameManager.getPlayerManager().getMovesRemaining() - 1);
-                            
+                                                      
                             ui.enableGridButtons();
                             ui.getGameScrollPane().setPannable(true);
                             ui.updateMovesRemaining("Moves Remaining: " + currentGameManager.getPlayerManager().getMovesRemaining());
@@ -119,6 +139,7 @@ public class GameThread extends AnimationTimer {
                                 if (!removingCard) {
                                     ui.getGSM().processIncrementPlayerRequest();
                                     ui.getGSM().processStartTurnRequest();
+
                                 } else {
                                     ui.getGSM().processSetWaitRequest(true);
                                 }
@@ -142,6 +163,7 @@ public class GameThread extends AnimationTimer {
         gameRenderer.setCurrentPlayer(this.currentPlayer);
         mouseHandler.setGameManager(currentGameManager);
         ui.updateMovesRemaining("Moves Remaining: " + currentGameManager.getPlayerManager().getMovesRemaining());
+        botRoll = true;
     }
 
     public void updateRemainingMoves(int moves) {

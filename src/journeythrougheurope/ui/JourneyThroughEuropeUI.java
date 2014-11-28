@@ -850,27 +850,27 @@ public class JourneyThroughEuropeUI extends Pane {
         }
     }
 
-    public void changeDieImage(JourneyThroughEuropeUIState dieImageState) {
-        switch (dieImageState) {
-            case DIE1_IMAGE_STATE:
+    public void setDieImage(int roll) {
+        switch (roll) {
+            case 1:
                 btnDie.setGraphic(setupImageView(JourneyThroughEuropePropertyType.DIE1_IMAGE_NAME));
                 break;
-            case DIE2_IMAGE_STATE:
+            case 2:
                 btnDie.setGraphic(setupImageView(JourneyThroughEuropePropertyType.DIE2_IMAGE_NAME));
                 break;
-            case DIE3_IMAGE_STATE:
+            case 3:
                 btnDie.setGraphic(setupImageView(JourneyThroughEuropePropertyType.DIE3_IMAGE_NAME));
                 break;
-            case DIE4_IMAGE_STATE:
+            case 4:
                 btnDie.setGraphic(setupImageView(JourneyThroughEuropePropertyType.DIE4_IMAGE_NAME));
                 break;
-            case DIE5_IMAGE_STATE:
+            case 5:
                 btnDie.setGraphic(setupImageView(JourneyThroughEuropePropertyType.DIE5_IMAGE_NAME));
                 break;
-            case DIE6_IMAGE_STATE:
+            case 6:
                 btnDie.setGraphic(setupImageView(JourneyThroughEuropePropertyType.DIE6_IMAGE_NAME));
                 break;
-            case DEFAULT_DIE_IMAGE_NAME:
+            case 0:
                 btnDie.setGraphic(setupImageView(JourneyThroughEuropePropertyType.DEFAULT_DIE_IMAGE_NAME));
                 break;
         }
@@ -1194,7 +1194,7 @@ public class JourneyThroughEuropeUI extends Pane {
     
     public void resetRollImage()
     {
-        changeDieImage(JourneyThroughEuropeUIState.DEFAULT_DIE_IMAGE_NAME);
+        setDieImage(0);
     }
     
     public void updateMovesRemaining(String movesRemaining)
