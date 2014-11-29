@@ -83,15 +83,17 @@ public class GameThread extends AnimationTimer {
         if (currentGameManager != null) {
             if (!currentGameManager.getPlayerManager().isHuman()) {
                 if (botRoll) {
-                    int roll = (int)((Math.random() * 6) + 1);
+                    int roll = (int) ((Math.random() * 6) + 1);
                     ui.setDieImage(roll);
                     updateRemainingMoves(roll);
+
                     ui.disableRollButton();
                     ui.disableGridButtons();
-                    
+                    ui.disableSaveButton();
+
                     if (roll != 6) {
                         botRoll = false;
-                    }            
+                    }
                 }
                 if (!currentGameManager.isMoveInProgress()) {
                     currentGameManager.isBotMoveValid();
@@ -100,16 +102,37 @@ public class GameThread extends AnimationTimer {
             if (currentGameManager.isMoveInProgress()) {
                 ui.getGameScrollPane().setPannable(false);
                 ui.disableGridButtons();
+                ui.disableSaveButton();
+
+                if (currentGameManager.isDestinationSeaRoute()) {
+                    if (!currentGameManager.isWaitingAtPort()) {
+                        currentGameManager.dontMove();
+                        currentGameManager.resetPreviousCity();
+                        currentGameManager.getPlayerManager().setMovesRemaining(0);
+                        currentGameManager.setWaitingAtPort(true);
+                        System.out.println("Game Thread: " + currentGameManager.getPlayerManager().getPlayerName() + " is waiting to sail at the city " + currentGameManager.getPlayerManager().getCurrentCity() + ".");
+                        ui.getGSM().processIncrementPlayerRequest();
+                        ui.getGSM().processStartTurnRequest();
+                    }
+                }
+
                 if (currentGameManager.getPlayerManager().getMovesRemaining() != 0) {
                     if (currentGameManager.isScrolling()) {
                         currentGameManager.scrollBack();
                     } else {
-                        if (currentGameManager.move()) {
+                        if (!currentGameManager.move()) {
+
+                            if (currentGameManager.isWaitingAtPort()) {
+                                currentGameManager.setWaitingAtPort(false);
+                                System.out.println("Game Thread: " + currentGameManager.getPlayerManager().getPlayerName() + " is no longer waiting to sail.");
+                            }
 
                             boolean removingCard = false;
                             currentGameManager.getPlayerManager().setMovesRemaining(currentGameManager.getPlayerManager().getMovesRemaining() - 1);
-                                                      
+
                             ui.enableGridButtons();
+                            ui.enableSaveButton();
+
                             ui.getGameScrollPane().setPannable(true);
                             ui.updateMovesRemaining("Moves Remaining: " + currentGameManager.getPlayerManager().getMovesRemaining());
 
@@ -119,6 +142,7 @@ public class GameThread extends AnimationTimer {
                                     if (currentCity.equalsIgnoreCase(currentGameManager.getPlayerManager().getCards().get(i))) {
                                         this.ui.getGSM().processRemoveCardRequest(i);
                                         removingCard = true;
+
                                     }
                                 }
                             } else if (currentGameManager.getPlayerManager().getCards().size() == 1) {
@@ -142,6 +166,7 @@ public class GameThread extends AnimationTimer {
 
                                 } else {
                                     ui.getGSM().processSetWaitRequest(true);
+                                    ui.disableSaveButton();
                                 }
                             }
                         }

@@ -1228,6 +1228,16 @@ public class JourneyThroughEuropeUI extends Pane {
         return btnDie.isDisabled();
     }
     
+    public void disableSaveButton()
+    {
+        btnSave.setDisable(true);
+    }
+    
+    public void enableSaveButton()
+    {
+         btnSave.setDisable(false);
+    }
+    
     public void resetRollImage()
     {
         setDieImage(0);

@@ -144,6 +144,7 @@ public class CardThread extends AnimationTimer {
                     if (currentCardManager.getPlayerManager().isHuman()) {
                         ui.enableRollButton();
                         ui.enableGridButtons();
+                        ui.enableSaveButton();
                         ui.getGameScrollPane().setPannable(true);
                     }
                 }

@@ -47,6 +47,7 @@ public class GameManager {
     private double gridWidth;
     private double gridHeight;
 
+    private boolean isWaitingAtPort;
     private boolean moveInProgress;
     private boolean scrolling;
 
@@ -65,6 +66,7 @@ public class GameManager {
         gridWidth = this.ui.getGameGridImages()[currentPlayer.getCurrentGridLocation() - 1].getImage().getWidth();
         gridHeight = this.ui.getGameGridImages()[currentPlayer.getCurrentGridLocation() - 1].getImage().getHeight();
         this.players = players;
+        isWaitingAtPort = false;
     }
 
     public synchronized void scrollBack() {
@@ -76,7 +78,7 @@ public class GameManager {
         double YScrollOffset = (destinationY - vValueY);
 
         Rectangle2D currentScrollLocation = new Rectangle2D(gameScrollPane.getHvalue() * gridWidth, gameScrollPane.getVvalue() * gridHeight, 15, 15);
-        Rectangle2D destinationRectLocation = new Rectangle2D(destinationX, destinationY, 30, 30);
+        Rectangle2D destinationRectLocation = new Rectangle2D(currentPlayer.getCurrentPosition().getX(),currentPlayer.getCurrentPosition().getY(), 20, 20);
         if (currentScrollLocation.intersects(destinationRectLocation)) {
             gameScrollPane.setHvalue((currentPlayer.getCurrentPosition().getX() / gridWidth));
             gameScrollPane.setVvalue((currentPlayer.getCurrentPosition().getY() / gridHeight));
@@ -114,11 +116,11 @@ public class GameManager {
                 currentPlayer.addToMoveHistory(destination.getCityName());
                 ui.getDocumentManager().addGameResultToStatsPage(players);
                 //JourneyThroughEuropeFileLoader.saveFile(players);
-               //JourneyThroughEuropeFileLoader.loadFile();
+                //JourneyThroughEuropeFileLoader.loadFile();
                 destination = null;
                 moveInProgress = false;
-                
-                return true;
+
+                return false;
             } else {
                 Point2D currentLocation = currentPlayer.getCurrentPosition();
                 currentPlayer.setCurrentPosition(currentLocation.add(xOffset / MOVE_STEPS, yOffset / MOVE_STEPS));
@@ -132,7 +134,7 @@ public class GameManager {
 
         }
 
-        return false;
+        return true;
     }
 
     public boolean isHumanMoveValid(double xPosition, double yPosition) {
@@ -216,9 +218,10 @@ public class GameManager {
                     }
                 }
 
-                if(path.size() == 1)
+                if (path.size() == 1) {
                     return false;
-                
+                }
+
                 destination = ui.getGSM().processGetCityRequest(path.get(1).toString());
                 moveInProgress = true;
                 startLocation = currentPlayer.getCurrentPosition();
@@ -232,12 +235,44 @@ public class GameManager {
         }
     }
 
+    public boolean isDestinationSeaRoute() {
+        if (moveInProgress) {
+            ArrayList<String> neighboringSeaCities = ui.getGSM().processGetCityRequest(currentPlayer.getCurrentCity()).getNeighboringSeaCities();
+            for (int i = 0; i < neighboringSeaCities.size(); i++) {
+                if (neighboringSeaCities.get(i).equalsIgnoreCase(destination.getCityName())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void dontMove() {
+        if (moveInProgress) {
+            destination = null;
+            moveInProgress = false;
+            scrolling = false;
+            hValueX = 0;
+            vValueY = 0;
+        }
+    }
+
     public boolean isMoveInProgress() {
         return moveInProgress;
     }
 
     public void setMoveInProgress(boolean status) {
         moveInProgress = status;
+    }
+    
+    public void setWaitingAtPort(boolean status)
+    {
+        isWaitingAtPort = status;
+    }
+    
+    public boolean isWaitingAtPort()
+    {
+        return isWaitingAtPort;
     }
 
     public PlayerManager getPlayerManager() {

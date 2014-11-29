@@ -42,7 +42,7 @@ public class GameMouseHandler implements EventHandler<MouseEvent> {
         if (currentGameManager != null) {
             switch (event.getEventType().toString()) {
                 case "MOUSE_CLICKED":
-                    System.out.println("Mouse Clicked");
+                    //System.out.println("Mouse Clicked");
                     if (currentGameManager.getPlayerManager().getMovesRemaining() != 0 && currentGameManager.getPlayerManager().isHuman()) {
                         System.out.println("GameMouseHandler: " + currentGameManager.isHumanMoveValid(event.getX(), event.getY()));
                     }
@@ -50,14 +50,14 @@ public class GameMouseHandler implements EventHandler<MouseEvent> {
                     break;
                 case "MOUSE_RELEASED":
                     if (mouseDragged) {
-                        System.out.println("Mouse Released");
+                        //System.out.println("Mouse Released");
                         mouseDragged = false;
                         ui.getGameScrollPane().setPannable(true);
                     }
                     break;
                 case "MOUSE_DRAGGED":
-                    System.out.println("Mouse Dragged");
-                    System.out.println("X: " + event.getX() + "     Y: " + event.getY());
+                    //System.out.println("Mouse Dragged");
+                    //System.out.println("X: " + event.getX() + "     Y: " + event.getY());
                     Point2D currentPlayerPosition = currentGameManager.getPlayerManager().getCurrentPosition();
                     Point2D currentDragPosition = new Point2D(event.getX(), event.getY());
 
