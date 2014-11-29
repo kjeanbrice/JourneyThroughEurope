@@ -78,7 +78,7 @@ public class GameManager {
         double YScrollOffset = (destinationY - vValueY);
 
         Rectangle2D currentScrollLocation = new Rectangle2D(gameScrollPane.getHvalue() * gridWidth, gameScrollPane.getVvalue() * gridHeight, 15, 15);
-        Rectangle2D destinationRectLocation = new Rectangle2D(currentPlayer.getCurrentPosition().getX(),currentPlayer.getCurrentPosition().getY(), 20, 20);
+        Rectangle2D destinationRectLocation = new Rectangle2D(currentPlayer.getCurrentPosition().getX(), currentPlayer.getCurrentPosition().getY(), 30, 30);
         if (currentScrollLocation.intersects(destinationRectLocation)) {
             gameScrollPane.setHvalue((currentPlayer.getCurrentPosition().getX() / gridWidth));
             gameScrollPane.setVvalue((currentPlayer.getCurrentPosition().getY() / gridHeight));
