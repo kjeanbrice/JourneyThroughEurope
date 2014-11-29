@@ -18,6 +18,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import journeythrougheurope.application.Main.JourneyThroughEuropePropertyType;
+import journeythrougheurope.file.JourneyThroughEuropeFileLoader;
 import journeythrougheurope.thread.CardThread;
 import journeythrougheurope.thread.GameRenderer;
 import properties_manager.PropertiesManager;
@@ -61,7 +62,17 @@ public class JourneyThroughEuropeEventHandler {
     }
     
     public void respondToLoadGameRequest() {
+        ArrayList<PlayerManager> players = JourneyThroughEuropeFileLoader.loadFile(ui);
+        ui.setPlayers(players);
+        ui.setNumPlayers(players.size());
         
+        respondToStartGameRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.PLAY_GAME_STATE);
+        ui.getDocumentManager().addGameResultToStatsPage(players);
+    }
+    
+     public void respondToSaveGameRequest(ArrayList<PlayerManager> players) {
+        if(ui.getGSM().isGameInProgress())
+            JourneyThroughEuropeFileLoader.saveFile(players);
     }
     
     public void respondToGameHistoryRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState uiState) {

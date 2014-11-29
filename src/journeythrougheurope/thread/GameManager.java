@@ -13,6 +13,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.shape.Circle;
 import journeythrougheurope.botalgorithm.Dijkstra;
 import journeythrougheurope.botalgorithm.Vertex;
+import journeythrougheurope.file.JourneyThroughEuropeFileLoader;
 import journeythrougheurope.game.JourneyThroughEuropeCity;
 import journeythrougheurope.ui.JourneyThroughEuropeUI;
 import journeythrougheurope.ui.PlayerManager;
@@ -77,8 +78,8 @@ public class GameManager {
         Rectangle2D currentScrollLocation = new Rectangle2D(gameScrollPane.getHvalue() * gridWidth, gameScrollPane.getVvalue() * gridHeight, 15, 15);
         Rectangle2D destinationRectLocation = new Rectangle2D(destinationX, destinationY, 30, 30);
         if (currentScrollLocation.intersects(destinationRectLocation)) {
-            gameScrollPane.setHvalue((destinationX / gridWidth));
-            gameScrollPane.setVvalue((destinationY / gridHeight));
+            gameScrollPane.setHvalue((currentPlayer.getCurrentPosition().getX() / gridWidth));
+            gameScrollPane.setVvalue((currentPlayer.getCurrentPosition().getY() / gridHeight));
             scrolling = false;
             hValueX = 0;
             vValueY = 0;
@@ -110,8 +111,13 @@ public class GameManager {
                 ui.getGameScrollPane().setHvalue((destination.getPoint().getX() / gridWidth));
                 ui.getGameScrollPane().setVvalue((destination.getPoint().getY() / gridHeight));
 
+                currentPlayer.addToMoveHistory(destination.getCityName());
+                ui.getDocumentManager().addGameResultToStatsPage(players);
+                //JourneyThroughEuropeFileLoader.saveFile(players);
+               //JourneyThroughEuropeFileLoader.loadFile();
                 destination = null;
                 moveInProgress = false;
+                
                 return true;
             } else {
                 Point2D currentLocation = currentPlayer.getCurrentPosition();
@@ -120,8 +126,8 @@ public class GameManager {
                 double x = currentLocation.getX();
                 double y = currentLocation.getY();
 
-                ui.getGameScrollPane().setHvalue((x / gridWidth));
-                ui.getGameScrollPane().setVvalue((y / gridHeight));
+                ui.getGameScrollPane().setHvalue((currentLocation.getX() / gridWidth));
+                ui.getGameScrollPane().setVvalue((currentLocation.getY() / gridHeight));
             }
 
         }
@@ -130,7 +136,7 @@ public class GameManager {
     }
 
     public boolean isHumanMoveValid(double xPosition, double yPosition) {
-        
+
         if (moveInProgress) {
             return false;
         } else {
@@ -203,22 +209,25 @@ public class GameManager {
                     path = Dijkstra.getShortestPathTo(ui.getGSM().processGetCityRequest(currentPlayer.getCards().get(1)).getVertex());
                     for (int k = 1; k < currentPlayer.getCards().size(); k++) {
                         List<Vertex> temp = Dijkstra.getShortestPathTo(ui.getGSM().processGetCityRequest(currentPlayer.getCards().get(k)).getVertex());
-                        if (temp.size() < path.size()) {
+                        //Fix this area - TIRANE
+                        if (temp.size() < path.size() || path.get(0).toString().equalsIgnoreCase("TIRANE")) {
                             path = temp;
                         }
                     }
                 }
-                if (path.size() != 1) {
-                    destination = ui.getGSM().processGetCityRequest(path.get(1).toString());
-                    moveInProgress = true;
-                    startLocation = currentPlayer.getCurrentPosition();
-                    scrolling = true;
-                    hValueX = gameScrollPane.getHvalue() * gridWidth;
-                    vValueY = gameScrollPane.getVvalue() * gridHeight;
-                    ui.getGSM().resetVertex();
-                    return true;
-                }
-                return false;
+
+                if(path.size() == 1)
+                    return false;
+                
+                destination = ui.getGSM().processGetCityRequest(path.get(1).toString());
+                moveInProgress = true;
+                startLocation = currentPlayer.getCurrentPosition();
+                scrolling = true;
+                hValueX = gameScrollPane.getHvalue() * gridWidth;
+                vValueY = gameScrollPane.getVvalue() * gridHeight;
+                ui.getGSM().resetVertex();
+                return true;
+
             }
         }
     }

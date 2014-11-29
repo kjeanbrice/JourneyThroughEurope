@@ -5,9 +5,15 @@
  */
 package journeythrougheurope.file;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,10 +21,14 @@ import java.util.HashMap;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.geometry.Point2D;
+import javafx.scene.control.TextField;
 import journeythrougheurope.application.Main.JourneyThroughEuropePropertyType;
 import journeythrougheurope.botalgorithm.Edge;
 import journeythrougheurope.game.JourneyThroughEuropeCity;
 import journeythrougheurope.reader.XMLCityReader;
+import journeythrougheurope.ui.JourneyThroughEuropeUI;
+import journeythrougheurope.ui.PlayerManager;
 import properties_manager.PropertiesManager;
 
 /**
@@ -101,20 +111,20 @@ public class JourneyThroughEuropeFileLoader {
                     cityTemp.setGridY(gridY * CONVERSION_FACTOR);
                     cityTemp.setFront(cityName);
 
-                    int size = cityTemp.getNeighboringLandCities().size() + cityTemp.getNeighboringSeaCities().size() ;
+                    int size = cityTemp.getNeighboringLandCities().size() + cityTemp.getNeighboringSeaCities().size();
                     Edge[] edgeList = new Edge[size];
                     for (int i = 0; i < cityTemp.getNeighboringLandCities().size(); i++) {
                         edgeList[i] = new Edge(cities.getCity(cityTemp.getNeighboringLandCities().get(i)).getVertex(), 1);
                     }
-                    
+
                     int landSize = cityTemp.getNeighboringLandCities().size();
                     for (int i = 0; i < cityTemp.getNeighboringSeaCities().size(); i++) {
                         edgeList[i + landSize] = new Edge(cities.getCity(cityTemp.getNeighboringSeaCities().get(i)).getVertex(), 2);
                     }
-                    
-                    cityTemp.setVertexAdjacencies(edgeList);         
+
+                    cityTemp.setVertexAdjacencies(edgeList);
                     cityData.add(cityTemp);
-                    
+
                     System.out.println(cities.getCity(cityName).toString() + "\n");
 
                 }
@@ -124,5 +134,97 @@ public class JourneyThroughEuropeFileLoader {
         }
 
         return cityData;
+    }
+
+    public static ArrayList<PlayerManager> loadFile(JourneyThroughEuropeUI ui) {
+        File fileToOpen = new File("data/game.dat");
+        //String fileName = fileToOpen.getPath();
+        try {
+            if (fileToOpen.exists()) {
+                // LET'S USE A FAST LOADING TECHNIQUE. WE'LL LOAD ALL OF THE
+                // BYTES AT ONCE INTO A BYTE ARRAY, AND THEN PICK THAT APART.
+                // THIS IS FAST BECAUSE IT ONLY HAS TO DO FILE READING ONCE
+                byte[] bytes = new byte[Long.valueOf(fileToOpen.length()).intValue()];
+                ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+                FileInputStream fis = new FileInputStream(fileToOpen);
+                BufferedInputStream bis = new BufferedInputStream(fis);
+
+                // HERE IT IS, THE ONLY READY REQUEST WE NEED
+                bis.read(bytes);
+                bis.close();
+
+                // NOW WE NEED TO LOAD THE DATA FROM THE BYTE ARRAY
+                DataInputStream dis = new DataInputStream(bais);
+                
+                ArrayList<PlayerManager> players = new ArrayList<PlayerManager>();
+                int numPlayers = dis.readInt();
+                for (int i = 0; i < numPlayers; i++) {
+                    
+                    int playerCardsLength = dis.readInt();
+                    int playerGameHistoryLength = dis.readInt();
+                    String playerName = dis.readUTF();
+                    String currentCity = dis.readUTF();
+                    
+                    ArrayList<String> cards = new ArrayList<String>();
+                    for(int j = 0; j<playerCardsLength; j++)
+                        cards.add(dis.readUTF());
+                    
+                    ArrayList<String> moveHistory = new ArrayList<String>();
+                    for(int j = 0; j<playerGameHistoryLength; j++)
+                        moveHistory.add(dis.readUTF());
+                    
+                    boolean isHuman = dis.readBoolean();
+                    
+                    PlayerManager temp = new PlayerManager(new TextField(playerName),isHuman);
+                    temp.setCurrentCity(currentCity);
+                    temp.setCards(cards);
+                    temp.setHomeCity(cards.get(0));
+                    temp.setMoveHistory(moveHistory);
+                    temp.setHomeGridLocation(ui.getGSM().processGetCityRequest(cards.get(0)).getGridLocation());
+                    temp.setCurrentGridLocation(ui.getGSM().processGetCityRequest(currentCity).getGridLocation());
+                    temp.setCurrentPosition(new Point2D(ui.getGSM().processGetCityRequest(currentCity).getGridX(),
+                    ui.getGSM().processGetCityRequest(currentCity).getGridY()));                    
+                    players.add(temp);
+                    
+                    System.out.println(temp.toString());
+                }
+                return players;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        throw new RuntimeException("No File To Load.");
+    }
+
+    public static void saveFile(ArrayList<PlayerManager> players) {
+        String fileName = "data/game.dat";
+        try {
+            FileOutputStream fos = new FileOutputStream(fileName);
+            DataOutputStream dos = new DataOutputStream(fos);
+
+            dos.writeInt(players.size());
+            for (int i = 0; i < players.size(); i++) {
+                dos.writeInt(players.get(i).getCards().size());
+                dos.writeInt(players.get(i).getMoveHistory().size());
+                dos.writeUTF(players.get(i).getPlayerName());
+                dos.writeUTF(players.get(i).getCurrentCity());
+                
+
+                ArrayList<String> cards = players.get(i).getCards();
+                for (int j = 0; j < cards.size(); j++) {
+                    dos.writeUTF(cards.get(j));
+                }
+
+                ArrayList<String> moveHistory = players.get(i).getMoveHistory();
+                for (int j = 0; j < moveHistory.size(); j++) {
+                    dos.writeUTF(moveHistory.get(j));
+                }
+                dos.writeBoolean(players.get(i).isHuman());
+                
+               System.out.println("FileLoader: Player Saved");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

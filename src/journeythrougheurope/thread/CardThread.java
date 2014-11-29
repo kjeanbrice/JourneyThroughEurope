@@ -68,9 +68,11 @@ public class CardThread extends AnimationTimer {
 
         gameGridImageViews = this.ui.getGameGridImages();
 
-        setupPlayerHands();
+        if (playersManager.get(0).getCards().isEmpty()) {
+            setupPlayerHands();
+        }
+        
         initCardManagers();
-
         cardMouseHandler = new CardMouseHandler(cardManager[0].getPlayerManager(), cardRenderer, this.ui.getCardPanel().getWidth());
         ui.getCardPanel().setOnMouseClicked(cardMouseHandler);
     }
@@ -229,6 +231,7 @@ public class CardThread extends AnimationTimer {
             playersManager.get(i).addCard(firstCard);
             playersManager.get(i).setCurrentCity(firstCard);
             playersManager.get(i).setHomeCity(firstCard);
+            playersManager.get(i).addToMoveHistory(firstCard);
             playersManager.get(i).setCurrentGridLocation(ui.getGSM().processGetCityRequest(firstCard).getGridLocation());
             playersManager.get(i).setHomeGridLocation(ui.getGSM().processGetCityRequest(firstCard).getGridLocation());
             playersManager.get(i).setCurrentPosition(new Point2D(ui.getGSM().processGetCityRequest(firstCard).getGridX(),

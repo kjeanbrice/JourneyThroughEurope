@@ -38,6 +38,7 @@ import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
+import javax.swing.text.html.HTMLDocument;
 import journeythrougheurope.application.Main.JourneyThroughEuropePropertyType;
 import journeythrougheurope.file.JourneyThroughEuropeFileLoader;
 import journeythrougheurope.thread.GameRenderer;
@@ -113,6 +114,7 @@ public class JourneyThroughEuropeUI extends Pane {
 
     private VBox rightPanel;
     private Button btnGameHistory;
+    private Button btnSave;
     private Button btnMovesRemaining;
     private Button btnAboutPlay;
     private VBox gameButtonsPanel;
@@ -229,7 +231,7 @@ public class JourneyThroughEuropeUI extends Pane {
         gameScreenContainer.setStyle("-fx-background-color:white");
 
         gameHistoryScreenContainer = new BorderPane();
-        gameHistoryScreenContainer.setStyle("-fx-background-color:white");
+        gameHistoryScreenContainer.setStyle("-fx-background-color:#c8c8fa");
 
         aboutMenuScreenContainer = new BorderPane();
         aboutMenuScreenContainer.setStyle("-fx-background-color:white");
@@ -546,6 +548,18 @@ public class JourneyThroughEuropeUI extends Pane {
                 eventHandler.respondToGameHistoryRequest(JourneyThroughEuropeUIState.VIEW_GAME_HISTORY_STATE);
             }
         });
+        
+        btnSave = this.initButton(JourneyThroughEuropePropertyType.SAVE_IMAGE_NAME);
+        btnSave.setShape(new Circle(1));
+        btnSave.setStyle("-fx-effect: dropshadow( three-pass-box , black , 10 , 0 , 0 , 0 );");
+        btnSave.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+
+                eventHandler.respondToSaveGameRequest(playersManager);
+            }
+        });
 
         btnAboutPlay = this.initButton(JourneyThroughEuropePropertyType.ABOUT_IMAGE_NAME);
         btnAboutPlay.setShape(new Circle(1));
@@ -562,10 +576,11 @@ public class JourneyThroughEuropeUI extends Pane {
         VBox gameHistoryPanel = new VBox();
         gameHistoryPanel.setAlignment(Pos.CENTER);
 
-        gameHistoryPanel.setPadding(new Insets(100, 0, 0, 30));
+        gameHistoryPanel.setPadding(new Insets(75, 0, 0, 30));
         gameHistoryPanel.setSpacing(10.0);
         gameHistoryPanel.getChildren().add(btnGameHistory);
         gameHistoryPanel.getChildren().add(btnAboutPlay);
+        gameHistoryPanel.getChildren().add(btnSave);
 
         VBox gridButtonsFirstColumnBox = new VBox();
         gridButtonsFirstColumnBox.setAlignment(Pos.CENTER);
@@ -692,13 +707,19 @@ public class JourneyThroughEuropeUI extends Pane {
         gameButtonsPanel.getChildren().add(gameHistoryPanel);
 
         StackPane rightPaneContainer = new StackPane();
-        rightPaneContainer.getChildren().add(new Rectangle(242, 636, Color.WHITE));
+        rightPaneContainer.getChildren().add(new Rectangle(242, 720, Color.WHITE));
         rightPaneContainer.getChildren().add(gameButtonsPanel);
 
         rightPanel = new VBox();
         rightPanel.getChildren().add(rightPaneContainer);
-        rightPanel.setStyle("-fx-border-color:black;" + "-fx-border-width: 2px;");
+        //rightPanel.setStyle("-fx-border-color:black;" + "-fx-border-width: 2px;");
 
+        ScrollPane rightPanelScrollPane = new ScrollPane();
+        rightPanelScrollPane.setContent(rightPanel);
+        rightPanelScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        rightPanelScrollPane.setStyle("-fx-border-color:black;" + "-fx-border-width: 2px;");
+        
+        
         leftPanel = new VBox();
         leftPanel.getChildren().add(playerName);
         leftPanel.getChildren().add(cardPanel);
@@ -716,7 +737,7 @@ public class JourneyThroughEuropeUI extends Pane {
 
         gameScreenContainer.setLeft(leftPanel);
         gameScreenContainer.setCenter(gameGridScrollPane);
-        gameScreenContainer.setRight(rightPanel);
+        gameScreenContainer.setRight(rightPanelScrollPane);
         workspace.getChildren().add(gameScreenContainer);
 
     }
@@ -724,6 +745,7 @@ public class JourneyThroughEuropeUI extends Pane {
     private void initGameHistoryScreen() {
 
         gameHistoryToolbar = new HBox();
+        gameHistoryToolbar.setStyle("-fx-background-color:#c8c8fa");
         gameHistoryToolbar.setPadding(new Insets(5, 5, 5, 5));
 
         btnGame = initButton(JourneyThroughEuropePropertyType.GAME_IMG_NAME);
@@ -748,12 +770,14 @@ public class JourneyThroughEuropeUI extends Pane {
 
         SwingNode gameHistorySwingNode = new SwingNode();
         gameHistorySwingNode.setContent(gameHistoryScrollPane);
+        gameHistorySwingNode.setStyle("-fx-background-color:#c8c8fa");
 
        
         loadPage(gameHistoryPane, JourneyThroughEuropePropertyType.GAME_HISTORY_FILE_NAME);
-        //HTMLDocument statsDoc = (HTMLDocument) gameHistoryPane.getDocument();
-        //docManager.setStatsDoc(statsDoc);
+        HTMLDocument statsDoc = (HTMLDocument) gameHistoryPane.getDocument();
+        docManager.setStatsDoc(statsDoc);
 
+        
         gameHistoryWebView = new WebView();
         gameHistoryWebEngine = gameHistoryWebView.getEngine();
         gameHistoryWebEngine.loadContent(gameHistoryPane.getText());
@@ -766,7 +790,9 @@ public class JourneyThroughEuropeUI extends Pane {
         gameHistoryToolbar.getChildren().add(btnGame);
 
         gameHistoryScreenContainer.setTop(gameHistoryToolbar);
-        gameHistoryScreenContainer.setCenter(gameHistoryScrollPaneFX);
+        gameHistoryScreenContainer.setCenter(gameHistorySwingNode);
+        
+        
 
         workspace.getChildren().add(gameHistoryScreenContainer);
     }
@@ -1136,6 +1162,11 @@ public class JourneyThroughEuropeUI extends Pane {
     public ArrayList<PlayerManager> getPlayers() {
         return playersManager;
     }
+    
+    public void setPlayers(ArrayList<PlayerManager> playersManager)
+    {
+        this.playersManager = playersManager;
+    }
 
     public void setCurrentPlayer(int player) {
         playerName.setText(playersManager.get(player).getPlayerName());
@@ -1143,6 +1174,11 @@ public class JourneyThroughEuropeUI extends Pane {
 
     public int getNumPlayers() {
         return numPlayers;
+    }
+    
+    public void setNumPlayers(int numPlayers)
+    {
+        this.numPlayers = numPlayers;
     }
 
     public StackPane getCardPanel() {
@@ -1201,5 +1237,4 @@ public class JourneyThroughEuropeUI extends Pane {
     {
         btnMovesRemaining.setText(movesRemaining);
     }
-
 }

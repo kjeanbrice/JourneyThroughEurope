@@ -19,26 +19,32 @@ public class PlayerManager {
 
     private TextField playerName;
     private boolean human;
+
     private ArrayList<String> cards;
     private ArrayList<Point2D> cardLocations;
+    private ArrayList<String> moveHistory;
+
     private String currentCity;
     private String homeCity;
     private Point2D currentPosition;
     private int currentGridLocation;
     private int homeGridLocation;
     private int movesRemaining;
-    
+
     private Image homeImage;
     private Image playerImage;
 
     public PlayerManager(TextField playerName, boolean human) {
         this.playerName = playerName;
         this.human = human;
+
         cards = new ArrayList<String>();
         cardLocations = new ArrayList<Point2D>();
+        moveHistory = new ArrayList<String>();
+
         currentCity = "";
         homeCity = "";
-        
+
         currentPosition = null;
         homeImage = null;
         playerImage = null;
@@ -46,16 +52,14 @@ public class PlayerManager {
         movesRemaining = 0;
     }
 
-    public void setMovesRemaining(int movesRemaining)
-    {
+    public void setMovesRemaining(int movesRemaining) {
         this.movesRemaining = movesRemaining;
     }
-    
-    public int getMovesRemaining()
-    {
+
+    public int getMovesRemaining() {
         return movesRemaining;
     }
-    
+
     public void setCurrentGridLocation(int gridLocation) {
         this.currentGridLocation = gridLocation;
     }
@@ -63,34 +67,28 @@ public class PlayerManager {
     public int getCurrentGridLocation() {
         return currentGridLocation;
     }
-    
-    public void setHomeGridLocation(int homeGridLocation)
-    {
+
+    public void setHomeGridLocation(int homeGridLocation) {
         this.homeGridLocation = homeGridLocation;
     }
-    
-    public int getHomeGridLocation()
-    {
+
+    public int getHomeGridLocation() {
         return homeGridLocation;
     }
-    
-    public void setHomeImage(Image homeImage)
-    {
+
+    public void setHomeImage(Image homeImage) {
         this.homeImage = homeImage;
     }
-    
-    public Image getHomeImage()
-    {
+
+    public Image getHomeImage() {
         return homeImage;
     }
-    
-    public void setPlayerImage(Image playerImage)
-    {
+
+    public void setPlayerImage(Image playerImage) {
         this.playerImage = playerImage;
     }
-    
-    public Image getPlayerImage()
-    {
+
+    public Image getPlayerImage() {
         return playerImage;
     }
 
@@ -98,7 +96,7 @@ public class PlayerManager {
         currentPosition = point;
     }
 
-   public Point2D getCurrentPosition() {
+    public Point2D getCurrentPosition() {
         return currentPosition;
     }
 
@@ -156,9 +154,39 @@ public class PlayerManager {
     public ArrayList<String> getCards() {
         return cards;
     }
+    
+    public void setCards(ArrayList<String> cards)
+    {
+        this.cards = cards;
+    }
 
     public ArrayList<Point2D> getCardLocations() {
         return cardLocations;
+    }
+
+    public void addToMoveHistory(String city) {
+        moveHistory.add(city);
+    }
+
+    public ArrayList<String> getMoveHistory() {
+        return moveHistory;
+    }
+    
+    public void setMoveHistory(ArrayList<String> moveHistory)
+    {
+        this.moveHistory = moveHistory;
+    }
+
+    public String printGameHistory() {
+        String output = playerName.getText().trim() + " - ";
+        for (int i = 0; i < moveHistory.size(); i++) {
+            if (i == moveHistory.size() - 1) {
+                output += moveHistory.get(i);
+            } else {
+                output += moveHistory.get(i) + ", ";
+            }
+        }
+        return output;
     }
 
     public String toString() {

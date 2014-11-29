@@ -23,6 +23,7 @@
 		<property name ="MAP_IMAGE_NAME"            value = "Map.png"></property>
 		<property name ="ABOUT_IMAGE_NAME"          value = "About.png"></property>
 		<property name ="GAME_HISTORY_IMAGE_NAME"   value = "GameHistory.png"></property>
+		<property name ="SAVE_IMAGE_NAME"           value = "Save.png"></property>
 		<property name ="ROLL_DIE_IMAGE_NAME"       value = "RollDie.png"></property>
 		<property name ="DIE1_IMAGE_NAME"           value = "DieOne.png"></property>
 		<property name ="DIE2_IMAGE_NAME"           value = "DieTwo.png"></property>
@@ -67,6 +68,7 @@
         <property name="DEFAULT_NO_TEXT"            value="No"></property>
        	<property name="DEFAULT_EXIT_TEXT"          value="Are you sure you want to reset this level? Note: This will count as a lost."></property>
 		<property name="LEVEL1_STATS_FILE_NAME"     value="Level1_StatsDisplay.html"></property>	
+		<property name="GAME_RESULTS_TEXT"          value="Game Results:"></property>
     </property_list>
     <property_options_list>
         <property_options name="LEVEL_OPTIONS">
