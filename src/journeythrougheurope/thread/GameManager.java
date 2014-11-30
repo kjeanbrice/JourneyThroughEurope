@@ -108,7 +108,7 @@ public class GameManager {
 
                 currentPlayer.setCurrentCity(destination.getCityName());
                 currentPlayer.setCurrentPosition(destination.getPoint());
-                System.out.println("Game Manager: " + currentPlayer.getCurrentCity());
+                //System.out.println("Game Manager: " + currentPlayer.getCurrentCity());
 
                 ui.getGameScrollPane().setHvalue((destination.getPoint().getX() / gridWidth));
                 ui.getGameScrollPane().setVvalue((destination.getPoint().getY() / gridHeight));

@@ -185,7 +185,7 @@ public class JourneyThroughEuropeEventHandler {
     }
     
     public void respondToGameSetupRequest() {
-        respondToSwitchScreenRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.GAME_SETUP_STATE);
+        respondToSwitchScreenRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.VIEW_GAME_SETUP_STATE);
     }
     
     public void respondToChangeGridRequest(int gridState) {

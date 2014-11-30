@@ -102,8 +102,6 @@ public class JourneyThroughEuropeUI extends Pane {
     private Pane gameCanvas;
     private Pane cardCanvas;
     private ScrollPane gameGridScrollPane;
-    private Image gameGridImage;
-    private ImageView gameGridImageView;
     private Label gameGridImageLabels[];
     private ImageView[] gameGridImageViews;
     private StackPane gameAndCardPanel;
@@ -115,6 +113,7 @@ public class JourneyThroughEuropeUI extends Pane {
     private VBox rightPanel;
     private Button btnGameHistory;
     private Button btnSave;
+    private Button btnFlightScreen;
     private Button btnMovesRemaining;
     private Button btnAboutPlay;
     private VBox gameButtonsPanel;
@@ -124,7 +123,7 @@ public class JourneyThroughEuropeUI extends Pane {
     private VBox diePanel;
     private Button btnDie;
 
-    //Stats Screen
+    //GameHistory Screen
     private HBox gameHistoryToolbar;
     private Button btnGame;
     private JScrollPane gameHistoryScrollPane;
@@ -132,6 +131,15 @@ public class JourneyThroughEuropeUI extends Pane {
     private WebView gameHistoryWebView;
     private WebEngine gameHistoryWebEngine;
     private ScrollPane gameHistoryScrollPaneFX;
+    
+    //Flight Selection Screen
+    private HBox flightScreenToolbar;
+    private Button btnGameFlightScreen;
+    private Label flightScreenImageLabel;
+    private ImageView flightScreenImageView;
+    private ScrollPane flightScreenScrollPane;
+    
+            
 
     //About Screen
     private JEditorPane aboutPane;
@@ -146,10 +154,11 @@ public class JourneyThroughEuropeUI extends Pane {
     private BorderPane gameHistoryScreenContainer;
     private BorderPane aboutMenuScreenContainer;
     private BorderPane aboutGameScreenContainer;
+    private BorderPane flightScreenContainer;
 
     public enum JourneyThroughEuropeUIState {
 
-        SPLASH_SCREEN_STATE, PLAY_GAME_STATE, VIEW_GAME_HISTORY_STATE, VIEW_ABOUT_MENU_STATE, VIEW_ABOUT_GAME_STATE, GAME_SETUP_STATE,
+        SPLASH_SCREEN_STATE, PLAY_GAME_STATE, VIEW_GAME_HISTORY_STATE, VIEW_ABOUT_MENU_STATE, VIEW_ABOUT_GAME_STATE, VIEW_GAME_SETUP_STATE, VIEW_FLIGHT_SCREEN_STATE,
         DIE1_IMAGE_STATE, DIE2_IMAGE_STATE, DIE3_IMAGE_STATE, DIE4_IMAGE_STATE, DIE5_IMAGE_STATE, DIE6_IMAGE_STATE,DEFAULT_DIE_IMAGE_NAME
     }
 
@@ -191,6 +200,7 @@ public class JourneyThroughEuropeUI extends Pane {
         initGameSetupScreen();
         initGameHistoryScreen();
         initGameScreen();
+        initFlightScreen();
         initAboutMenuScreen();
         initAboutGameScreen();
         initSplashScreen();
@@ -234,10 +244,13 @@ public class JourneyThroughEuropeUI extends Pane {
         gameHistoryScreenContainer.setStyle("-fx-background-color:#c8c8fa");
 
         aboutMenuScreenContainer = new BorderPane();
-        aboutMenuScreenContainer.setStyle("-fx-background-color:white");
+        aboutMenuScreenContainer.setStyle("-fx-background-color:#c8c8fa");
 
         aboutGameScreenContainer = new BorderPane();
-        aboutGameScreenContainer.setStyle("-fx-background-color:white");
+        aboutGameScreenContainer.setStyle("-fx-background-color:#c8c8fa");
+        
+        flightScreenContainer = new BorderPane();
+        flightScreenContainer.setStyle("-fx-background-color:#eb2d31");
 
     }
 
@@ -348,10 +361,11 @@ public class JourneyThroughEuropeUI extends Pane {
         FlowPane aboutToolbar = new FlowPane();
         aboutToolbar.setPadding(new Insets(5, 5, 5, 5));
         aboutPanel = new BorderPane();
-        aboutSwingNode.setStyle("-fx-background-color: #FFFFFF");
         aboutPanel.setCenter(aboutSwingNode);
+        aboutPanel.setStyle("-fx-border-color:black;" + "-fx-border-width: 2px;");
+        
         aboutToolbar.getChildren().add(btnBack);
-        aboutToolbar.setStyle("-fx-background-color: #FFFFFF");
+        aboutToolbar.setStyle("-fx-border-color:black;" + "-fx-border-width: 2px;");
 
         btnBack.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -523,8 +537,8 @@ public class JourneyThroughEuropeUI extends Pane {
                 + " -fx-background-radius: 3,2,2,2;"
                 + " -fx-padding: 3,4,3,4;"
                 + " -fx-text-fill: white;"
-                + " -fx-font-size: 15px;"
-                + " -fx-font-family: \"Arial\";"
+                + " -fx-font-size: 16px;"
+                + " -fx-font-family: \"Trebuchet MS\";"
                 + " -fx-font-weight: bold;");
         
         
@@ -546,6 +560,19 @@ public class JourneyThroughEuropeUI extends Pane {
             public void handle(ActionEvent event) {
 
                 eventHandler.respondToGameHistoryRequest(JourneyThroughEuropeUIState.VIEW_GAME_HISTORY_STATE);
+            }
+        });
+        
+        
+        btnFlightScreen = this.initButton(JourneyThroughEuropePropertyType.FLIGHT_SCREEN_IMAGE_NAME);
+        btnFlightScreen.setShape(new Circle(1));
+        btnFlightScreen.setStyle("-fx-effect: dropshadow( three-pass-box , black , 10 , 0 , 0 , 0 );");
+        btnFlightScreen.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+
+                eventHandler.respondToSwitchScreenRequest(JourneyThroughEuropeUIState.VIEW_FLIGHT_SCREEN_STATE);
             }
         });
         
@@ -576,8 +603,9 @@ public class JourneyThroughEuropeUI extends Pane {
         VBox gameHistoryPanel = new VBox();
         gameHistoryPanel.setAlignment(Pos.CENTER);
 
-        gameHistoryPanel.setPadding(new Insets(75, 0, 0, 30));
+        gameHistoryPanel.setPadding(new Insets(50, 0, 0, 30));
         gameHistoryPanel.setSpacing(10.0);
+        gameHistoryPanel.getChildren().add(btnFlightScreen);
         gameHistoryPanel.getChildren().add(btnGameHistory);
         gameHistoryPanel.getChildren().add(btnAboutPlay);
         gameHistoryPanel.getChildren().add(btnSave);
@@ -668,8 +696,8 @@ public class JourneyThroughEuropeUI extends Pane {
                 + " -fx-background-radius: 3,2,2,2;"
                 + " -fx-padding: 3,4,3,4;"
                 + " -fx-text-fill: white;"
-                + " -fx-font-size: 15px;"
-                + " -fx-font-family: \"Arial\";"
+                + " -fx-font-size: 16px;"
+                + " -fx-font-family: \"Trebuchet MS\";"
                 + " -fx-font-weight: bold;");
         
         movesRemainingPanel.getChildren().add(btnMovesRemaining);
@@ -717,13 +745,13 @@ public class JourneyThroughEuropeUI extends Pane {
         ScrollPane rightPanelScrollPane = new ScrollPane();
         rightPanelScrollPane.setContent(rightPanel);
         rightPanelScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-        rightPanelScrollPane.setStyle("-fx-border-color:black;" + "-fx-border-width: 2px;");
+        rightPanelScrollPane.setStyle("-fx-border-color:black;" + "-fx-border-width: 3px;");
         
         
         leftPanel = new VBox();
         leftPanel.getChildren().add(playerName);
         leftPanel.getChildren().add(cardPanel);
-        leftPanel.setStyle("-fx-border-color:black;" + "-fx-border-width: 2px;");
+        leftPanel.setStyle("-fx-border-color:black;" + "-fx-border-width: 3px;");
 
         gameAndCardPanel = new StackPane();
         BorderPane gameAndCardPanelContainer = new BorderPane();
@@ -733,6 +761,7 @@ public class JourneyThroughEuropeUI extends Pane {
 
         gameGridScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         gameGridScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        gameGridScrollPane.setStyle("-fx-border-color:black;" + "-fx-border-width: 3px;");
         gameGridScrollPane.setPannable(true);
 
         gameScreenContainer.setLeft(leftPanel);
@@ -742,6 +771,51 @@ public class JourneyThroughEuropeUI extends Pane {
 
     }
 
+    private void initFlightScreen()
+    {
+         
+        flightScreenToolbar = new HBox();
+        flightScreenToolbar.setPadding(new Insets(5, 5, 5, 5));
+        flightScreenToolbar.setStyle("-fx-border-color:black;" + "-fx-border-width: 3px;");
+
+        btnGameFlightScreen = initButton(JourneyThroughEuropePropertyType.GAME_IMG_NAME);
+        btnGameFlightScreen.setShape(new Circle(1));
+        btnGameFlightScreen.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );");
+
+        btnGameFlightScreen.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+                // TODO Auto-generated method stub
+                eventHandler.respondToSwitchScreenRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.PLAY_GAME_STATE);
+            }
+        });
+
+       
+
+        flightScreenImageView = initImageView(JourneyThroughEuropePropertyType.FLIGHT_PLAN_IMAGE_NAME); 
+        flightScreenImageLabel = new Label();
+        flightScreenImageLabel.setGraphic(flightScreenImageView);
+       
+        flightScreenScrollPane = new ScrollPane();
+        flightScreenScrollPane.setContent(flightScreenImageLabel);
+        flightScreenScrollPane.setFitToHeight(true);
+        
+        flightScreenScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        flightScreenScrollPane.setStyle("-fx-border-color:black;" + "-fx-border-width: 3px;");
+
+        flightScreenToolbar.getChildren().add(btnGameFlightScreen);
+
+        flightScreenContainer.setTop(flightScreenToolbar);
+        flightScreenContainer.setCenter(flightScreenScrollPane);
+        flightScreenContainer.setMaxWidth(flightScreenImageView.getImage().getWidth());
+        
+        
+
+        workspace.getChildren().add(flightScreenContainer);
+    }
+    
+    
     private void initGameHistoryScreen() {
 
         gameHistoryToolbar = new HBox();
@@ -807,7 +881,7 @@ public class JourneyThroughEuropeUI extends Pane {
                 break;
             case PLAY_GAME_STATE:
                 gameScreenContainer.setVisible(true);
-                mainPane.setStyle("-fx-background-color:cb0d11");
+                mainPane.setStyle("-fx-background-color:#cb0d11");
                 break;
             case VIEW_GAME_HISTORY_STATE:
                 gameHistoryScreenContainer.setVisible(true);
@@ -821,9 +895,13 @@ public class JourneyThroughEuropeUI extends Pane {
                 aboutGameScreenContainer.setVisible(true);
                 mainPane.setStyle("-fx-background-color:black");
                 break;
-            case GAME_SETUP_STATE:
+            case VIEW_GAME_SETUP_STATE:
                 gameSetupScreenContainer.setVisible(true);
                 mainPane.setStyle("-fx-background-color:brown");
+                break;
+            case VIEW_FLIGHT_SCREEN_STATE:
+                flightScreenContainer.setVisible(true);
+                mainPane.setStyle("-fx-background-color:cb0d11");
                 break;
             default:
         }
@@ -1035,6 +1113,7 @@ public class JourneyThroughEuropeUI extends Pane {
         gameHistoryScreenContainer.setVisible(false);
         aboutMenuScreenContainer.setVisible(false);
         aboutGameScreenContainer.setVisible(false);
+        flightScreenContainer.setVisible(false);
     }
 
     public VBox setupPlayerGridPane(int flagColor) {

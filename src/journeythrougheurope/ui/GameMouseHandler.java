@@ -9,8 +9,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
 import journeythrougheurope.thread.GameManager;
 import journeythrougheurope.thread.GameRenderer;
 

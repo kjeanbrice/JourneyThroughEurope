@@ -6,6 +6,8 @@
 package journeythrougheurope.thread;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.AnimationTimer;
 import journeythrougheurope.ui.GameMouseHandler;
 import journeythrougheurope.ui.JourneyThroughEuropeUI;
@@ -81,6 +83,8 @@ public class GameThread extends AnimationTimer {
 
     public void update() {
         if (currentGameManager != null) {
+            //System.out.println("Game Thread: " + currentGameManager.getPlayerManager().getPlayerName());
+            //System.out.println("Game Thread: " + currentGameManager.getPlayerManager().toString());
             if (!currentGameManager.getPlayerManager().isHuman()) {
                 if (botRoll) {
                     int roll = (int) ((Math.random() * 6) + 1);
@@ -104,6 +108,7 @@ public class GameThread extends AnimationTimer {
                 ui.disableGridButtons();
                 ui.disableSaveButton();
 
+                
                 if (currentGameManager.isDestinationSeaRoute()) {
                     if (!currentGameManager.isWaitingAtPort()) {
                         currentGameManager.dontMove();
@@ -113,7 +118,9 @@ public class GameThread extends AnimationTimer {
                         System.out.println("Game Thread: " + currentGameManager.getPlayerManager().getPlayerName() + " is waiting to sail at the city " + currentGameManager.getPlayerManager().getCurrentCity() + ".");
                         ui.getGSM().processIncrementPlayerRequest();
                         ui.getGSM().processStartTurnRequest();
+                         //System.out.println("Game Thread: Next Turn " + currentGameManager.getPlayerManager().getPlayerName() + " Moves Remaining: " + currentGameManager.getPlayerManager().getMovesRemaining() + ".");
                     }
+                        
                 }
 
                 if (currentGameManager.getPlayerManager().getMovesRemaining() != 0) {
@@ -121,7 +128,8 @@ public class GameThread extends AnimationTimer {
                         currentGameManager.scrollBack();
                     } else {
                         if (!currentGameManager.move()) {
-
+                           
+                            //System.out.println("Game Thread - Moves Remaining: " + currentGameManager.getPlayerManager().getMovesRemaining());
                             if (currentGameManager.isWaitingAtPort()) {
                                 currentGameManager.setWaitingAtPort(false);
                                 System.out.println("Game Thread: " + currentGameManager.getPlayerManager().getPlayerName() + " is no longer waiting to sail.");
@@ -194,6 +202,5 @@ public class GameThread extends AnimationTimer {
     public void updateRemainingMoves(int moves) {
         currentGameManager.getPlayerManager().setMovesRemaining(currentGameManager.getPlayerManager().getMovesRemaining() + moves);
         ui.updateMovesRemaining("Moves Remaining: " + currentGameManager.getPlayerManager().getMovesRemaining());
-        System.out.println("Game Thread - Remaining Moves: " + remainingMoves);
     }
 }

@@ -47,7 +47,7 @@ public class CardManager {
     }
 
     public void initDefaultCardLocations() {
-        System.out.println(player.getCards().size());
+        System.out.println("Card Manager - Max Cards: " + player.getCards().size());
         for (int i = 0; i < player.getCards().size(); i++) {
             cardLocations.add(new Point2D(0, canvasHeight));
         }
