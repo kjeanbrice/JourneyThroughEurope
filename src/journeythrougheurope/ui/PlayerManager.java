@@ -33,7 +33,7 @@ public class PlayerManager {
 
     private Image homeImage;
     private Image playerImage;
-
+    
     public PlayerManager(TextField playerName, boolean human) {
         this.playerName = playerName;
         this.human = human;
@@ -50,8 +50,11 @@ public class PlayerManager {
         playerImage = null;
         currentGridLocation = -1;
         movesRemaining = 0;
+        
     }
 
+
+    
     public void setMovesRemaining(int movesRemaining) {
         this.movesRemaining = movesRemaining;
     }

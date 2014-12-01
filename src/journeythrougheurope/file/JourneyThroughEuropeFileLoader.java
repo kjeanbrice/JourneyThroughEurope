@@ -38,6 +38,7 @@ import properties_manager.PropertiesManager;
 public class JourneyThroughEuropeFileLoader {
 
     private static final String CITY_DATA_FILE = "data/cities.txt";
+    private static final String AIRPORT_DATA_FILE = "data/airportdata.txt";
     private static final String CITY_NEIGHBORS_FILE = "data/cityneighbors.xml";
     private static final double CONVERSION_FACTOR = .60;
     private HashMap<String, JourneyThroughEuropeCity> cityHashMap;
@@ -70,6 +71,34 @@ public class JourneyThroughEuropeFileLoader {
 
         // RETURN THE TEXT
         return textToReturn;
+    }
+
+    public static ArrayList<String> loadAirportData(XMLCityReader cities) {
+        ArrayList<String> airportData = new ArrayList<String>();
+        try {
+            Scanner fileScan = new Scanner(new File(AIRPORT_DATA_FILE));
+
+            while (fileScan.hasNext()) {
+
+                String cityName = fileScan.next();
+                double x = fileScan.nextDouble();
+                double y = fileScan.nextDouble();
+                int airportGridLocation = fileScan.nextInt();
+
+                JourneyThroughEuropeCity city = cities.getCity(cityName.toUpperCase().trim());
+                city.setAirport(true);
+                city.setAirportLocation(new Point2D(x, y));
+                city.setAirportGrid(airportGridLocation);
+
+                System.out.println("File Loader: " + city.toString() + "Is Airport: " + city.isAirport() + "\nAirport Location: " + city.getAirportLocation().toString() + "\nAirport Grid Location: " + city.getAirportGrid() + "\n");
+                airportData.add(city.getCityName());
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(JourneyThroughEuropeFileLoader.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        System.out.println("File Loader: " + airportData.size());
+        return airportData;
     }
 
     public static ArrayList<JourneyThroughEuropeCity> loadMapGridData(int mapGrid, XMLCityReader cities) {
@@ -155,27 +184,29 @@ public class JourneyThroughEuropeFileLoader {
 
                 // NOW WE NEED TO LOAD THE DATA FROM THE BYTE ARRAY
                 DataInputStream dis = new DataInputStream(bais);
-                
+
                 ArrayList<PlayerManager> players = new ArrayList<PlayerManager>();
                 int numPlayers = dis.readInt();
                 for (int i = 0; i < numPlayers; i++) {
-                    
+
                     int playerCardsLength = dis.readInt();
                     int playerGameHistoryLength = dis.readInt();
                     String playerName = dis.readUTF();
                     String currentCity = dis.readUTF();
-                    
+
                     ArrayList<String> cards = new ArrayList<String>();
-                    for(int j = 0; j<playerCardsLength; j++)
+                    for (int j = 0; j < playerCardsLength; j++) {
                         cards.add(dis.readUTF());
-                    
+                    }
+
                     ArrayList<String> moveHistory = new ArrayList<String>();
-                    for(int j = 0; j<playerGameHistoryLength; j++)
+                    for (int j = 0; j < playerGameHistoryLength; j++) {
                         moveHistory.add(dis.readUTF());
-                    
+                    }
+
                     boolean isHuman = dis.readBoolean();
-                    
-                    PlayerManager temp = new PlayerManager(new TextField(playerName),isHuman);
+
+                    PlayerManager temp = new PlayerManager(new TextField(playerName), isHuman);
                     temp.setCurrentCity(currentCity);
                     temp.setCards(cards);
                     temp.setHomeCity(cards.get(0));
@@ -183,9 +214,9 @@ public class JourneyThroughEuropeFileLoader {
                     temp.setHomeGridLocation(ui.getGSM().processGetCityRequest(cards.get(0)).getGridLocation());
                     temp.setCurrentGridLocation(ui.getGSM().processGetCityRequest(currentCity).getGridLocation());
                     temp.setCurrentPosition(new Point2D(ui.getGSM().processGetCityRequest(currentCity).getGridX(),
-                    ui.getGSM().processGetCityRequest(currentCity).getGridY()));                    
+                            ui.getGSM().processGetCityRequest(currentCity).getGridY()));
                     players.add(temp);
-                    
+
                     System.out.println(temp.toString());
                 }
                 return players;
@@ -208,7 +239,6 @@ public class JourneyThroughEuropeFileLoader {
                 dos.writeInt(players.get(i).getMoveHistory().size());
                 dos.writeUTF(players.get(i).getPlayerName());
                 dos.writeUTF(players.get(i).getCurrentCity());
-                
 
                 ArrayList<String> cards = players.get(i).getCards();
                 for (int j = 0; j < cards.size(); j++) {
@@ -220,8 +250,8 @@ public class JourneyThroughEuropeFileLoader {
                     dos.writeUTF(moveHistory.get(j));
                 }
                 dos.writeBoolean(players.get(i).isHuman());
-                
-               System.out.println("FileLoader: Player Saved");
+
+                System.out.println("FileLoader: Player Saved");
             }
         } catch (Exception e) {
             e.printStackTrace();

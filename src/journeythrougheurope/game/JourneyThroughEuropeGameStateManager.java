@@ -40,6 +40,7 @@ public class JourneyThroughEuropeGameStateManager {
     private HashMap<String, JourneyThroughEuropeCity> cityHashMap;
     private ArrayList<JourneyThroughEuropeCity> currentGrid;
     private ArrayList<ArrayList<JourneyThroughEuropeCity>> grids;
+    private ArrayList<String> airports;
 
     // private
     public JourneyThroughEuropeGameStateManager(JourneyThroughEuropeUI ui) {
@@ -51,6 +52,7 @@ public class JourneyThroughEuropeGameStateManager {
         currentGameState = JourneyThroughEuropeGameState.GAME_NOT_STARTED;
         gamesHistory = new ArrayList<JourneyThroughEuropeGameData>();
         gameInProgress = null;
+        airports = JourneyThroughEuropeFileLoader.loadAirportData(cities);
     }
 
     public void resetVertex() {
@@ -250,5 +252,17 @@ public class JourneyThroughEuropeGameStateManager {
                 gameInProgress.stopGame();
             }
         }
+    }
+    
+    public void processFlightRequest(JourneyThroughEuropeCity city, int moveCost)
+    {
+        if(isGameInProgress())
+        {
+            gameInProgress.sendFlightRequest(city, moveCost);
+        }
+    }
+    public ArrayList<String> processAirportRequest()
+    {
+        return airports;
     }
 }

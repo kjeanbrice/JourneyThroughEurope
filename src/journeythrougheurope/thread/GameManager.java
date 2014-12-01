@@ -48,6 +48,7 @@ public class GameManager {
     private double gridHeight;
 
     private boolean isWaitingAtPort;
+    private boolean alreadyFlew;
     private boolean moveInProgress;
     private boolean scrolling;
 
@@ -66,7 +67,9 @@ public class GameManager {
         gridWidth = this.ui.getGameGridImages()[currentPlayer.getCurrentGridLocation() - 1].getImage().getWidth();
         gridHeight = this.ui.getGameGridImages()[currentPlayer.getCurrentGridLocation() - 1].getImage().getHeight();
         this.players = players;
+       
         isWaitingAtPort = false;
+        alreadyFlew = false;
     }
 
     public synchronized void scrollBack() {
@@ -257,6 +260,29 @@ public class GameManager {
         }
     }
 
+    public void handleFlightRequest(JourneyThroughEuropeCity city) {
+       if(!moveInProgress && !previousCity.equalsIgnoreCase(city.getCityName()))
+       {
+        destination = city;
+        moveInProgress = true;
+        startLocation = currentPlayer.getCurrentPosition();
+        scrolling = true;
+        hValueX = gameScrollPane.getHvalue() * gridWidth;
+        vValueY = gameScrollPane.getVvalue() * gridHeight;
+        alreadyFlew = true;
+       }
+    }
+    
+    public boolean didPlayerFlyThisTurn()
+    {
+        return alreadyFlew;
+    }
+    
+    public void setAlreadyFlew(boolean status)
+    {
+        alreadyFlew = status;
+    }
+
     public boolean isMoveInProgress() {
         return moveInProgress;
     }
@@ -264,14 +290,12 @@ public class GameManager {
     public void setMoveInProgress(boolean status) {
         moveInProgress = status;
     }
-    
-    public void setWaitingAtPort(boolean status)
-    {
+
+    public void setWaitingAtPort(boolean status) {
         isWaitingAtPort = status;
     }
-    
-    public boolean isWaitingAtPort()
-    {
+
+    public boolean isWaitingAtPort() {
         return isWaitingAtPort;
     }
 

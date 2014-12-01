@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.AnimationTimer;
+import journeythrougheurope.game.JourneyThroughEuropeCity;
 import journeythrougheurope.ui.GameMouseHandler;
 import journeythrougheurope.ui.JourneyThroughEuropeUI;
 import journeythrougheurope.ui.PlayerManager;
@@ -21,17 +22,20 @@ public class GameThread extends AnimationTimer {
 
     private JourneyThroughEuropeUI ui;
     private GameMouseHandler mouseHandler;
+    private ArrayList<String> airports;
 
     private ArrayList<PlayerManager> players;
-    private GameManager gameManager[];
+    private GameManager gameManagers[];
     private GameRenderer gameRenderer;
     private GameManager currentGameManager;
     private int remainingMoves;
+    private int moveCost;
 
     private int currentPlayer;
 
     private boolean won;
     private boolean botRoll;
+    private boolean endOfFirstTurn;
 
     public GameThread(JourneyThroughEuropeUI ui) {
         this.ui = ui;
@@ -41,7 +45,7 @@ public class GameThread extends AnimationTimer {
         players = this.ui.getPlayers();
         initGameManagers();
 
-        gameRenderer = new GameRenderer(this.ui.getGamePanel().getWidth(), this.ui.getGamePanel().getHeight(), this.ui, gameManager);
+        gameRenderer = new GameRenderer(this.ui.getGamePanel().getWidth(), this.ui.getGamePanel().getHeight(), this.ui, gameManagers);
         mouseHandler = new GameMouseHandler(this.ui, gameRenderer);
         this.ui.getGamePanel().setOnMouseClicked(mouseHandler);
         this.ui.getGamePanel().setOnMouseDragged(mouseHandler);
@@ -49,13 +53,16 @@ public class GameThread extends AnimationTimer {
 
         botRoll = false;
         won = false;
+        moveCost = 0;
+        airports = ui.getGSM().processAirportRequest();
+        endOfFirstTurn = false;
 
     }
 
     public void initGameManagers() {
-        gameManager = new GameManager[players.size()];
+        gameManagers = new GameManager[players.size()];
         for (int i = 0; i < players.size(); i++) {
-            gameManager[i] = new GameManager(players.get(i), players, ui);
+            gameManagers[i] = new GameManager(players.get(i), players, ui);
         }
 
     }
@@ -108,7 +115,6 @@ public class GameThread extends AnimationTimer {
                 ui.disableGridButtons();
                 ui.disableSaveButton();
 
-                
                 if (currentGameManager.isDestinationSeaRoute()) {
                     if (!currentGameManager.isWaitingAtPort()) {
                         currentGameManager.dontMove();
@@ -118,17 +124,18 @@ public class GameThread extends AnimationTimer {
                         System.out.println("Game Thread: " + currentGameManager.getPlayerManager().getPlayerName() + " is waiting to sail at the city " + currentGameManager.getPlayerManager().getCurrentCity() + ".");
                         ui.getGSM().processIncrementPlayerRequest();
                         ui.getGSM().processStartTurnRequest();
-                         //System.out.println("Game Thread: Next Turn " + currentGameManager.getPlayerManager().getPlayerName() + " Moves Remaining: " + currentGameManager.getPlayerManager().getMovesRemaining() + ".");
+                        //System.out.println("Game Thread: Next Turn " + currentGameManager.getPlayerManager().getPlayerName() + " Moves Remaining: " + currentGameManager.getPlayerManager().getMovesRemaining() + ".");
                     }
-                        
+
                 }
 
                 if (currentGameManager.getPlayerManager().getMovesRemaining() != 0) {
                     if (currentGameManager.isScrolling()) {
                         currentGameManager.scrollBack();
+                        ui.disableFlightButton();
                     } else {
                         if (!currentGameManager.move()) {
-                           
+
                             //System.out.println("Game Thread - Moves Remaining: " + currentGameManager.getPlayerManager().getMovesRemaining());
                             if (currentGameManager.isWaitingAtPort()) {
                                 currentGameManager.setWaitingAtPort(false);
@@ -136,8 +143,14 @@ public class GameThread extends AnimationTimer {
                             }
 
                             boolean removingCard = false;
-                            currentGameManager.getPlayerManager().setMovesRemaining(currentGameManager.getPlayerManager().getMovesRemaining() - 1);
+                            if (moveCost == 0) {
+                                currentGameManager.getPlayerManager().setMovesRemaining(currentGameManager.getPlayerManager().getMovesRemaining() - 1);
+                            } else {
+                                currentGameManager.getPlayerManager().setMovesRemaining(currentGameManager.getPlayerManager().getMovesRemaining() - moveCost);
+                                moveCost = 0;
+                            }
 
+                            checkFlightStatus();
                             ui.enableGridButtons();
                             ui.enableSaveButton();
 
@@ -169,10 +182,12 @@ public class GameThread extends AnimationTimer {
                                 currentGameManager.resetPreviousCity();
                                 currentGameManager.getPlayerManager().setMovesRemaining(0);
                                 if (!removingCard) {
+                                    currentGameManager.setAlreadyFlew(false);
                                     ui.getGSM().processIncrementPlayerRequest();
                                     ui.getGSM().processStartTurnRequest();
 
                                 } else {
+                                    currentGameManager.setAlreadyFlew(false);
                                     ui.getGSM().processSetWaitRequest(true);
                                     ui.disableSaveButton();
                                 }
@@ -192,7 +207,7 @@ public class GameThread extends AnimationTimer {
 
     public void updatePlayer(int currentPlayer) {
         this.currentPlayer = currentPlayer;
-        currentGameManager = gameManager[this.currentPlayer];
+        currentGameManager = gameManagers[this.currentPlayer];
         gameRenderer.setCurrentPlayer(this.currentPlayer);
         mouseHandler.setGameManager(currentGameManager);
         ui.updateMovesRemaining("Moves Remaining: " + currentGameManager.getPlayerManager().getMovesRemaining());
@@ -202,5 +217,35 @@ public class GameThread extends AnimationTimer {
     public void updateRemainingMoves(int moves) {
         currentGameManager.getPlayerManager().setMovesRemaining(currentGameManager.getPlayerManager().getMovesRemaining() + moves);
         ui.updateMovesRemaining("Moves Remaining: " + currentGameManager.getPlayerManager().getMovesRemaining());
+    }
+
+    public void checkFlightStatus() {
+        if (endOfFirstTurn) {
+            boolean activateFlightButton = false;
+            for (int i = 0; i < airports.size(); i++) {
+                if (airports.get(i).equalsIgnoreCase(currentGameManager.getPlayerManager().getCurrentCity())
+                        && !(currentGameManager.getPlayerManager().getMovesRemaining() < 2) && !currentGameManager.didPlayerFlyThisTurn()) {
+                    activateFlightButton = true;
+                    break;
+                }
+            }
+
+            if (activateFlightButton) {
+                ui.enableFlightButton();
+            } else {
+                ui.disableFlightButton();
+            }
+        }
+    }
+
+    public void handleFlightRequest(JourneyThroughEuropeCity city, int moveCost) {
+        if (!currentGameManager.didPlayerFlyThisTurn()) {
+            this.moveCost = moveCost;
+            currentGameManager.handleFlightRequest(city);
+        }
+    }
+
+    public void setEndOfFirstTurn(boolean status) {
+        endOfFirstTurn = true;
     }
 }

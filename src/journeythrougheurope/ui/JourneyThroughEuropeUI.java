@@ -44,6 +44,7 @@ import journeythrougheurope.file.JourneyThroughEuropeFileLoader;
 import journeythrougheurope.thread.GameRenderer;
 import journeythrougheurope.game.JourneyThroughEuropeGameStateManager;
 import journeythrougheurope.thread.CardRenderer;
+import journeythrougheurope.thread.FlightRenderer;
 import properties_manager.PropertiesManager;
 
 /**
@@ -134,6 +135,8 @@ public class JourneyThroughEuropeUI extends Pane {
     
     //Flight Selection Screen
     private HBox flightScreenToolbar;
+    private StackPane flightPanel;
+    private Pane flightCanvas;
     private Button btnGameFlightScreen;
     private Label flightScreenImageLabel;
     private ImageView flightScreenImageView;
@@ -513,12 +516,9 @@ public class JourneyThroughEuropeUI extends Pane {
         gameGridImageLabels[3].setGraphic(gameGridImageViews[3]);
 
         gamePanel = new StackPane();
-        gamePanel.setStyle("-fx-border-color:black;" + "-fx-border-width: 2px;");
         gamePanel.getChildren().add(gameGridImageLabels[0]);
         gamePanel.setFocusTraversable(true);
-        //gameGridImageView.fitWidthProperty().bind(gamePanel.widthProperty());
-        //gameGridImageView.fitHeightProperty().bind(gamePanel.heightProperty());
-
+ 
         gameCanvas = new Pane();
         gamePanel.getChildren().add(gameCanvas);
 
@@ -552,7 +552,7 @@ public class JourneyThroughEuropeUI extends Pane {
         gameButtonsPanel.setAlignment(Pos.TOP_CENTER);
 
         btnGameHistory = this.initButton(JourneyThroughEuropePropertyType.GAME_HISTORY_IMAGE_NAME);
-        btnGameHistory.setShape(new Circle(1));
+       // btnGameHistory.setShape(new Circle(1));
         btnGameHistory.setStyle("-fx-effect: dropshadow( three-pass-box , black , 10 , 0 , 0 , 0 );");
         btnGameHistory.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -565,8 +565,9 @@ public class JourneyThroughEuropeUI extends Pane {
         
         
         btnFlightScreen = this.initButton(JourneyThroughEuropePropertyType.FLIGHT_SCREEN_IMAGE_NAME);
-        btnFlightScreen.setShape(new Circle(1));
+       // btnFlightScreen.setShape(new Circle(1));
         btnFlightScreen.setStyle("-fx-effect: dropshadow( three-pass-box , black , 10 , 0 , 0 , 0 );");
+        btnFlightScreen.setDisable(true);
         btnFlightScreen.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -577,7 +578,7 @@ public class JourneyThroughEuropeUI extends Pane {
         });
         
         btnSave = this.initButton(JourneyThroughEuropePropertyType.SAVE_IMAGE_NAME);
-        btnSave.setShape(new Circle(1));
+        //btnSave.setShape(new Circle(1));
         btnSave.setStyle("-fx-effect: dropshadow( three-pass-box , black , 10 , 0 , 0 , 0 );");
         btnSave.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -589,7 +590,7 @@ public class JourneyThroughEuropeUI extends Pane {
         });
 
         btnAboutPlay = this.initButton(JourneyThroughEuropePropertyType.ABOUT_IMAGE_NAME);
-        btnAboutPlay.setShape(new Circle(1));
+       // btnAboutPlay.setShape(new Circle(1));
         btnAboutPlay.setStyle("-fx-effect: dropshadow( three-pass-box , black , 10 , 0 , 0 , 0 );");
         btnAboutPlay.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -797,8 +798,15 @@ public class JourneyThroughEuropeUI extends Pane {
         flightScreenImageLabel = new Label();
         flightScreenImageLabel.setGraphic(flightScreenImageView);
        
+        flightPanel = new StackPane();
+        flightPanel.getChildren().add(flightScreenImageLabel);
+        gamePanel.setFocusTraversable(true);
+ 
+        flightCanvas = new Pane();
+        flightPanel.getChildren().add(flightCanvas);
         flightScreenScrollPane = new ScrollPane();
-        flightScreenScrollPane.setContent(flightScreenImageLabel);
+        
+        flightScreenScrollPane.setContent(flightPanel);
         flightScreenScrollPane.setFitToHeight(true);
         
         flightScreenScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -1233,6 +1241,11 @@ public class JourneyThroughEuropeUI extends Pane {
         cardCanvas.getChildren().clear();
         cardCanvas.getChildren().add(cardRenderer);
     }
+    
+     public void setFlightToScreen(FlightRenderer flightRenderer) {
+        flightCanvas.getChildren().clear();
+        flightCanvas.getChildren().add(flightRenderer);
+    }
 
     public GameRenderer getGameRenderer() {
         return gameRenderer;
@@ -1267,9 +1280,18 @@ public class JourneyThroughEuropeUI extends Pane {
     public StackPane getGamePanel() {
         return gamePanel;
     }
+    
+     public StackPane getFlightPanel() {
+        return flightPanel;
+    }
 
     public ScrollPane getGameScrollPane() {
         return gameGridScrollPane;
+    }
+    
+    public ScrollPane getFlightScrollPane()
+    {
+        return flightScreenScrollPane;
     }
 
     public int getCurrentGrid() {
@@ -1278,6 +1300,11 @@ public class JourneyThroughEuropeUI extends Pane {
 
     public ImageView[] getGameGridImages() {
         return gameGridImageViews;
+    }
+    
+    public ImageView getFlightScreenImage()
+    {
+        return flightScreenImageView;
     }
     
     public void disableGridButtons()
@@ -1315,6 +1342,16 @@ public class JourneyThroughEuropeUI extends Pane {
     public void enableSaveButton()
     {
          btnSave.setDisable(false);
+    }
+    
+     public void disableFlightButton()
+    {
+        btnFlightScreen.setDisable(true);
+    }
+    
+    public void enableFlightButton()
+    {
+         btnFlightScreen.setDisable(false);
     }
     
     public void resetRollImage()

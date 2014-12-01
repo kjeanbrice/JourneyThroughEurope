@@ -28,6 +28,10 @@ public class JourneyThroughEuropeCity {
     private Vertex vertex;
     private Edge[] adjacencies;
 
+    private boolean isAirport;
+    private Point2D airportLocation;
+    private int airportGrid;
+
     public JourneyThroughEuropeCity(String cityName, String cardColor, int gridLocation, double gridX, double gridY) {
         this.cityName = cityName;
         this.cardColor = cardColor;
@@ -38,10 +42,38 @@ public class JourneyThroughEuropeCity {
         neighboringSeaCities = new ArrayList<String>();
         vertex = null;
         adjacencies = null;
+        
+        isAirport = false;
+        airportLocation = null;
+        airportGrid = -1;
     }
 
     public JourneyThroughEuropeCity() {
         this("", "", -1, -1, -1);
+    }
+
+    public void setAirport(boolean isAirport) {
+        this.isAirport = isAirport;
+    }
+
+    public boolean isAirport() {
+        return isAirport;
+    }
+
+    public void setAirportLocation(Point2D airportLocation) {
+        this.airportLocation = airportLocation;
+    }
+
+    public Point2D getAirportLocation() {
+        return airportLocation;
+    }
+
+    public void setAirportGrid(int airportGrid) {
+        this.airportGrid = airportGrid;
+    }
+
+    public int getAirportGrid() {
+        return airportGrid;
     }
 
     public void setFront(String imageName) {
@@ -136,12 +168,12 @@ public class JourneyThroughEuropeCity {
     public String toString() {
         String output = "";
         output += "City Name: " + cityName + "\nCard Color: " + cardColor + "\nGrid Location: " + gridLocation + "\nX: " + gridX
-                + "\nY: " + gridY + "\nNeighboring Land Cities: " + neighboringLandCities.toString() + "\nNeighboring Sea Cities: " + neighboringSeaCities.toString() + 
-                "\nVertex: "  + vertex.toString() + "\n";
+                + "\nY: " + gridY + "\nNeighboring Land Cities: " + neighboringLandCities.toString() + "\nNeighboring Sea Cities: " + neighboringSeaCities.toString()
+                + "\nVertex: " + vertex.toString() + "\n";
         for (int i = 0; i < adjacencies.length; i++) {
             output += "Edge " + i + ": " + adjacencies[i].toString() + "\n";
         }
-        
+
         return output;
     }
 }
