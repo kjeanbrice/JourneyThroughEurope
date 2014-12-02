@@ -98,6 +98,12 @@ public class JourneyThroughEuropeGameData {
     public void sendFlightRequest(JourneyThroughEuropeCity city, int moveCost) {
         gameThread.handleFlightRequest(city, moveCost);
     }
+    
+    public void sendStatusOnScrollPane(boolean status)
+    { 
+            gameThread.setStatusOnScrollPane(status);
+            cardThread.setStatusOnScrollPane(status);
+    }
 
     public synchronized void removeCardFromCurrentPlayer(int cityIndex) {
         cardThread.setRemovingCardStatus(true, cityIndex);

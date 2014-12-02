@@ -20,6 +20,7 @@ import journeythrougheurope.ui.PlayerManager;
  */
 public class GameThread extends AnimationTimer {
 
+    private final int MAX_DELAY = 20;
     private JourneyThroughEuropeUI ui;
     private GameMouseHandler mouseHandler;
     private ArrayList<String> airports;
@@ -32,15 +33,19 @@ public class GameThread extends AnimationTimer {
     private int moveCost;
 
     private int currentPlayer;
+    private int delayCount;
 
     private boolean won;
     private boolean botRoll;
     private boolean endOfFirstTurn;
+    private boolean delay;
+    private boolean nextTurn;
 
     public GameThread(JourneyThroughEuropeUI ui) {
         this.ui = ui;
         currentPlayer = -1;
         remainingMoves = 0;
+        delayCount = 0;
 
         players = this.ui.getPlayers();
         initGameManagers();
@@ -56,6 +61,8 @@ public class GameThread extends AnimationTimer {
         moveCost = 0;
         airports = ui.getGSM().processAirportRequest();
         endOfFirstTurn = false;
+        delay = false;
+        nextTurn = false;
 
     }
 
@@ -78,8 +85,26 @@ public class GameThread extends AnimationTimer {
 
     @Override
     public void handle(long now) {
-        update();
-        render();
+
+        if (!delay) {
+            update();
+            render();
+        }
+
+        if (delay) {
+            delayCount++;
+            if (delayCount == MAX_DELAY) {
+                delay = false;
+                delayCount = 0;
+                if (nextTurn) {
+                    currentGameManager.setAlreadyFlew(false);
+                    ui.getGSM().processIncrementPlayerRequest();
+                    ui.getGSM().processStartTurnRequest();
+                    nextTurn = false;
+                }
+            }
+
+        }
     }
 
     public void render() {
@@ -90,8 +115,7 @@ public class GameThread extends AnimationTimer {
 
     public void update() {
         if (currentGameManager != null) {
-            //System.out.println("Game Thread: " + currentGameManager.getPlayerManager().getPlayerName());
-            //System.out.println("Game Thread: " + currentGameManager.getPlayerManager().toString());
+
             if (!currentGameManager.getPlayerManager().isHuman()) {
                 if (botRoll) {
                     int roll = (int) ((Math.random() * 6) + 1);
@@ -107,11 +131,12 @@ public class GameThread extends AnimationTimer {
                     }
                 }
                 if (!currentGameManager.isMoveInProgress()) {
-                    currentGameManager.isBotMoveValid();
+                    if (currentGameManager.isBotMoveValid()) {
+                        ui.getGSM().processStatusOnScrollPaneRequest(false);
+                    }
                 }
             }
             if (currentGameManager.isMoveInProgress()) {
-                ui.getGameScrollPane().setPannable(false);
                 ui.disableGridButtons();
                 ui.disableSaveButton();
 
@@ -122,6 +147,7 @@ public class GameThread extends AnimationTimer {
                         currentGameManager.getPlayerManager().setMovesRemaining(0);
                         currentGameManager.setWaitingAtPort(true);
                         System.out.println("Game Thread: " + currentGameManager.getPlayerManager().getPlayerName() + " is waiting to sail at the city " + currentGameManager.getPlayerManager().getCurrentCity() + ".");
+
                         ui.getGSM().processIncrementPlayerRequest();
                         ui.getGSM().processStartTurnRequest();
                         //System.out.println("Game Thread: Next Turn " + currentGameManager.getPlayerManager().getPlayerName() + " Moves Remaining: " + currentGameManager.getPlayerManager().getMovesRemaining() + ".");
@@ -130,13 +156,16 @@ public class GameThread extends AnimationTimer {
                 }
 
                 if (currentGameManager.getPlayerManager().getMovesRemaining() != 0) {
+
                     if (currentGameManager.isScrolling()) {
                         currentGameManager.scrollBack();
                         ui.disableFlightButton();
                     } else {
+
                         if (!currentGameManager.move()) {
 
-                            //System.out.println("Game Thread - Moves Remaining: " + currentGameManager.getPlayerManager().getMovesRemaining());
+                            ui.getGSM().processStatusOnScrollPaneRequest(true);
+                            delay = true;
                             if (currentGameManager.isWaitingAtPort()) {
                                 currentGameManager.setWaitingAtPort(false);
                                 System.out.println("Game Thread: " + currentGameManager.getPlayerManager().getPlayerName() + " is no longer waiting to sail.");
@@ -153,8 +182,8 @@ public class GameThread extends AnimationTimer {
                             checkFlightStatus();
                             ui.enableGridButtons();
                             ui.enableSaveButton();
+                            System.out.println("Im Enabled.");
 
-                            ui.getGameScrollPane().setPannable(true);
                             ui.updateMovesRemaining("Moves Remaining: " + currentGameManager.getPlayerManager().getMovesRemaining());
 
                             if (currentGameManager.getPlayerManager().getCards().size() != 1) {
@@ -182,15 +211,18 @@ public class GameThread extends AnimationTimer {
                                 currentGameManager.resetPreviousCity();
                                 currentGameManager.getPlayerManager().setMovesRemaining(0);
                                 if (!removingCard) {
-                                    currentGameManager.setAlreadyFlew(false);
-                                    ui.getGSM().processIncrementPlayerRequest();
-                                    ui.getGSM().processStartTurnRequest();
+                                    nextTurn = true;
+                                    //currentGameManager.setAlreadyFlew(false);
+                                    //ui.getGSM().processIncrementPlayerRequest();
+                                    //ui.getGSM().processStartTurnRequest();
 
                                 } else {
                                     currentGameManager.setAlreadyFlew(false);
                                     ui.getGSM().processSetWaitRequest(true);
                                     ui.disableSaveButton();
+                                    delay = false;
                                 }
+
                             }
                         }
                     }
@@ -247,5 +279,13 @@ public class GameThread extends AnimationTimer {
 
     public void setEndOfFirstTurn(boolean status) {
         endOfFirstTurn = true;
+    }
+
+    public void setStatusOnScrollPane(boolean status) {
+        if (status) {
+            ui.enableScrollPaneFocus();
+        } else {
+            ui.disableScrollPaneFocus();
+        }
     }
 }

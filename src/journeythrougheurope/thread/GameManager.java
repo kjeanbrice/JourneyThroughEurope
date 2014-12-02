@@ -99,8 +99,8 @@ public class GameManager {
             float xOffset = (float) ((destination.getGridX() - startLocation.getX()));
             float yOffset = (float) ((destination.getGridY() - startLocation.getY()));
 
-            Rectangle2D currentRectLocation = new Rectangle2D(currentPlayer.getCurrentPosition().getX(), currentPlayer.getCurrentPosition().getY(), 5, 5);
-            Rectangle2D destinationRectLocation = new Rectangle2D(destination.getGridX(), destination.getGridY(), 5, 5);
+            Rectangle2D currentRectLocation = new Rectangle2D(currentPlayer.getCurrentPosition().getX(), currentPlayer.getCurrentPosition().getY(), 1, 1);
+            Rectangle2D destinationRectLocation = new Rectangle2D(destination.getGridX(), destination.getGridY(), 3, 3);
             if (currentRectLocation.intersects(destinationRectLocation)) {
 
                 previousCity = currentPlayer.getCurrentCity();

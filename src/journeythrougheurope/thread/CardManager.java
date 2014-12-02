@@ -53,26 +53,31 @@ public class CardManager {
         }
     }
 
-    public synchronized void scrollToPlayerLocation() {
-        double destinationX = player.getCurrentPosition().getX();
-        double destinationY = player.getCurrentPosition().getY();
+    public boolean scrollToPlayerLocation() {
+        if (scrolling) {
+            double destinationX = player.getCurrentPosition().getX();
+            double destinationY = player.getCurrentPosition().getY();
 
-        double xScrollOffset = (destinationX - hValueX);
-        double YScrollOffset = (destinationY - vValueY);
+            double xScrollOffset = (destinationX - hValueX);
+            double YScrollOffset = (destinationY - vValueY);
 
-        Rectangle2D currentScrollLocation = new Rectangle2D(gameScrollPane.getHvalue() * gridWidth, gameScrollPane.getVvalue() * gridHeight, 10, 10);
-        Rectangle2D destinationRectLocation = new Rectangle2D(destinationX, destinationY, 5, 5);
-        if (currentScrollLocation.intersects(destinationRectLocation)) {
-            gameScrollPane.setHvalue((destinationX / gridWidth));
-            gameScrollPane.setVvalue((destinationY / gridHeight));
-            scrolling = false;
-            hValueX = 0;
-            vValueY = 0;
+            Rectangle2D currentScrollLocation = new Rectangle2D(gameScrollPane.getHvalue() * gridWidth, gameScrollPane.getVvalue() * gridHeight, 1, 1);
+            Rectangle2D destinationRectLocation = new Rectangle2D(destinationX, destinationY, 3, 3);
+            if (currentScrollLocation.intersects(destinationRectLocation)) {
+                gameScrollPane.setHvalue((destinationX / gridWidth));
+                gameScrollPane.setVvalue((destinationY / gridHeight));
+                scrolling = false;
+                hValueX = 0;
+                vValueY = 0;
+                return false;
 
-        } else {
-            gameScrollPane.setHvalue((gameScrollPane.getHvalue() + ((xScrollOffset / gridWidth) / STEPS)));
-            gameScrollPane.setVvalue((gameScrollPane.getVvalue() + ((YScrollOffset / gridHeight) / STEPS)));
+            } else {
+                gameScrollPane.setHvalue((gameScrollPane.getHvalue() + ((xScrollOffset / gridWidth) / STEPS)));
+                gameScrollPane.setVvalue((gameScrollPane.getVvalue() + ((YScrollOffset / gridHeight) / STEPS)));
+                return true;
+            }
         }
+        return true;
 
     }
 

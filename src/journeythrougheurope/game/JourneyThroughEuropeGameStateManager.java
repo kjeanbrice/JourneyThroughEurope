@@ -261,6 +261,14 @@ public class JourneyThroughEuropeGameStateManager {
             gameInProgress.sendFlightRequest(city, moveCost);
         }
     }
+    
+    public void processStatusOnScrollPaneRequest(boolean status)
+    {
+        if(isGameInProgress())
+        {
+            gameInProgress.sendStatusOnScrollPane(status);
+        }
+    }
     public ArrayList<String> processAirportRequest()
     {
         return airports;

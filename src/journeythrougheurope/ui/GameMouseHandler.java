@@ -42,7 +42,9 @@ public class GameMouseHandler implements EventHandler<MouseEvent> {
                 case "MOUSE_CLICKED":
                     //System.out.println("Mouse Clicked");
                     if (currentGameManager.getPlayerManager().getMovesRemaining() != 0 && currentGameManager.getPlayerManager().isHuman()) {
-                        System.out.println("GameMouseHandler: " + currentGameManager.isHumanMoveValid(event.getX(), event.getY()));
+                        if (currentGameManager.isHumanMoveValid(event.getX(), event.getY())) {
+                            ui.getGSM().processStatusOnScrollPaneRequest(false);
+                        }
                     }
 
                     break;
