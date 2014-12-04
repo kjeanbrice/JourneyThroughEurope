@@ -67,7 +67,8 @@ public class JourneyThroughEuropeEventHandler {
         ui.setNumPlayers(players.size());
         
         respondToStartGameRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.PLAY_GAME_STATE);
-        ui.getDocumentManager().addGameResultToStatsPage(players);
+        for(int i = 0; i<players.size(); i++)
+        ui.getDocumentManager().addGameResultToStatsPage(players,i);
     }
     
      public void respondToSaveGameRequest(ArrayList<PlayerManager> players) {
@@ -200,5 +201,78 @@ public class JourneyThroughEuropeEventHandler {
     public void respondToChangeNumberOfPlayersRequest(int numPlayers) {
         ui.disablePlayerGridPanes();
         ui.enablePlayerGridPanes(numPlayers);
+    }
+    
+    public void respondToExitRequest(Stage primaryStage)
+    {
+        // ENGLIS IS THE DEFAULT
+        String options[] = new String[]
+        {
+            "Yes", "No"
+        };
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        options[0] = props.getProperty(JourneyThroughEuropePropertyType.DEFAULT_YES_TEXT);
+        options[1] = props.getProperty(JourneyThroughEuropePropertyType.DEFAULT_NO_TEXT);
+        String verifyExit = props.getProperty(JourneyThroughEuropePropertyType.DEFAULT_EXIT_TEXT);
+        String exitText = props.getProperty(JourneyThroughEuropePropertyType.EXIT_TEXT);
+
+        // NOW WE'LL CHECK TO SEE IF LANGUAGE SPECIFIC VALUES HAVE BEEN SET
+        if (props.getProperty(JourneyThroughEuropePropertyType.YES_TEXT) != null)
+        {
+            options[0] = props.getProperty(JourneyThroughEuropePropertyType.YES_TEXT);
+            options[1] = props.getProperty(JourneyThroughEuropePropertyType.NO_TEXT);
+            verifyExit = props.getProperty(JourneyThroughEuropePropertyType.EXIT_REQUEST_TEXT);
+            exitText = props.getProperty(JourneyThroughEuropePropertyType.EXIT_TEXT);
+        }
+
+        // FIRST MAKE SURE THE USER REALLY WANTS TO EXIT
+        Stage dialogStage = new Stage();
+        dialogStage.setTitle(exitText);
+        dialogStage.initModality(Modality.WINDOW_MODAL);
+        dialogStage.initOwner(primaryStage);
+        BorderPane exitPane = new BorderPane();
+
+        HBox optionPane = new HBox();
+        Button btnYes = new Button(options[0]);
+        Button btnNo = new Button(options[1]);
+       
+        optionPane.setPadding(new Insets(2,2,10,2));
+        optionPane.setSpacing(5.0);
+        optionPane.getChildren().addAll(btnYes, btnNo);
+        optionPane.setAlignment(Pos.TOP_CENTER);
+
+        Label exitLabel = new Label(verifyExit);
+        HBox exitLabelPane = new HBox();
+        exitLabelPane.setPadding(new Insets(10,2,5,2));
+        exitLabelPane.getChildren().add(exitLabel);
+        exitLabelPane.setAlignment(Pos.BOTTOM_CENTER);
+        
+        VBox container = new VBox();
+        container.getChildren().addAll(exitLabelPane,optionPane);
+        container.setAlignment(Pos.CENTER);
+
+        exitPane.setCenter(container);
+       
+        Scene scene = new Scene(exitPane);
+
+        dialogStage.setWidth(400);
+        dialogStage.setHeight(100);
+        dialogStage.setResizable(false);
+        dialogStage.setScene(scene);
+        dialogStage.show();
+
+        // WHAT'S THE USER'S DECISION?
+        btnYes.setOnAction(buttonEvent ->
+        {
+            // YES, LET'S EXIT
+            System.exit(0);
+        });
+        
+        btnNo.setOnAction(buttonEvent ->
+        {
+           // Closes the stage when the user's decision is "No".
+           dialogStage.close();
+        });
+
     }
 }

@@ -147,6 +147,7 @@ public class GameThread extends AnimationTimer {
                         currentGameManager.getPlayerManager().setMovesRemaining(0);
                         currentGameManager.setWaitingAtPort(true);
                         System.out.println("Game Thread: " + currentGameManager.getPlayerManager().getPlayerName() + " is waiting to sail at the city " + currentGameManager.getPlayerManager().getCurrentCity() + ".");
+                        ui.getTextArea().setText(currentGameManager.getPlayerManager().getPlayerName() + " is waiting to sail at the city " + currentGameManager.getPlayerManager().getCurrentCity() + ".");
 
                         ui.getGSM().processIncrementPlayerRequest();
                         ui.getGSM().processStartTurnRequest();
@@ -182,8 +183,6 @@ public class GameThread extends AnimationTimer {
                             checkFlightStatus();
                             ui.enableGridButtons();
                             ui.enableSaveButton();
-                            System.out.println("Im Enabled.");
-
                             ui.updateMovesRemaining("Moves Remaining: " + currentGameManager.getPlayerManager().getMovesRemaining());
 
                             if (currentGameManager.getPlayerManager().getCards().size() != 1) {
@@ -240,6 +239,7 @@ public class GameThread extends AnimationTimer {
     public void updatePlayer(int currentPlayer) {
         this.currentPlayer = currentPlayer;
         currentGameManager = gameManagers[this.currentPlayer];
+        currentGameManager.setCurrentPlayer(currentPlayer);
         gameRenderer.setCurrentPlayer(this.currentPlayer);
         mouseHandler.setGameManager(currentGameManager);
         ui.updateMovesRemaining("Moves Remaining: " + currentGameManager.getPlayerManager().getMovesRemaining());

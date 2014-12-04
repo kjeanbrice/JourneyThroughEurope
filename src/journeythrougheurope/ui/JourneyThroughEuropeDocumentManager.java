@@ -57,6 +57,12 @@ public class JourneyThroughEuropeDocumentManager {
     private final String FASTEST_WIN_ID = "fastest_win";
     private final String GAME_RESULTS_HEADER_ID = "game_results_header";
     private final String GAME_RESULTS_LIST_ID = "game_results_list";
+    private final String PLAYER1_ID = "player_1";
+    private final String PLAYER2_ID = "player_2";
+    private final String PLAYER3_ID = "player_3";
+    private final String PLAYER4_ID = "player_4";
+    private final String PLAYER5_ID = "player_5";
+    private final String PLAYER6_ID = "player_6";
 
     public JourneyThroughEuropeDocumentManager(JourneyThroughEuropeUI ui) {
         this.ui = ui;
@@ -66,25 +72,48 @@ public class JourneyThroughEuropeDocumentManager {
         statsDoc = initStatsDoc;
     }
 
-    public void addGameResultToStatsPage(ArrayList<PlayerManager> players) {
+    public void addGameResultToStatsPage(ArrayList<PlayerManager> players, int player) {
         // GET THE GAME STATS
         JourneyThroughEuropeGameStateManager gsm = ui.getGSM();
 
         try {
 
             // ADD THE SUBHEADER
-             PropertiesManager props = PropertiesManager.getPropertiesManager();
-             String gameResultsText = props.getProperty(JourneyThroughEuropePropertyType.GAME_RESULTS_TEXT);
-             Element h2 = statsDoc.getElement(GAME_RESULTS_HEADER_ID);
-             statsDoc.setInnerHTML(h2, gameResultsText);
-             
+            PropertiesManager props = PropertiesManager.getPropertiesManager();
+            String gameResultsText = props.getProperty(JourneyThroughEuropePropertyType.GAME_RESULTS_TEXT);
+            Element h2 = statsDoc.getElement(GAME_RESULTS_HEADER_ID);
+            statsDoc.setInnerHTML(h2, gameResultsText);
+
             // AND NOW ADD THE LATEST GAME TO THE LIST
             Element ol = statsDoc.getElement(GAME_RESULTS_LIST_ID);
-            String htmlText = "";
+            Element li = null;
+            switch (player) {
+                case 0:
+                    li = statsDoc.getElement(PLAYER1_ID);
+                    break;
+                case 1:
+                    li = statsDoc.getElement(PLAYER2_ID);
+                    break;
+                case 2:
+                    li = statsDoc.getElement(PLAYER3_ID);
+                    break;
+                case 3:
+                    li = statsDoc.getElement(PLAYER4_ID);
+                    break;
+                case 4:
+                    li = statsDoc.getElement(PLAYER5_ID);
+                    break;
+                case 5:
+                    li = statsDoc.getElement(PLAYER6_ID);
+                    break;
+
+            }
+            statsDoc.setInnerHTML(li, players.get(player).printGameHistory());
+            /*String htmlText = "";
             for (int i = 0; i < players.size(); i++) {
                 htmlText += START_TAG + HTML.Tag.LI + END_TAG + players.get(i).printGameHistory() + START_TAG + SLASH + HTML.Tag.LI + END_TAG + NL;
             }
-             statsDoc.setInnerHTML(ol, htmlText);
+            statsDoc.setInnerHTML(ol, htmlText);*/
         } // WE'LL LET THE ERROR HANDLER TAKE CARE OF ANY ERRORS,
         // WHICH COULD HAPPEN IF XML SETUP FILES ARE IMPROPERLY
         // FORMATTED

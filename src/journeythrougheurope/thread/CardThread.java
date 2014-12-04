@@ -239,7 +239,7 @@ public class CardThread extends AnimationTimer {
             playersManager.get(i).addCard(firstCard);
             playersManager.get(i).setCurrentCity(firstCard);
             playersManager.get(i).setHomeCity(firstCard);
-            playersManager.get(i).addToMoveHistory(firstCard);
+            playersManager.get(i).addToMoveHistory(playersManager.get(i).getPlayerName() + "'s home city is " + firstCard);
             playersManager.get(i).setCurrentGridLocation(ui.getGSM().processGetCityRequest(firstCard).getGridLocation());
             playersManager.get(i).setHomeGridLocation(ui.getGSM().processGetCityRequest(firstCard).getGridLocation());
             playersManager.get(i).setCurrentPosition(new Point2D(ui.getGSM().processGetCityRequest(firstCard).getGridX(),

@@ -19,6 +19,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -104,6 +105,7 @@ public class JourneyThroughEuropeUI extends Pane {
     private Pane cardCanvas;
     private ScrollPane gameGridScrollPane;
     private Label gameGridImageLabels[];
+    private TextArea textArea;
     private ImageView[] gameGridImageViews;
     private StackPane gameAndCardPanel;
     private boolean focus;
@@ -118,6 +120,7 @@ public class JourneyThroughEuropeUI extends Pane {
     private Button btnFlightScreen;
     private Button btnMovesRemaining;
     private Button btnAboutPlay;
+    private Button btnExitGame;
     private VBox gameButtonsPanel;
 
     private Button gridButtons[];
@@ -243,7 +246,7 @@ public class JourneyThroughEuropeUI extends Pane {
         gameScreenContainer.setStyle("-fx-background-color:white");
 
         gameHistoryScreenContainer = new BorderPane();
-        gameHistoryScreenContainer.setStyle("-fx-background-color:#c8c8fa");
+        gameScreenContainer.setStyle("-fx-background-color:white");
 
         aboutMenuScreenContainer = new BorderPane();
         aboutMenuScreenContainer.setStyle("-fx-background-color:#c8c8fa");
@@ -555,7 +558,7 @@ public class JourneyThroughEuropeUI extends Pane {
         gameButtonsPanel.setAlignment(Pos.TOP_CENTER);
 
         btnGameHistory = this.initButton(JourneyThroughEuropePropertyType.GAME_HISTORY_IMAGE_NAME);
-        // btnGameHistory.setShape(new Circle(1));
+        btnGameHistory.setShape(new Circle(1));
         btnGameHistory.setStyle("-fx-effect: dropshadow( three-pass-box , black , 10 , 0 , 0 , 0 );");
         btnGameHistory.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -567,7 +570,7 @@ public class JourneyThroughEuropeUI extends Pane {
         });
 
         btnFlightScreen = this.initButton(JourneyThroughEuropePropertyType.FLIGHT_SCREEN_IMAGE_NAME);
-        // btnFlightScreen.setShape(new Circle(1));
+        btnFlightScreen.setShape(new Circle(1));
         btnFlightScreen.setStyle("-fx-effect: dropshadow( three-pass-box , black , 10 , 0 , 0 , 0 );");
         btnFlightScreen.setDisable(true);
         btnFlightScreen.setOnAction(new EventHandler<ActionEvent>() {
@@ -580,7 +583,7 @@ public class JourneyThroughEuropeUI extends Pane {
         });
 
         btnSave = this.initButton(JourneyThroughEuropePropertyType.SAVE_IMAGE_NAME);
-        //btnSave.setShape(new Circle(1));
+        btnSave.setShape(new Circle(1));
         btnSave.setStyle("-fx-effect: dropshadow( three-pass-box , black , 10 , 0 , 0 , 0 );");
         btnSave.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -592,7 +595,7 @@ public class JourneyThroughEuropeUI extends Pane {
         });
 
         btnAboutPlay = this.initButton(JourneyThroughEuropePropertyType.ABOUT_IMAGE_NAME);
-        // btnAboutPlay.setShape(new Circle(1));
+        btnAboutPlay.setShape(new Circle(1));
         btnAboutPlay.setStyle("-fx-effect: dropshadow( three-pass-box , black , 10 , 0 , 0 , 0 );");
         btnAboutPlay.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -600,6 +603,18 @@ public class JourneyThroughEuropeUI extends Pane {
             public void handle(ActionEvent event) {
 
                 eventHandler.respondToSwitchScreenRequest(JourneyThroughEuropeUIState.VIEW_ABOUT_GAME_STATE);
+            }
+        });
+        
+        btnExitGame = this.initButton(JourneyThroughEuropePropertyType.EXIT_GAME_IMAGE_NAME);
+        btnExitGame.setShape(new Circle(1));
+        btnExitGame.setStyle("-fx-effect: dropshadow( three-pass-box , black , 10 , 0 , 0 , 0 );");
+        btnExitGame.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+
+                eventHandler.respondToExitRequest(primaryStage);
             }
         });
 
@@ -612,6 +627,7 @@ public class JourneyThroughEuropeUI extends Pane {
         gameHistoryPanel.getChildren().add(btnGameHistory);
         gameHistoryPanel.getChildren().add(btnAboutPlay);
         gameHistoryPanel.getChildren().add(btnSave);
+        gameHistoryPanel.getChildren().add(btnExitGame);
 
         VBox gridButtonsFirstColumnBox = new VBox();
         gridButtonsFirstColumnBox.setAlignment(Pos.CENTER);
@@ -703,7 +719,17 @@ public class JourneyThroughEuropeUI extends Pane {
                 + " -fx-font-family: \"Trebuchet MS\";"
                 + " -fx-font-weight: bold;");
 
-        movesRemainingPanel.getChildren().add(btnMovesRemaining);
+        textArea = new TextArea();
+        textArea.setEditable(false);
+        textArea.setPrefRowCount(5);
+        textArea.setMaxWidth(240);
+        textArea.setText("Game Notifications");
+        textArea.setWrapText(true);
+        textArea.setStyle("-fx-border-color:black;" + "-fx-border-width: 4px;" + "-fx-font-family: \"Trebuchet MS\";"
+                + " -fx-font-weight: bold;" + "-fx-font-size: 13px;");
+       
+        movesRemainingPanel.setSpacing(10.0);
+        movesRemainingPanel.getChildren().addAll(btnMovesRemaining,textArea);
 
         diePanel = new VBox();
         diePanel.setAlignment(Pos.CENTER);
@@ -711,6 +737,7 @@ public class JourneyThroughEuropeUI extends Pane {
 
         btnDie = this.initButton(JourneyThroughEuropePropertyType.DEFAULT_DIE_IMAGE_NAME);
         btnDie.setDisable(true);
+        btnDie.setShape(new Circle(1));
         btnDie.setStyle("-fx-effect: dropshadow( three-pass-box , black , 10 , 0 , 0 , 0 );");
         btnDie.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -721,6 +748,8 @@ public class JourneyThroughEuropeUI extends Pane {
             }
         });
 
+        
+        
         Label lblRollDie = this.initLabel(JourneyThroughEuropePropertyType.ROLL_DIE_IMAGE_NAME);
         diePanel.getChildren().addAll(lblRollDie, btnDie);
         diePanel.setSpacing(5.0);
@@ -738,7 +767,7 @@ public class JourneyThroughEuropeUI extends Pane {
         gameButtonsPanel.getChildren().add(gameHistoryPanel);
 
         StackPane rightPaneContainer = new StackPane();
-        rightPaneContainer.getChildren().add(new Rectangle(242, 720, Color.WHITE));
+        rightPaneContainer.getChildren().add(new Rectangle(242, 800, Color.WHITE));
         rightPaneContainer.getChildren().add(gameButtonsPanel);
 
         rightPanel = new VBox();
@@ -764,9 +793,8 @@ public class JourneyThroughEuropeUI extends Pane {
         gameGridScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         gameGridScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         gameGridScrollPane.setStyle("-fx-border-color:black;" + "-fx-border-width: 3px;");
-        
+
         disableScrollPaneFocus();
-        
 
         gameScreenContainer.setLeft(leftPanel);
         gameScreenContainer.setCenter(gameGridScrollPane);
@@ -824,8 +852,8 @@ public class JourneyThroughEuropeUI extends Pane {
     private void initGameHistoryScreen() {
 
         gameHistoryToolbar = new HBox();
-        gameHistoryToolbar.setStyle("-fx-background-color:#c8c8fa");
         gameHistoryToolbar.setPadding(new Insets(5, 5, 5, 5));
+        gameHistoryToolbar.setStyle("-fx-background-color:white");
 
         btnGame = initButton(JourneyThroughEuropePropertyType.GAME_IMG_NAME);
         btnGame.setShape(new Circle(1));
@@ -849,7 +877,6 @@ public class JourneyThroughEuropeUI extends Pane {
 
         SwingNode gameHistorySwingNode = new SwingNode();
         gameHistorySwingNode.setContent(gameHistoryScrollPane);
-        gameHistorySwingNode.setStyle("-fx-background-color:#c8c8fa");
 
         loadPage(gameHistoryPane, JourneyThroughEuropePropertyType.GAME_HISTORY_FILE_NAME);
         HTMLDocument statsDoc = (HTMLDocument) gameHistoryPane.getDocument();
@@ -1342,18 +1369,21 @@ public class JourneyThroughEuropeUI extends Pane {
     public void updateMovesRemaining(String movesRemaining) {
         btnMovesRemaining.setText(movesRemaining);
     }
-    
-    public void disableScrollPaneFocus()
-    {
+
+    public void disableScrollPaneFocus() {
         focus = false;
         gameGridScrollPane.setPannable(false);
         leftPanel.requestFocus();
     }
-    
-    public void enableScrollPaneFocus()
-    {
+
+    public void enableScrollPaneFocus() {
         focus = true;
         gameGridScrollPane.setPannable(true);
-        
+
+    }
+    
+    public TextArea getTextArea()
+    {
+        return textArea;
     }
 }
