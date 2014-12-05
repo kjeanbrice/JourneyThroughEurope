@@ -21,10 +21,10 @@
 		<property name ="GRID3_BUTTON_IMAGE_NAME"   value = "Grid3ButtonImage.png"></property>
 		<property name ="GRID4_BUTTON_IMAGE_NAME"   value = "Grid4ButtonImage.png"></property>
 		<property name ="MAP_IMAGE_NAME"            value = "Map.png"></property>
-		<property name ="FLIGHT_PLAN_IMAGE_NAME"    value = "FlightPlan.jpg"></property>
+		<property name ="FLIGHT_PLAN_IMAGE_NAME"    value = "FlightPlan.png"></property>
 		<property name ="ABOUT_IMAGE_NAME"          value = "About.png"></property>
 		<property name ="EXIT_GAME_IMAGE_NAME"      value = "ExitGame.png"></property>
-		<property name="EXIT_TEXT"				    value="Exit"></property>
+		<property name="EXIT_TEXT"				    value=  "Exit"></property>
 		<property name ="GAME_HISTORY_IMAGE_NAME"   value = "GameHistory.png"></property>
 		<property name ="SAVE_IMAGE_NAME"           value = "Save.png"></property>
 		<property name ="FLIGHT_SCREEN_IMAGE_NAME"  value = "FlightScreen.png"></property>
@@ -70,7 +70,7 @@
         <property name="LETTERS_FONT_SIZE"          value="24"></property>
         <property name="DEFAULT_YES_TEXT"           value="Yes"></property>
         <property name="DEFAULT_NO_TEXT"            value="No"></property>
-       	<property name="DEFAULT_EXIT_TEXT"          value="Are you sure you want to exit? Any unsaved data will be lost."></property>
+       	<property name="DEFAULT_EXIT_TEXT"          value="Are you sure you want to exit? Any unsaved changes will be lost."></property>
 		<property name="LEVEL1_STATS_FILE_NAME"     value="Level1_StatsDisplay.html"></property>	
 		<property name="GAME_RESULTS_TEXT"          value="Game Results:"></property>
     </property_list>

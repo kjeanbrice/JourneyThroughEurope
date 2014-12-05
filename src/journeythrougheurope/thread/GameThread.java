@@ -20,7 +20,7 @@ import journeythrougheurope.ui.PlayerManager;
  */
 public class GameThread extends AnimationTimer {
 
-    private final int MAX_DELAY = 20;
+    private final int MAX_DELAY = 40;
     private JourneyThroughEuropeUI ui;
     private GameMouseHandler mouseHandler;
     private ArrayList<String> airports;
@@ -131,7 +131,7 @@ public class GameThread extends AnimationTimer {
                     }
                 }
                 if (!currentGameManager.isMoveInProgress()) {
-                    if (currentGameManager.isBotMoveValid()) {
+                    if (currentGameManager.isBotMoveValid(endOfFirstTurn)) {
                         ui.getGSM().processStatusOnScrollPaneRequest(false);
                     }
                 }
@@ -177,6 +177,7 @@ public class GameThread extends AnimationTimer {
                                 currentGameManager.getPlayerManager().setMovesRemaining(currentGameManager.getPlayerManager().getMovesRemaining() - 1);
                             } else {
                                 currentGameManager.getPlayerManager().setMovesRemaining(currentGameManager.getPlayerManager().getMovesRemaining() - moveCost);
+                                ui.getTextArea().setText(ui.getTextArea().getText() + "\n" + currentGameManager.getPlayerManager().getPlayerName() + " used " + moveCost + " points to fly to "+ currentGameManager.getPlayerManager().getCurrentCity() + ".");
                                 moveCost = 0;
                             }
 

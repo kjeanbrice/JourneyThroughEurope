@@ -41,6 +41,7 @@ public class JourneyThroughEuropeFileLoader {
     private static final String AIRPORT_DATA_FILE = "data/airportdata.txt";
     private static final String CITY_NEIGHBORS_FILE = "data/cityneighbors.xml";
     private static final double CONVERSION_FACTOR = .60;
+    private static final double AIRPORT_CONVERSION_FACTOR = .55;
     private HashMap<String, JourneyThroughEuropeCity> cityHashMap;
     private static final double GRID_1_WIDTH = 2000;
     private static final double GRID_1_HEIGHT = 2569;
@@ -81,8 +82,8 @@ public class JourneyThroughEuropeFileLoader {
             while (fileScan.hasNext()) {
 
                 String cityName = fileScan.next();
-                double x = fileScan.nextDouble();
-                double y = fileScan.nextDouble();
+                double x = fileScan.nextDouble() * AIRPORT_CONVERSION_FACTOR;
+                double y = fileScan.nextDouble() * AIRPORT_CONVERSION_FACTOR;
                 int airportGridLocation = fileScan.nextInt();
 
                 JourneyThroughEuropeCity city = cities.getCity(cityName.toUpperCase().trim());

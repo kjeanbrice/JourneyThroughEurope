@@ -10,10 +10,8 @@ import java.util.List;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.shape.Circle;
 import journeythrougheurope.botalgorithm.Dijkstra;
 import journeythrougheurope.botalgorithm.Vertex;
-import journeythrougheurope.file.JourneyThroughEuropeFileLoader;
 import journeythrougheurope.game.JourneyThroughEuropeCity;
 import journeythrougheurope.ui.JourneyThroughEuropeUI;
 import journeythrougheurope.ui.PlayerManager;
@@ -41,6 +39,7 @@ public class GameManager {
     private JourneyThroughEuropeUI ui;
     private JourneyThroughEuropeCity destination;
     private String previousCity;
+    private ArrayList<String> airportCities;
 
     private ScrollPane gameScrollPane;
     private double hValueX;
@@ -52,15 +51,19 @@ public class GameManager {
     private boolean alreadyFlew;
     private boolean moveInProgress;
     private boolean scrolling;
+    private boolean flightInProgress;
 
     public GameManager(PlayerManager player, ArrayList<PlayerManager> players, JourneyThroughEuropeUI ui) {
         this.ui = ui;
         this.player = player;
         destination = null;
         moveInProgress = false;
+        flightInProgress = false;
         scrolling = true;
         startLocation = null;
         previousCity = "";
+
+        airportCities = ui.getGSM().processAirportRequest();
 
         hValueX = 0;
         vValueY = 0;
@@ -69,7 +72,7 @@ public class GameManager {
         gridWidth = this.ui.getGameGridImages()[this.player.getCurrentGridLocation() - 1].getImage().getWidth();
         gridHeight = this.ui.getGameGridImages()[this.player.getCurrentGridLocation() - 1].getImage().getHeight();
         this.players = players;
-       
+
         isWaitingAtPort = false;
         alreadyFlew = false;
     }
@@ -117,11 +120,19 @@ public class GameManager {
 
                 ui.getGameScrollPane().setHvalue((destination.getPoint().getX() / gridWidth));
                 ui.getGameScrollPane().setVvalue((destination.getPoint().getY() / gridHeight));
-                
-                ui.getTextArea().setText(player.getPlayerName() +" has moved to " + destination.getCityName() + ".");
-                player.addToMoveHistory(player.getPlayerName() +" has " + player.getMovesRemaining() + " points left" );
-                player.addToMoveHistory(player.getPlayerName() +" has moved to " + destination.getCityName());
-                ui.getDocumentManager().addGameResultToStatsPage(players,currentPlayer);
+
+                player.addToMoveHistory(player.getPlayerName() + " has " + player.getMovesRemaining() + " points left");
+                if (flightInProgress) {
+                    ui.getTextArea().setText(player.getPlayerName() + " flew to " + destination.getCityName() + "."
+                            + "\n" + player.getPlayerName() + " must wait until next round to fly again.");
+                    player.addToMoveHistory(player.getPlayerName() + " flew to " + destination.getCityName());
+                    flightInProgress = false;
+                } else {
+                    ui.getTextArea().setText(player.getPlayerName() + " has moved to " + destination.getCityName() + ".");
+                    player.addToMoveHistory(player.getPlayerName() + " has moved to " + destination.getCityName());
+                }
+
+                ui.getDocumentManager().addGameResultToStatsPage(players, currentPlayer);
                 //JourneyThroughEuropeFileLoader.saveFile(players);
                 //JourneyThroughEuropeFileLoader.loadFile();
                 destination = null;
@@ -202,7 +213,7 @@ public class GameManager {
         }
     }
 
-    public boolean isBotMoveValid() {
+    public boolean isBotMoveValid(boolean endOfFirstTurn) {
         if (moveInProgress) {
             return false;
         } else {
@@ -229,7 +240,38 @@ public class GameManager {
                     return false;
                 }
 
-                destination = ui.getGSM().processGetCityRequest(path.get(1).toString());
+                //check for bot flight route here
+                if (isBotAtAirport() && !alreadyFlew && endOfFirstTurn) {
+                    System.out.println("GameManager: Bot is at Airport.");
+                    ArrayList<String> temp = validBotFlightRoutes();
+                    if (!temp.isEmpty()) {
+                        boolean pathFound = false;
+                        for (int i = 0; i < temp.size(); i++) {
+                            if (!temp.get(i).equalsIgnoreCase("TIRANE")) {
+                                JourneyThroughEuropeCity airportCity = ui.getGSM().processGetCityRequest(temp.get(i));
+                                JourneyThroughEuropeCity cardDestination = ui.getGSM().processGetCityRequest(path.get(path.size() - 1).toString());
+                                ui.getGSM().resetVertex();
+
+                                Dijkstra.computePaths(airportCity.getVertex());
+                                List<Vertex> tempPath = Dijkstra.getShortestPathTo(cardDestination.getVertex());
+                                if (tempPath.size() < (path.size() - 1)) {
+                                    pathFound = true;
+                                    destination = ui.getGSM().processGetCityRequest(tempPath.get(0).toString());
+                                }
+                            }
+                        }
+                        if (pathFound) {
+                            alreadyFlew = true;
+                            flightInProgress = true;
+                            System.out.println("Bot is flying");
+                        }
+
+                    }
+                }
+
+                if (destination == null) {
+                    destination = ui.getGSM().processGetCityRequest(path.get(1).toString());
+                }
                 moveInProgress = true;
                 startLocation = player.getCurrentPosition();
                 scrolling = true;
@@ -265,25 +307,23 @@ public class GameManager {
     }
 
     public void handleFlightRequest(JourneyThroughEuropeCity city) {
-       if(!moveInProgress && !previousCity.equalsIgnoreCase(city.getCityName()))
-       {
-        destination = city;
-        moveInProgress = true;
-        startLocation = player.getCurrentPosition();
-        scrolling = true;
-        hValueX = gameScrollPane.getHvalue() * gridWidth;
-        vValueY = gameScrollPane.getVvalue() * gridHeight;
-        alreadyFlew = true;
-       }
+        if (!moveInProgress && !previousCity.equalsIgnoreCase(city.getCityName())) {
+            destination = city;
+            moveInProgress = true;
+            startLocation = player.getCurrentPosition();
+            scrolling = true;
+            hValueX = gameScrollPane.getHvalue() * gridWidth;
+            vValueY = gameScrollPane.getVvalue() * gridHeight;
+            alreadyFlew = true;
+            flightInProgress = true;
+        }
     }
-    
-    public boolean didPlayerFlyThisTurn()
-    {
+
+    public boolean didPlayerFlyThisTurn() {
         return alreadyFlew;
     }
-    
-    public void setAlreadyFlew(boolean status)
-    {
+
+    public void setAlreadyFlew(boolean status) {
         alreadyFlew = status;
     }
 
@@ -314,10 +354,145 @@ public class GameManager {
     public void resetPreviousCity() {
         previousCity = "";
     }
-    
-    public void setCurrentPlayer(int currentPlayer)
-    {
+
+    public void setCurrentPlayer(int currentPlayer) {
         this.currentPlayer = currentPlayer;
     }
 
+    public ArrayList<String> validBotFlightRoutes() {
+        if (!isBotAtAirport()) {
+            throw new RuntimeException("The current player is not at a airport.");
+        }
+
+        ArrayList<String> validPlayerAirports = new ArrayList<String>();
+        int playerAirportGridLocation = ui.getGSM().processGetCityRequest(player.getCurrentCity()).getAirportGrid();
+
+        switch (playerAirportGridLocation) {
+            case 1:
+                if (player.getMovesRemaining() >= 2 && player.getMovesRemaining() < 4) {
+                    for (int i = 0; i < airportCities.size(); i++) {
+                        JourneyThroughEuropeCity city = ui.getGSM().processGetCityRequest(airportCities.get(i));
+                        if (city.getAirportGrid() == 1) {
+                            validPlayerAirports.add(city.getCityName());
+                        }
+                    }
+                }
+
+                if (player.getMovesRemaining() >= 4) {
+                    for (int i = 0; i < airportCities.size(); i++) {
+                        JourneyThroughEuropeCity city = ui.getGSM().processGetCityRequest(airportCities.get(i));
+                        if (city.getAirportGrid() == 1 || city.getAirportGrid() == 2 || city.getAirportGrid() == 4) {
+                            validPlayerAirports.add(city.getCityName());
+                        }
+                    }
+                }
+                break;
+            case 2:
+                if (player.getMovesRemaining() >= 2 && player.getMovesRemaining() < 4) {
+                    for (int i = 0; i < airportCities.size(); i++) {
+                        JourneyThroughEuropeCity city = ui.getGSM().processGetCityRequest(airportCities.get(i));
+                        if (city.getAirportGrid() == 2) {
+                            validPlayerAirports.add(city.getCityName());
+                        }
+                    }
+                }
+
+                if (player.getMovesRemaining() >= 4) {
+                    for (int i = 0; i < airportCities.size(); i++) {
+                        JourneyThroughEuropeCity city = ui.getGSM().processGetCityRequest(airportCities.get(i));
+                        if (city.getAirportGrid() == 1 || city.getAirportGrid() == 2 || city.getAirportGrid() == 3) {
+                            validPlayerAirports.add(city.getCityName());
+                        }
+                    }
+                }
+                break;
+            case 3:
+                if (player.getMovesRemaining() >= 2 && player.getMovesRemaining() < 4) {
+                    for (int i = 0; i < airportCities.size(); i++) {
+                        JourneyThroughEuropeCity city = ui.getGSM().processGetCityRequest(airportCities.get(i));
+                        if (city.getAirportGrid() == 3) {
+                            validPlayerAirports.add(city.getCityName());
+                        }
+                    }
+                }
+
+                if (player.getMovesRemaining() >= 4) {
+                    for (int i = 0; i < airportCities.size(); i++) {
+                        JourneyThroughEuropeCity city = ui.getGSM().processGetCityRequest(airportCities.get(i));
+                        if (city.getAirportGrid() == 4 || city.getAirportGrid() == 2 || city.getAirportGrid() == 3 || city.getAirportGrid() == 6) {
+                            validPlayerAirports.add(city.getCityName());
+                        }
+                    }
+                }
+                break;
+            case 4:
+                if (player.getMovesRemaining() >= 2 && player.getMovesRemaining() < 4) {
+                    for (int i = 0; i < airportCities.size(); i++) {
+                        JourneyThroughEuropeCity city = ui.getGSM().processGetCityRequest(airportCities.get(i));
+                        if (city.getAirportGrid() == 4) {
+                            validPlayerAirports.add(city.getCityName());
+                        }
+                    }
+                }
+
+                if (player.getMovesRemaining() >= 4) {
+                    for (int i = 0; i < airportCities.size(); i++) {
+                        JourneyThroughEuropeCity city = ui.getGSM().processGetCityRequest(airportCities.get(i));
+                        if (city.getAirportGrid() == 1 || city.getAirportGrid() == 3 || city.getAirportGrid() == 4 || city.getAirportGrid() == 5) {
+                            validPlayerAirports.add(city.getCityName());
+                        }
+                    }
+                }
+                break;
+            case 5:
+                if (player.getMovesRemaining() >= 2 && player.getMovesRemaining() < 4) {
+                    for (int i = 0; i < airportCities.size(); i++) {
+                        JourneyThroughEuropeCity city = ui.getGSM().processGetCityRequest(airportCities.get(i));
+                        if (city.getAirportGrid() == 5) {
+                            validPlayerAirports.add(city.getCityName());
+                        }
+                    }
+                }
+
+                if (player.getMovesRemaining() >= 4) {
+                    for (int i = 0; i < airportCities.size(); i++) {
+                        JourneyThroughEuropeCity city = ui.getGSM().processGetCityRequest(airportCities.get(i));
+                        if (city.getAirportGrid() == 5 || city.getAirportGrid() == 6 || city.getAirportGrid() == 4) {
+                            validPlayerAirports.add(city.getCityName());
+                        }
+                    }
+                }
+                break;
+            case 6:
+                if (player.getMovesRemaining() >= 2 && player.getMovesRemaining() < 4) {
+                    for (int i = 0; i < airportCities.size(); i++) {
+                        JourneyThroughEuropeCity city = ui.getGSM().processGetCityRequest(airportCities.get(i));
+                        if (city.getAirportGrid() == 6) {
+                            validPlayerAirports.add(city.getCityName());
+                        }
+                    }
+                }
+
+                if (player.getMovesRemaining() >= 4) {
+                    for (int i = 0; i < airportCities.size(); i++) {
+                        JourneyThroughEuropeCity city = ui.getGSM().processGetCityRequest(airportCities.get(i));
+                        if (city.getAirportGrid() == 6 || city.getAirportGrid() == 5 || city.getAirportGrid() == 3) {
+                            validPlayerAirports.add(city.getCityName());
+                        }
+                    }
+                }
+                break;
+        }
+
+        return validPlayerAirports;
+    }
+
+    public boolean isBotAtAirport() {
+        for (int i = 0; i < airportCities.size(); i++) {
+            if (player.getCurrentCity().equalsIgnoreCase(airportCities.get(i))) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
