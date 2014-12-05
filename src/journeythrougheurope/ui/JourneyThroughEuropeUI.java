@@ -177,6 +177,11 @@ public class JourneyThroughEuropeUI extends Pane {
     public BorderPane getMainPane() {
         return mainPane;
     }
+    
+    public Stage getPrimaryStage()
+    {
+        return primaryStage;
+    }
 
     public void setStage(Stage stage) {
         primaryStage = stage;
@@ -912,6 +917,10 @@ public class JourneyThroughEuropeUI extends Pane {
                 mainPane.setStyle("-fx-background-color:#cb0d11");
                 break;
             case VIEW_GAME_HISTORY_STATE:
+                for(int i = 0; i<MAX_PLAYERS; i++)
+                {
+                    docManager.addGameResultToStatsPage(playersManager);
+                }
                 gameHistoryScreenContainer.setVisible(true);
                 mainPane.setStyle("-fx-background-color:black");
                 break;
@@ -1385,5 +1394,13 @@ public class JourneyThroughEuropeUI extends Pane {
     public TextArea getTextArea()
     {
         return textArea;
+    }
+    
+    public void resetGame()
+    {
+        workspace.getChildren().remove(gameSetupScreenContainer);
+        gameSetupScreenContainer.getChildren().clear();
+        initGameSetupScreen();
+        textArea.setText("Game Notifications");
     }
 }

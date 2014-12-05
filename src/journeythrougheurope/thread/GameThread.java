@@ -133,6 +133,11 @@ public class GameThread extends AnimationTimer {
                 if (!currentGameManager.isMoveInProgress()) {
                     if (currentGameManager.isBotMoveValid(endOfFirstTurn)) {
                         ui.getGSM().processStatusOnScrollPaneRequest(false);
+                        if(currentGameManager.getMoveCost() != 0)
+                        {
+                            moveCost = currentGameManager.getMoveCost();
+                            currentGameManager.setMoveCost(0);
+                        }
                     }
                 }
             }
@@ -203,6 +208,7 @@ public class GameThread extends AnimationTimer {
                                     this.ui.getGSM().processRemoveCardRequest(0);
                                     removingCard = true;
                                     stopGameThread();
+                                    ui.getEventHandler().showWinDialog(ui.getPrimaryStage(), currentGameManager.getPlayerManager().getPlayerName());
                                     System.out.println(currentGameManager.getPlayerManager().getPlayerName() + " has won!");
                                 }
                             }

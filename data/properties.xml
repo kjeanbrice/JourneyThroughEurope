@@ -22,6 +22,7 @@
 		<property name ="GRID4_BUTTON_IMAGE_NAME"   value = "Grid4ButtonImage.png"></property>
 		<property name ="MAP_IMAGE_NAME"            value = "Map.png"></property>
 		<property name ="FLIGHT_PLAN_IMAGE_NAME"    value = "FlightPlan.png"></property>
+		<property name ="TROPHY_IMG_NAME"           value = "Trophy.png"></property>
 		<property name ="ABOUT_IMAGE_NAME"          value = "About.png"></property>
 		<property name ="EXIT_GAME_IMAGE_NAME"      value = "ExitGame.png"></property>
 		<property name="EXIT_TEXT"				    value=  "Exit"></property>

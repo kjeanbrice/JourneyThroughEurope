@@ -72,7 +72,7 @@ public class JourneyThroughEuropeDocumentManager {
         statsDoc = initStatsDoc;
     }
 
-    public void addGameResultToStatsPage(ArrayList<PlayerManager> players, int player) {
+    public void addGameResultToStatsPage(ArrayList<PlayerManager> players) {
         // GET THE GAME STATS
         JourneyThroughEuropeGameStateManager gsm = ui.getGSM();
 
@@ -86,34 +86,11 @@ public class JourneyThroughEuropeDocumentManager {
 
             // AND NOW ADD THE LATEST GAME TO THE LIST
             Element ol = statsDoc.getElement(GAME_RESULTS_LIST_ID);
-            Element li = null;
-            switch (player) {
-                case 0:
-                    li = statsDoc.getElement(PLAYER1_ID);
-                    break;
-                case 1:
-                    li = statsDoc.getElement(PLAYER2_ID);
-                    break;
-                case 2:
-                    li = statsDoc.getElement(PLAYER3_ID);
-                    break;
-                case 3:
-                    li = statsDoc.getElement(PLAYER4_ID);
-                    break;
-                case 4:
-                    li = statsDoc.getElement(PLAYER5_ID);
-                    break;
-                case 5:
-                    li = statsDoc.getElement(PLAYER6_ID);
-                    break;
-
-            }
-            statsDoc.setInnerHTML(li, players.get(player).printGameHistory());
-            /*String htmlText = "";
+            String htmlText = "";
             for (int i = 0; i < players.size(); i++) {
                 htmlText += START_TAG + HTML.Tag.LI + END_TAG + players.get(i).printGameHistory() + START_TAG + SLASH + HTML.Tag.LI + END_TAG + NL;
             }
-            statsDoc.setInnerHTML(ol, htmlText);*/
+            statsDoc.setInnerHTML(ol, htmlText);
         } // WE'LL LET THE ERROR HANDLER TAKE CARE OF ANY ERRORS,
         // WHICH COULD HAPPEN IF XML SETUP FILES ARE IMPROPERLY
         // FORMATTED

@@ -12,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -68,7 +69,7 @@ public class JourneyThroughEuropeEventHandler {
         
         respondToStartGameRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.PLAY_GAME_STATE);
         for(int i = 0; i<players.size(); i++)
-        ui.getDocumentManager().addGameResultToStatsPage(players,i);
+        ui.getDocumentManager().addGameResultToStatsPage(players);
     }
     
      public void respondToSaveGameRequest(ArrayList<PlayerManager> players) {
@@ -274,5 +275,57 @@ public class JourneyThroughEuropeEventHandler {
            dialogStage.close();
         });
 
+    }
+    
+    public void showWinDialog(Stage primaryStage, String playerName)
+    {
+        Stage dialogStage = new Stage();
+        dialogStage.setTitle("Congratulations!");
+        dialogStage.initModality(Modality.WINDOW_MODAL);
+        dialogStage.initOwner(primaryStage);
+        BorderPane winPane = new BorderPane();
+
+        Button btnOK = new Button("OK");
+        HBox optionPane = new HBox();
+        
+
+        optionPane.setPadding(new Insets(2, 2, 10, 2));
+        optionPane.setSpacing(5.0);
+        optionPane.getChildren().add(btnOK);
+        optionPane.setAlignment(Pos.TOP_CENTER);
+
+        Label trophyLabel = new Label("");
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        String trophyImageName = props.getProperty(JourneyThroughEuropePropertyType.TROPHY_IMG_NAME);
+        Image trophyImage = new Image("file:images/"+ trophyImageName);
+        ImageView trophyView = new ImageView(trophyImage);
+        trophyLabel.setGraphic(trophyView);
+        
+        Label winningLabel = new Label("Congratulations! " + playerName + " Won!");
+        HBox winLabelPane = new HBox();
+        winLabelPane.setPadding(new Insets(10, 2, 5, 2));
+        winLabelPane.getChildren().addAll(trophyLabel,winningLabel);
+        winLabelPane.setAlignment(Pos.BOTTOM_CENTER);
+
+        VBox container = new VBox();
+        container.getChildren().addAll(winLabelPane, optionPane);
+        container.setAlignment(Pos.CENTER);
+
+        winPane.setCenter(container);
+
+        Scene scene = new Scene(winPane);
+
+        dialogStage.setWidth(250);
+        dialogStage.setHeight(130);
+        dialogStage.setResizable(false);
+        dialogStage.setScene(scene);
+        dialogStage.show();
+
+        btnOK.setOnAction(buttonEvent -> {
+           
+            dialogStage.close();
+            ui.changeWorkspace(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.SPLASH_SCREEN_STATE);
+            ui.resetGame();
+        });
     }
 }

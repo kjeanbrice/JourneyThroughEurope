@@ -34,6 +34,7 @@ public class GameManager {
 
     private PlayerManager player;
     private int currentPlayer;
+    private int moveCost;
     private ArrayList<PlayerManager> players;
     private Point2D startLocation;
     private JourneyThroughEuropeUI ui;
@@ -67,6 +68,7 @@ public class GameManager {
 
         hValueX = 0;
         vValueY = 0;
+        moveCost = 0;
         currentPlayer = -1;
         gameScrollPane = this.ui.getGameScrollPane();
         gridWidth = this.ui.getGameGridImages()[this.player.getCurrentGridLocation() - 1].getImage().getWidth();
@@ -132,7 +134,7 @@ public class GameManager {
                     player.addToMoveHistory(player.getPlayerName() + " has moved to " + destination.getCityName());
                 }
 
-                ui.getDocumentManager().addGameResultToStatsPage(players, currentPlayer);
+                ui.getDocumentManager().addGameResultToStatsPage(players);
                 //JourneyThroughEuropeFileLoader.saveFile(players);
                 //JourneyThroughEuropeFileLoader.loadFile();
                 destination = null;
@@ -263,7 +265,12 @@ public class GameManager {
                         if (pathFound) {
                             alreadyFlew = true;
                             flightInProgress = true;
-                            System.out.println("Bot is flying");
+                            
+                            JourneyThroughEuropeCity currentCity = ui.getGSM().processGetCityRequest(player.getCurrentCity());
+                            if(currentCity.getAirportGrid() == destination.getAirportGrid())
+                                moveCost = 2;
+                            else
+                                moveCost = 4;
                         }
 
                     }
@@ -495,4 +502,16 @@ public class GameManager {
         }
         return false;
     }
+    
+    public int getMoveCost()
+    {
+        return moveCost;
+    }
+    
+    public void setMoveCost(int moveCost)
+    {
+        this.moveCost = moveCost;
+    }
 }
+
+
