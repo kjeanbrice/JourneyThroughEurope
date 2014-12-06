@@ -37,7 +37,10 @@ import properties_manager.PropertiesManager;
  */
 public class JourneyThroughEuropeFileLoader {
 
+    public static final String TOWN_INFO_FILE = "towninformation.txt";
     public static final String GAME_DATA_FILE = "data/game.dat";
+    public static int CURRENT_PLAYER = 0;
+
     private static final String CITY_DATA_FILE = "data/cities.txt";
     private static final String AIRPORT_DATA_FILE = "data/airportdata.txt";
     private static final String CITY_NEIGHBORS_FILE = "data/cityneighbors.xml";
@@ -69,6 +72,7 @@ public class JourneyThroughEuropeFileLoader {
 
             // READ THE NEXT LINE
             inputLine = reader.readLine();
+
         }
 
         // RETURN THE TEXT
@@ -188,7 +192,9 @@ public class JourneyThroughEuropeFileLoader {
                 DataInputStream dis = new DataInputStream(bais);
 
                 ArrayList<PlayerManager> players = new ArrayList<PlayerManager>();
+
                 int numPlayers = dis.readInt();
+                CURRENT_PLAYER = dis.readInt();
                 for (int i = 0; i < numPlayers; i++) {
 
                     int playerCardsLength = dis.readInt();
@@ -221,6 +227,7 @@ public class JourneyThroughEuropeFileLoader {
 
                     System.out.println(temp.toString());
                 }
+
                 return players;
             }
         } catch (Exception e) {
@@ -229,13 +236,15 @@ public class JourneyThroughEuropeFileLoader {
         throw new RuntimeException("No File To Load.");
     }
 
-    public static void saveFile(ArrayList<PlayerManager> players) {
-        
+    public static void saveFile(ArrayList<PlayerManager> players, int currentPlayer) {
+
         try {
             FileOutputStream fos = new FileOutputStream(GAME_DATA_FILE);
             DataOutputStream dos = new DataOutputStream(fos);
 
             dos.writeInt(players.size());
+            dos.writeInt(currentPlayer);
+
             for (int i = 0; i < players.size(); i++) {
                 dos.writeInt(players.get(i).getCards().size());
                 dos.writeInt(players.get(i).getMoveHistory().size());
@@ -257,6 +266,43 @@ public class JourneyThroughEuropeFileLoader {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void loadTownInformation(XMLCityReader cities) {
+
+        try {
+            PropertiesManager props = PropertiesManager.getPropertiesManager();
+            String textFile = props.getProperty(JourneyThroughEuropePropertyType.DATA_PATH) + TOWN_INFO_FILE;
+
+            // WE'LL ADD ALL THE CONTENTS OF THE TEXT FILE TO THIS STRING
+            String textToReturn = "";
+
+            // OPEN A STREAM TO READ THE TEXT FILE
+            FileReader fr = new FileReader(textFile);
+            BufferedReader reader = new BufferedReader(fr);
+
+            // READ THE FILE, ONE LINE OF TEXT AT A TIME
+            String inputLine;
+            int i = 1;
+            while ((inputLine = reader.readLine()) != null) {
+
+                if (!inputLine.equals("")) {
+                    String cityName = inputLine;
+                    String cityInfo = reader.readLine();
+                    
+                    JourneyThroughEuropeCity city = cities.getCity(cityName.toUpperCase().trim());
+                    city.setHasTownInformation(true);
+                    city.setTownInformation(cityInfo);
+                    
+                    //System.out.println("CityName:" + cityName);
+                    //System.out.println("CityInfo:" + cityInfo);
+                    i++;
+                }
+            }
+            System.out.println("JourneyThroughEuropeFileLoader: End");
+        } catch (IOException ex) {
+            Logger.getLogger(JourneyThroughEuropeFileLoader.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

@@ -108,8 +108,8 @@ public class CardThread extends AnimationTimer {
         if (isScrolling) {
             isScrolling = currentCardManager.scrollToPlayerLocation();
             if (!isScrolling) {
-                 ui.getGSM().processStatusOnScrollPaneRequest(true);
-            } else {    
+                ui.getGSM().processStatusOnScrollPaneRequest(true);
+            } else {
                 ui.disableGridButtons();
                 ui.getGSM().processStatusOnScrollPaneRequest(false);
             }
@@ -236,6 +236,9 @@ public class CardThread extends AnimationTimer {
             }
 
             String firstCard = deck.dealCard(j);
+            if (firstCard.equalsIgnoreCase("TIRANE")) {
+                firstCard = deck.dealCard(j);
+            }
             playersManager.get(i).addCard(firstCard);
             playersManager.get(i).setCurrentCity(firstCard);
             playersManager.get(i).setHomeCity(firstCard);
@@ -335,11 +338,11 @@ public class CardThread extends AnimationTimer {
         }
     }
 
-    public void setStatusOnScrollPane(boolean status)
-    {
-        if(status)
+    public void setStatusOnScrollPane(boolean status) {
+        if (status) {
             ui.enableScrollPaneFocus();
-        else
+        } else {
             ui.disableScrollPaneFocus();
+        }
     }
 }

@@ -53,6 +53,7 @@ public class JourneyThroughEuropeGameStateManager {
         gamesHistory = new ArrayList<JourneyThroughEuropeGameData>();
         gameInProgress = null;
         airports = JourneyThroughEuropeFileLoader.loadAirportData(cities);
+        JourneyThroughEuropeFileLoader.loadTownInformation(cities);
     }
 
     public void resetVertex() {

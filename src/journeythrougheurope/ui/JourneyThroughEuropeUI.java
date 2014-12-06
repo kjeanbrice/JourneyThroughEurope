@@ -422,12 +422,14 @@ public class JourneyThroughEuropeUI extends Pane {
 
         FlowPane aboutToolbar = new FlowPane();
         aboutToolbar.setPadding(new Insets(5, 5, 5, 5));
+        
         BorderPane aboutPanel = new BorderPane();
-        aboutSwingNode.setStyle("-fx-background-color: #FFFFFF");
         aboutPanel.setCenter(aboutSwingNode);
+        aboutPanel.setStyle("-fx-border-color:black;" + "-fx-border-width: 2px;");
+        
         aboutToolbar.getChildren().add(btnGameAbout);
-        aboutToolbar.setStyle("-fx-background-color: #FFFFFF");
-
+        aboutToolbar.setStyle("-fx-border-color:black;" + "-fx-border-width: 2px;");
+   
         //aboutPane.addHyperlinkListener(new HelpHyperlinkListener(this));
         aboutGameScreenContainer.setTop(aboutToolbar);
         aboutGameScreenContainer.setCenter(aboutPanel);

@@ -31,6 +31,9 @@ public class JourneyThroughEuropeCity {
     private boolean isAirport;
     private Point2D airportLocation;
     private int airportGrid;
+    
+    private boolean hasTownInformation;
+    private String townInformation;
 
     public JourneyThroughEuropeCity(String cityName, String cardColor, int gridLocation, double gridX, double gridY) {
         this.cityName = cityName;
@@ -44,6 +47,9 @@ public class JourneyThroughEuropeCity {
         adjacencies = null;
         
         isAirport = false;
+        hasTownInformation = false;
+        
+        townInformation = "";
         airportLocation = null;
         airportGrid = -1;
     }
@@ -52,6 +58,25 @@ public class JourneyThroughEuropeCity {
         this("", "", -1, -1, -1);
     }
 
+    public void setTownInformation(String townInformation)
+    {
+        this.townInformation = townInformation;
+    }
+   
+    public void setHasTownInformation(boolean hasTownInformation)
+    {
+        this.hasTownInformation = hasTownInformation;
+    }
+    
+    public boolean hasTownInformation()
+    {
+        return hasTownInformation;
+    }
+    
+    public String getTownInformation()
+    {
+        return townInformation;
+    }
     public void setAirport(boolean isAirport) {
         this.isAirport = isAirport;
     }

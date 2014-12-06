@@ -116,4 +116,15 @@ public class JourneyThroughEuropeGameData {
     public boolean getWait() {
         return wait;
     }
+    
+    public int getCurrentPlayer()
+    {
+        return currentPlayer;
+    }
+    
+    public void setCurrentPlayer(int currentPlayer)
+    {
+        this.currentPlayer = currentPlayer;
+        
+    }
 }

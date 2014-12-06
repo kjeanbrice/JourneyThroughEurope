@@ -134,6 +134,10 @@ public class GameManager {
                     player.addToMoveHistory(player.getPlayerName() + " has moved to " + destination.getCityName());
                 }
 
+                if (destination.hasTownInformation()) {
+                    ui.getTextArea().setText(ui.getTextArea().getText() + "\n\nTown Information:\n" + destination.getTownInformation());
+                }
+
                 ui.getDocumentManager().addGameResultToStatsPage(players);
                 //JourneyThroughEuropeFileLoader.saveFile(players);
                 //JourneyThroughEuropeFileLoader.loadFile();
@@ -265,12 +269,13 @@ public class GameManager {
                         if (pathFound) {
                             alreadyFlew = true;
                             flightInProgress = true;
-                            
+
                             JourneyThroughEuropeCity currentCity = ui.getGSM().processGetCityRequest(player.getCurrentCity());
-                            if(currentCity.getAirportGrid() == destination.getAirportGrid())
+                            if (currentCity.getAirportGrid() == destination.getAirportGrid()) {
                                 moveCost = 2;
-                            else
+                            } else {
                                 moveCost = 4;
+                            }
                         }
 
                     }
@@ -502,16 +507,12 @@ public class GameManager {
         }
         return false;
     }
-    
-    public int getMoveCost()
-    {
+
+    public int getMoveCost() {
         return moveCost;
     }
-    
-    public void setMoveCost(int moveCost)
-    {
+
+    public void setMoveCost(int moveCost) {
         this.moveCost = moveCost;
     }
 }
-
-

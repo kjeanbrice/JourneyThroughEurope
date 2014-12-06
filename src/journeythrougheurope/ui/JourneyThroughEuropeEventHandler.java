@@ -68,9 +68,15 @@ public class JourneyThroughEuropeEventHandler {
         ui.setNumPlayers(players.size());
 
         respondToStartGameRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.PLAY_GAME_STATE);
+        if (ui.getGSM().isGameInProgress()) {
+            ui.getGSM().getGameInProgess().setCurrentPlayer(JourneyThroughEuropeFileLoader.CURRENT_PLAYER);
+            JourneyThroughEuropeFileLoader.CURRENT_PLAYER = 0;
+        }
+
         for (int i = 0; i < players.size(); i++) {
             ui.getDocumentManager().addGameResultToStatsPage(players);
         }
+
     }
 
     public void respondToSaveGameRequest(ArrayList<PlayerManager> players, Stage primaryStage) {
@@ -125,7 +131,8 @@ public class JourneyThroughEuropeEventHandler {
 
                 dialogStage.close();
             });
-            JourneyThroughEuropeFileLoader.saveFile(players);
+
+            JourneyThroughEuropeFileLoader.saveFile(players, ui.getGSM().getGameInProgess().getCurrentPlayer());
         }
     }
 
@@ -338,7 +345,7 @@ public class JourneyThroughEuropeEventHandler {
 
         HBox exitLabelPane = new HBox();
         exitLabelPane.setPadding(new Insets(10, 2, 2, 2));
-        exitLabelPane.getChildren().addAll(exitImageLabel,exitLabel);
+        exitLabelPane.getChildren().addAll(exitImageLabel, exitLabel);
         exitLabelPane.setAlignment(Pos.BOTTOM_CENTER);
 
         VBox container = new VBox();
@@ -391,6 +398,10 @@ public class JourneyThroughEuropeEventHandler {
         trophyLabel.setGraphic(trophyView);
 
         Label winningLabel = new Label("Congratulations! " + playerName + " Won!");
+        winningLabel.setStyle("-fx-font-size: 13px;"
+                    + " -fx-font-family: \"Trebuchet MS\";"
+                    + " -fx-font-weight: bold;");
+
         HBox winLabelPane = new HBox();
         winLabelPane.setPadding(new Insets(10, 2, 5, 2));
         winLabelPane.getChildren().addAll(trophyLabel, winningLabel);

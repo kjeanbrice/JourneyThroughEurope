@@ -20,7 +20,7 @@ import journeythrougheurope.ui.PlayerManager;
  */
 public class GameThread extends AnimationTimer {
 
-    private final int MAX_DELAY = 40;
+    private final int MAX_DELAY = 30;
     private JourneyThroughEuropeUI ui;
     private GameMouseHandler mouseHandler;
     private ArrayList<String> airports;
@@ -133,8 +133,7 @@ public class GameThread extends AnimationTimer {
                 if (!currentGameManager.isMoveInProgress()) {
                     if (currentGameManager.isBotMoveValid(endOfFirstTurn)) {
                         ui.getGSM().processStatusOnScrollPaneRequest(false);
-                        if(currentGameManager.getMoveCost() != 0)
-                        {
+                        if (currentGameManager.getMoveCost() != 0) {
                             moveCost = currentGameManager.getMoveCost();
                             currentGameManager.setMoveCost(0);
                         }
@@ -182,7 +181,7 @@ public class GameThread extends AnimationTimer {
                                 currentGameManager.getPlayerManager().setMovesRemaining(currentGameManager.getPlayerManager().getMovesRemaining() - 1);
                             } else {
                                 currentGameManager.getPlayerManager().setMovesRemaining(currentGameManager.getPlayerManager().getMovesRemaining() - moveCost);
-                                ui.getTextArea().setText(ui.getTextArea().getText() + "\n" + currentGameManager.getPlayerManager().getPlayerName() + " used " + moveCost + " points to fly to "+ currentGameManager.getPlayerManager().getCurrentCity() + ".");
+                                ui.getTextArea().setText(ui.getTextArea().getText() + "\n" + currentGameManager.getPlayerManager().getPlayerName() + " used " + moveCost + " points to fly to " + currentGameManager.getPlayerManager().getCurrentCity() + ".");
                                 moveCost = 0;
                             }
 
@@ -190,6 +189,13 @@ public class GameThread extends AnimationTimer {
                             ui.enableGridButtons();
                             ui.enableSaveButton();
                             ui.updateMovesRemaining("Moves Remaining: " + currentGameManager.getPlayerManager().getMovesRemaining());
+
+                            if ((currentGameManager.didPlayerFlyThisTurn() && currentGameManager.getPlayerManager().getCurrentCity().equalsIgnoreCase("TIRANE"))) {
+                                ui.disableRollButton();
+                                currentGameManager.resetPreviousCity();
+                                currentGameManager.getPlayerManager().setMovesRemaining(0);
+                                nextTurn = true;
+                            }
 
                             if (currentGameManager.getPlayerManager().getCards().size() != 1) {
                                 for (int i = 1; i < currentGameManager.getPlayerManager().getCards().size(); i++) {
@@ -256,6 +262,22 @@ public class GameThread extends AnimationTimer {
     public void updateRemainingMoves(int moves) {
         currentGameManager.getPlayerManager().setMovesRemaining(currentGameManager.getPlayerManager().getMovesRemaining() + moves);
         ui.updateMovesRemaining("Moves Remaining: " + currentGameManager.getPlayerManager().getMovesRemaining());
+
+        if ((currentGameManager.didPlayerFlyThisTurn() && currentGameManager.getPlayerManager().getCurrentCity().equalsIgnoreCase("TIRANE"))) {
+            ui.disableRollButton();
+            currentGameManager.resetPreviousCity();
+            currentGameManager.getPlayerManager().setMovesRemaining(0);
+            delay = true;
+            nextTurn = true;
+        }
+
+        if ((!currentGameManager.didPlayerFlyThisTurn() && currentGameManager.getPlayerManager().getCurrentCity().equalsIgnoreCase("TIRANE")) && ui.isRollButtonDisabled() && currentGameManager.getPlayerManager().getMovesRemaining() < 2) {
+            ui.disableRollButton();
+            currentGameManager.resetPreviousCity();
+            currentGameManager.getPlayerManager().setMovesRemaining(0);
+            delay = true;
+            nextTurn = true;
+        }
     }
 
     public void checkFlightStatus() {
