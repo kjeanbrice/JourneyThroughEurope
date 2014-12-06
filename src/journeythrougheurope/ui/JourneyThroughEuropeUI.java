@@ -5,6 +5,7 @@
  */
 package journeythrougheurope.ui;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import javafx.beans.value.ChangeListener;
@@ -595,7 +596,7 @@ public class JourneyThroughEuropeUI extends Pane {
             @Override
             public void handle(ActionEvent event) {
 
-                eventHandler.respondToSaveGameRequest(playersManager);
+                eventHandler.respondToSaveGameRequest(playersManager,primaryStage);
             }
         });
 
@@ -772,7 +773,7 @@ public class JourneyThroughEuropeUI extends Pane {
         gameButtonsPanel.getChildren().add(gameHistoryPanel);
 
         StackPane rightPaneContainer = new StackPane();
-        rightPaneContainer.getChildren().add(new Rectangle(242, 800, Color.WHITE));
+        rightPaneContainer.getChildren().add(new Rectangle(242, 850, Color.WHITE));
         rightPaneContainer.getChildren().add(gameButtonsPanel);
 
         rightPanel = new VBox();
@@ -911,6 +912,11 @@ public class JourneyThroughEuropeUI extends Pane {
             case SPLASH_SCREEN_STATE:
                 splashScreenContainer.setVisible(true);
                 mainPane.setStyle("-fx-background-color:blue");
+                File file = new File(JourneyThroughEuropeFileLoader.GAME_DATA_FILE);
+                if(file.exists())
+                    btnLoad.setDisable(false);
+                else
+                    btnLoad.setDisable(true);            
                 break;
             case PLAY_GAME_STATE:
                 gameScreenContainer.setVisible(true);

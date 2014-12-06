@@ -37,6 +37,7 @@ import properties_manager.PropertiesManager;
  */
 public class JourneyThroughEuropeFileLoader {
 
+    public static final String GAME_DATA_FILE = "data/game.dat";
     private static final String CITY_DATA_FILE = "data/cities.txt";
     private static final String AIRPORT_DATA_FILE = "data/airportdata.txt";
     private static final String CITY_NEIGHBORS_FILE = "data/cityneighbors.xml";
@@ -167,7 +168,7 @@ public class JourneyThroughEuropeFileLoader {
     }
 
     public static ArrayList<PlayerManager> loadFile(JourneyThroughEuropeUI ui) {
-        File fileToOpen = new File("data/game.dat");
+        File fileToOpen = new File(GAME_DATA_FILE);
         //String fileName = fileToOpen.getPath();
         try {
             if (fileToOpen.exists()) {
@@ -229,9 +230,9 @@ public class JourneyThroughEuropeFileLoader {
     }
 
     public static void saveFile(ArrayList<PlayerManager> players) {
-        String fileName = "data/game.dat";
+        
         try {
-            FileOutputStream fos = new FileOutputStream(fileName);
+            FileOutputStream fos = new FileOutputStream(GAME_DATA_FILE);
             DataOutputStream dos = new DataOutputStream(fos);
 
             dos.writeInt(players.size());
