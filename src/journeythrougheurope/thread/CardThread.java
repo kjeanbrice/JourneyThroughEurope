@@ -26,7 +26,7 @@ public class CardThread extends AnimationTimer {
     private final int Y_INCREMENT = 61;
     private final int DEAL_CARD_SPEED = -50;
     private final int REMOVE_CARD_SPEED = -5;
-    private final int MAX_CARDS = 10;
+    private final int MAX_CARDS = 5;
 
     private JourneyThroughEuropeUI ui;
     private Deck deck;
