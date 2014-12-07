@@ -104,7 +104,6 @@ public class XMLCityReader {
     public JourneyThroughEuropeCity getCity(String cityName) {
         JourneyThroughEuropeCity temp = cityHashMap.get(cityName.toUpperCase().trim());
         if (temp == null) {
-            System.out.println("The requested city is not contained in this hashmap.\t" + cityName);
             throw new NullPointerException("The requested city is not contained in this hashmap.\t" + cityName);
         }
         return temp;

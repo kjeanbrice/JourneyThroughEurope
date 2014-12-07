@@ -95,15 +95,11 @@ public class JourneyThroughEuropeFileLoader {
                 city.setAirport(true);
                 city.setAirportLocation(new Point2D(x, y));
                 city.setAirportGrid(airportGridLocation);
-
-                System.out.println("File Loader: " + city.toString() + "Is Airport: " + city.isAirport() + "\nAirport Location: " + city.getAirportLocation().toString() + "\nAirport Grid Location: " + city.getAirportGrid() + "\n");
                 airportData.add(city.getCityName());
             }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(JourneyThroughEuropeFileLoader.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        System.out.println("File Loader: " + airportData.size());
         return airportData;
     }
 
@@ -156,12 +152,8 @@ public class JourneyThroughEuropeFileLoader {
                     for (int i = 0; i < cityTemp.getNeighboringSeaCities().size(); i++) {
                         edgeList[i + landSize] = new Edge(cities.getCity(cityTemp.getNeighboringSeaCities().get(i)).getVertex(), 2);
                     }
-
                     cityTemp.setVertexAdjacencies(edgeList);
                     cityData.add(cityTemp);
-
-                    System.out.println(cities.getCity(cityName).toString() + "\n");
-
                 }
             }
         } catch (FileNotFoundException ex) {
@@ -224,8 +216,6 @@ public class JourneyThroughEuropeFileLoader {
                     temp.setCurrentPosition(new Point2D(ui.getGSM().processGetCityRequest(currentCity).getGridX(),
                             ui.getGSM().processGetCityRequest(currentCity).getGridY()));
                     players.add(temp);
-
-                    System.out.println(temp.toString());
                 }
 
                 return players;
@@ -261,8 +251,6 @@ public class JourneyThroughEuropeFileLoader {
                     dos.writeUTF(moveHistory.get(j));
                 }
                 dos.writeBoolean(players.get(i).isHuman());
-
-                System.out.println("FileLoader: Player Saved");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -284,7 +272,6 @@ public class JourneyThroughEuropeFileLoader {
 
             // READ THE FILE, ONE LINE OF TEXT AT A TIME
             String inputLine;
-            int i = 1;
             while ((inputLine = reader.readLine()) != null) {
 
                 if (!inputLine.equals("")) {
@@ -294,13 +281,8 @@ public class JourneyThroughEuropeFileLoader {
                     JourneyThroughEuropeCity city = cities.getCity(cityName.toUpperCase().trim());
                     city.setHasTownInformation(true);
                     city.setTownInformation(cityInfo);
-                    
-                    //System.out.println("CityName:" + cityName);
-                    //System.out.println("CityInfo:" + cityInfo);
-                    i++;
                 }
             }
-            System.out.println("JourneyThroughEuropeFileLoader: End");
         } catch (IOException ex) {
             Logger.getLogger(JourneyThroughEuropeFileLoader.class.getName()).log(Level.SEVERE, null, ex);
         }

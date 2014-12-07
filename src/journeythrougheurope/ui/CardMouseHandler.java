@@ -54,14 +54,10 @@ public class CardMouseHandler implements EventHandler<MouseEvent> {
 
                     }
                 }
-                //gameManager.repaint(event.getX(),event.getY());
-
                 break;
             case "MOUSE_RELEASED":
                 break;
             case "MOUSE_DRAGGED":
-                System.out.println("X: " + event.getX() + "     Y: " + event.getY());
-                //gameManager.repaint(event.getX(), event.getY());
                 break;
         }
     }

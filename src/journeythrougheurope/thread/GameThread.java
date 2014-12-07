@@ -150,12 +150,11 @@ public class GameThread extends AnimationTimer {
                         currentGameManager.resetPreviousCity();
                         currentGameManager.getPlayerManager().setMovesRemaining(0);
                         currentGameManager.setWaitingAtPort(true);
-                        System.out.println("Game Thread: " + currentGameManager.getPlayerManager().getPlayerName() + " is waiting to sail at the city " + currentGameManager.getPlayerManager().getCurrentCity() + ".");
                         ui.getTextArea().setText(currentGameManager.getPlayerManager().getPlayerName() + " is waiting to sail at the city " + currentGameManager.getPlayerManager().getCurrentCity() + ".");
 
+                        ui.disableRollButton();
                         ui.getGSM().processIncrementPlayerRequest();
-                        ui.getGSM().processStartTurnRequest();
-                        //System.out.println("Game Thread: Next Turn " + currentGameManager.getPlayerManager().getPlayerName() + " Moves Remaining: " + currentGameManager.getPlayerManager().getMovesRemaining() + ".");
+                        ui.getGSM().processStartTurnRequest();                       
                     }
 
                 }
@@ -170,10 +169,13 @@ public class GameThread extends AnimationTimer {
                         if (!currentGameManager.move()) {
 
                             ui.getGSM().processStatusOnScrollPaneRequest(true);
-                            delay = true;
+
+                            if (!currentGameManager.getPlayerManager().isHuman()) {
+                                delay = true;
+                            }
+
                             if (currentGameManager.isWaitingAtPort()) {
                                 currentGameManager.setWaitingAtPort(false);
-                                System.out.println("Game Thread: " + currentGameManager.getPlayerManager().getPlayerName() + " is no longer waiting to sail.");
                             }
 
                             boolean removingCard = false;
@@ -214,8 +216,7 @@ public class GameThread extends AnimationTimer {
                                     this.ui.getGSM().processRemoveCardRequest(0);
                                     removingCard = true;
                                     stopGameThread();
-                                    ui.getEventHandler().showWinDialog(ui.getPrimaryStage(), currentGameManager.getPlayerManager().getPlayerName());
-                                    System.out.println(currentGameManager.getPlayerManager().getPlayerName() + " has won!");
+                                    ui.getEventHandler().showWinDialog(ui.getPrimaryStage(), currentGameManager.getPlayerManager().getPlayerName());                                    
                                 }
                             }
 
@@ -223,11 +224,10 @@ public class GameThread extends AnimationTimer {
                                 currentGameManager.resetPreviousCity();
                                 currentGameManager.getPlayerManager().setMovesRemaining(0);
                                 if (!removingCard) {
+                                    if (currentGameManager.getPlayerManager().isHuman()) {
+                                        delay = true;
+                                    }
                                     nextTurn = true;
-                                    //currentGameManager.setAlreadyFlew(false);
-                                    //ui.getGSM().processIncrementPlayerRequest();
-                                    //ui.getGSM().processStartTurnRequest();
-
                                 } else {
                                     currentGameManager.setAlreadyFlew(false);
                                     ui.getGSM().processSetWaitRequest(true);

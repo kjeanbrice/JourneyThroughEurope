@@ -26,7 +26,7 @@ public class CardThread extends AnimationTimer {
     private final int Y_INCREMENT = 61;
     private final int DEAL_CARD_SPEED = -50;
     private final int REMOVE_CARD_SPEED = -5;
-    private final int MAX_CARDS = 6;
+    private final int MAX_CARDS = 10;
 
     private JourneyThroughEuropeUI ui;
     private Deck deck;
@@ -261,7 +261,6 @@ public class CardThread extends AnimationTimer {
                     case "GREEN":
                         String yellowCard = deck.dealCard(3);
                         if (yellowCard.equalsIgnoreCase("TIRANE")) {
-                            System.out.println(yellowCard + " HAS BEEN DEALT!");
                             playersManager.get(i).addCard(deck.dealCard(3));
                         } else {
                             playersManager.get(i).addCard(yellowCard);
@@ -270,7 +269,7 @@ public class CardThread extends AnimationTimer {
                 }
 
             }
-            //System.out.println(playersManager.get(i).toString() + "\n");
+            
         }
     }
 

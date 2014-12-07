@@ -385,7 +385,7 @@ public class JourneyThroughEuropeEventHandler {
         Button btnOK = new Button("OK");
         HBox optionPane = new HBox();
 
-        optionPane.setPadding(new Insets(2, 2, 10, 2));
+        optionPane.setPadding(new Insets(5, 2, 5, 2));
         optionPane.setSpacing(5.0);
         optionPane.getChildren().add(btnOK);
         optionPane.setAlignment(Pos.TOP_CENTER);
@@ -397,12 +397,13 @@ public class JourneyThroughEuropeEventHandler {
         ImageView trophyView = new ImageView(trophyImage);
         trophyLabel.setGraphic(trophyView);
 
-        Label winningLabel = new Label("Congratulations! " + playerName + " Won!");
+        Label winningLabel = new Label("Congratulations " + playerName + "! You Won!");
         winningLabel.setStyle("-fx-font-size: 13px;"
                     + " -fx-font-family: \"Trebuchet MS\";"
                     + " -fx-font-weight: bold;");
 
         HBox winLabelPane = new HBox();
+        winLabelPane.setSpacing(10);
         winLabelPane.setPadding(new Insets(10, 2, 5, 2));
         winLabelPane.getChildren().addAll(trophyLabel, winningLabel);
         winLabelPane.setAlignment(Pos.BOTTOM_CENTER);
@@ -415,8 +416,8 @@ public class JourneyThroughEuropeEventHandler {
 
         Scene scene = new Scene(winPane);
 
-        dialogStage.setWidth(250);
-        dialogStage.setHeight(130);
+        dialogStage.setWidth(280);
+        dialogStage.setHeight(150);
         dialogStage.setResizable(false);
         dialogStage.setScene(scene);
         dialogStage.show();

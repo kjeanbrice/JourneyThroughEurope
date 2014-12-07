@@ -118,7 +118,7 @@ public class GameManager {
 
                 player.setCurrentCity(destination.getCityName());
                 player.setCurrentPosition(destination.getPoint());
-                //System.out.println("Game Manager: " + currentPlayer.getCurrentCity());
+               
 
                 ui.getGameScrollPane().setHvalue((destination.getPoint().getX() / gridWidth));
                 ui.getGameScrollPane().setVvalue((destination.getPoint().getY() / gridHeight));
@@ -248,7 +248,6 @@ public class GameManager {
 
                 //check for bot flight route here
                 if (isBotAtAirport() && !alreadyFlew && endOfFirstTurn) {
-                    System.out.println("GameManager: Bot is at Airport.");
                     ArrayList<String> temp = validBotFlightRoutes();
                     if (!temp.isEmpty()) {
                         boolean pathFound = false;

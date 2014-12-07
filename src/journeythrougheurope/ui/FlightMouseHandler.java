@@ -42,13 +42,10 @@ public class FlightMouseHandler implements EventHandler<MouseEvent> {
             switch (event.getEventType().toString()) {
                 case "MOUSE_CLICKED":
                     if (currentFlightManager.isPlayerMoveValid(event.getX(), event.getY())) {
-                        System.out.println("FlightMouseHandler - Move is valid");
                         ui.getEventHandler().respondToSwitchScreenRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.PLAY_GAME_STATE);
                         ui.getGSM().processFlightRequest(currentFlightManager.getDestination(), currentFlightManager.getMoveCost());
                         currentFlightManager.reset();
                     }
-                    else
-                        System.out.println("FlightMouseHandler - Move is not valid");
                     break;
                 case "MOUSE_RELEASED":
                     break;
@@ -56,9 +53,7 @@ public class FlightMouseHandler implements EventHandler<MouseEvent> {
                     
                     break;
             }
-        } else {
-            System.out.println("CurrentFlightManager is null");
-        }
+        } 
     }
 
     public void setFlightManager(FlightManager currentFlightManager) {
