@@ -211,7 +211,7 @@ public class JourneyThroughEuropeEventHandler {
 
         Scene scene = new Scene(resetPane);
 
-        dialogStage.setWidth(280);
+        dialogStage.setWidth(320);
         dialogStage.setHeight(120);
         dialogStage.setResizable(false);
         dialogStage.setScene(scene);
@@ -279,10 +279,6 @@ public class JourneyThroughEuropeEventHandler {
     public void respondToChangeGridRequest(int gridState) {
         ui.getGSM().processGridChangeRequest(gridState);
         ui.changeGridImage(gridState);
-    }
-
-    public void respondToShowWinDialogRequest(Stage primaryStage) {
-
     }
 
     public void respondToChangeNumberOfPlayersRequest(int numPlayers) {
@@ -358,7 +354,7 @@ public class JourneyThroughEuropeEventHandler {
 
         Scene scene = new Scene(exitPane);
 
-        dialogStage.setWidth(455);
+        dialogStage.setWidth(500);
         dialogStage.setHeight(110);
         dialogStage.setResizable(false);
         dialogStage.setScene(scene);
@@ -421,7 +417,7 @@ public class JourneyThroughEuropeEventHandler {
 
         dialogStage.setWidth(340);
         dialogStage.setHeight(140);
-        dialogStage.setResizable(true);
+        dialogStage.setResizable(false);
         dialogStage.setScene(scene);
         dialogStage.show();
 
