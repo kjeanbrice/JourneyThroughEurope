@@ -20,7 +20,7 @@ import journeythrougheurope.ui.PlayerManager;
  */
 public class GameThread extends AnimationTimer {
 
-    private final int MAX_DELAY = 30;
+    private final int MAX_DELAY = 45;
     private JourneyThroughEuropeUI ui;
     private GameMouseHandler mouseHandler;
     private ArrayList<String> airports;
@@ -216,7 +216,7 @@ public class GameThread extends AnimationTimer {
                                     this.ui.getGSM().processRemoveCardRequest(0);
                                     removingCard = true;
                                     stopGameThread();
-                                    ui.getEventHandler().showWinDialog(ui.getPrimaryStage(), currentGameManager.getPlayerManager().getPlayerName());                                    
+                                    ui.getEventHandler().showWinDialog(ui.getPrimaryStage(), currentGameManager.getPlayerManager().getPlayerName());     
                                 }
                             }
 

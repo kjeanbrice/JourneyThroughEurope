@@ -26,7 +26,7 @@ public class CardThread extends AnimationTimer {
     private final int Y_INCREMENT = 61;
     private final int DEAL_CARD_SPEED = -50;
     private final int REMOVE_CARD_SPEED = -5;
-    private final int MAX_CARDS = 5;
+    private int maxCards;
 
     private JourneyThroughEuropeUI ui;
     private Deck deck;
@@ -49,13 +49,14 @@ public class CardThread extends AnimationTimer {
     private boolean removingCard;
     private boolean isScrolling;
 
-    public CardThread(JourneyThroughEuropeUI ui) {
+    public CardThread(JourneyThroughEuropeUI ui, int maxCards) {
         this.ui = ui;
         yFinalLocation = 0;
         currentPlayer = -1;
         cardToRemove = -1;
         currentCard = 0;
 
+        this.maxCards = maxCards;
         dealFirstCard = true;
         dealRemainingCards = true;
         updatePlayer = false;
@@ -102,7 +103,9 @@ public class CardThread extends AnimationTimer {
             currentCardManager.moveCardUp(currentCard, DEAL_CARD_SPEED, yFinalLocation);
         } else if (dealRemainingCards) {
             dealRemainingCards = dealRemainingCards();
-            currentCardManager.moveCardUp(currentCard, DEAL_CARD_SPEED, yFinalLocation);
+            if (currentCardManager.getPlayerManager().getCards().size() != 1) {
+                currentCardManager.moveCardUp(currentCard, DEAL_CARD_SPEED, yFinalLocation);
+            }
         }
 
         if (isScrolling) {
@@ -193,6 +196,13 @@ public class CardThread extends AnimationTimer {
             return false;
         }
 
+        if (currentCardManager.getPlayerManager().getCards().size() == 1) {
+            nextPlayer(1);
+            yFinalLocation = 60;
+            currentCard = 1;
+            return true;
+        }
+
         if (currentCardManager.getPlayerManager().getCardLocations().get(currentCard).getY() == yFinalLocation) {
             currentCard++;
             yFinalLocation += Y_INCREMENT;
@@ -250,7 +260,7 @@ public class CardThread extends AnimationTimer {
         }
 
         for (int i = 0, k = 0; i < playersManager.size(); i++) {
-            for (int j = 1; j < MAX_CARDS; j++) {
+            for (int j = 1; j < maxCards; j++) {
                 switch (ui.getGSM().processGetCityRequest(playersManager.get(i).getCards().get(j - 1)).getCardColor().toUpperCase().trim()) {
                     case "YELLOW":
                         playersManager.get(i).addCard(deck.dealCard(1));
@@ -269,7 +279,7 @@ public class CardThread extends AnimationTimer {
                 }
 
             }
-            
+
         }
     }
 

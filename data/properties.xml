@@ -16,6 +16,7 @@
 		<property name ="BACK_IMG_NAME"             value = "Back.png"></property>
 		<property name ="GO_IMG_NAME"               value = "Go.png"></property>
 		<property name ="NUM_PLAYERS_IMG_NAME"      value = "NumPlayersLabel.png"></property>
+		<property name ="NUM_CARDS_IMG_NAME"        value = "NumCardsLabel.png"></property>
 		<property name ="GRID1_BUTTON_IMAGE_NAME"   value = "Grid1ButtonImage.png"></property>
 		<property name ="GRID2_BUTTON_IMAGE_NAME"   value = "Grid2ButtonImage.png"></property>
 		<property name ="GRID3_BUTTON_IMAGE_NAME"   value = "Grid3ButtonImage.png"></property>

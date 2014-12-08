@@ -41,7 +41,7 @@ public class JourneyThroughEuropeEventHandler {
         ui.changeWorkspace(uiState);
     }
 
-    public void respondToStartGameRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState uiState) {
+    public void respondToStartGameRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState uiState, int maxCards) {
         ui.changeWorkspace(uiState);
 
         ArrayList<PlayerManager> players = ui.getPlayers();
@@ -59,15 +59,17 @@ public class JourneyThroughEuropeEventHandler {
 
         }
         ui.setCurrentPlayer(0);
-        ui.getGSM().startNewGame();
+        ui.getGSM().startNewGame(maxCards);
     }
 
     public void respondToLoadGameRequest() {
         ArrayList<PlayerManager> players = JourneyThroughEuropeFileLoader.loadFile(ui);
         ui.setPlayers(players);
         ui.setNumPlayers(players.size());
+        ui.setNumCards(JourneyThroughEuropeFileLoader.NUM_CARDS);
+        JourneyThroughEuropeFileLoader.NUM_CARDS = 0;
 
-        respondToStartGameRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.PLAY_GAME_STATE);
+        respondToStartGameRequest(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.PLAY_GAME_STATE,ui.getNumCards());
         if (ui.getGSM().isGameInProgress()) {
             ui.getGSM().getGameInProgess().setCurrentPlayer(JourneyThroughEuropeFileLoader.CURRENT_PLAYER);
             JourneyThroughEuropeFileLoader.CURRENT_PLAYER = 0;
@@ -132,7 +134,7 @@ public class JourneyThroughEuropeEventHandler {
                 dialogStage.close();
             });
 
-            JourneyThroughEuropeFileLoader.saveFile(players, ui.getGSM().getGameInProgess().getCurrentPlayer());
+            JourneyThroughEuropeFileLoader.saveFile(ui,players, ui.getGSM().getGameInProgess().getCurrentPlayer());
         }
     }
 
@@ -383,10 +385,11 @@ public class JourneyThroughEuropeEventHandler {
         BorderPane winPane = new BorderPane();
 
         Button btnOK = new Button("OK");
+        btnOK.setStyle("-fx-font-size: 13px;"
+                    + " -fx-font-family: \"Trebuchet MS\";"
+                    + " -fx-font-weight: bold;");
+        
         HBox optionPane = new HBox();
-
-        optionPane.setPadding(new Insets(5, 2, 5, 2));
-        optionPane.setSpacing(5.0);
         optionPane.getChildren().add(btnOK);
         optionPane.setAlignment(Pos.TOP_CENTER);
 
@@ -403,10 +406,10 @@ public class JourneyThroughEuropeEventHandler {
                     + " -fx-font-weight: bold;");
 
         HBox winLabelPane = new HBox();
-        winLabelPane.setSpacing(10);
-        winLabelPane.setPadding(new Insets(10, 2, 5, 2));
+        winLabelPane.setSpacing(20);
+        winLabelPane.setPadding(new Insets(10, 20, 5, 5));
         winLabelPane.getChildren().addAll(trophyLabel, winningLabel);
-        winLabelPane.setAlignment(Pos.BOTTOM_CENTER);
+        winLabelPane.setAlignment(Pos.CENTER);
 
         VBox container = new VBox();
         container.getChildren().addAll(winLabelPane, optionPane);
@@ -416,9 +419,9 @@ public class JourneyThroughEuropeEventHandler {
 
         Scene scene = new Scene(winPane);
 
-        dialogStage.setWidth(280);
-        dialogStage.setHeight(150);
-        dialogStage.setResizable(false);
+        dialogStage.setWidth(340);
+        dialogStage.setHeight(140);
+        dialogStage.setResizable(true);
         dialogStage.setScene(scene);
         dialogStage.show();
 
@@ -427,6 +430,8 @@ public class JourneyThroughEuropeEventHandler {
             dialogStage.close();
             ui.changeWorkspace(JourneyThroughEuropeUI.JourneyThroughEuropeUIState.SPLASH_SCREEN_STATE);
             ui.resetGame();
+            ui.resetRollImage();
+            ui.updateMovesRemaining("Moves Remaining: 0");
         });
     }
 }

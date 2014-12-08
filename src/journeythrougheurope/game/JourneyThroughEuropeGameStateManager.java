@@ -169,7 +169,7 @@ public class JourneyThroughEuropeGameStateManager {
         return currentGrid;
     }
 
-    public void startNewGame() {
+    public void startNewGame(int maxCards) {
         if (!isGameNotStarted() && (!gamesHistory.contains(gameInProgress))) {
             gamesHistory.add(gameInProgress);
         }
@@ -181,16 +181,16 @@ public class JourneyThroughEuropeGameStateManager {
         }
 
         // AND NOW MAKE A NEW GAME
-        makeNewGame();
+        makeNewGame(maxCards);
 
         // AND MAKE SURE THE UI REFLECTS A NEW GAME
         //ui.resetUI();
     }
 
-    public void makeNewGame() {
+    public void makeNewGame(int maxCards) {
 
         //ui.getDocManager().updateStatsDoc();
-        gameInProgress = new JourneyThroughEuropeGameData(ui);
+        gameInProgress = new JourneyThroughEuropeGameData(ui,maxCards);
         gameInProgress.startGame();
 
         // THE GAME IS OFFICIALLY UNDERWAY

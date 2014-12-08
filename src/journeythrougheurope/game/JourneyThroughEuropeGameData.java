@@ -29,12 +29,12 @@ public class JourneyThroughEuropeGameData {
     private boolean endOfFirstTurn;
     private boolean wait;
 
-    public JourneyThroughEuropeGameData(JourneyThroughEuropeUI ui) {
+    public JourneyThroughEuropeGameData(JourneyThroughEuropeUI ui, int maxCards) {
         this.ui = ui;
         wait = false;
         currentPlayer = 0;
         endOfFirstTurn = false;
-        cardThread = new CardThread(this.ui);
+        cardThread = new CardThread(this.ui,maxCards);
         gameThread = new GameThread(this.ui);
         flightThread = new FlightThread(this.ui);
 

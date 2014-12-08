@@ -90,12 +90,14 @@ public class JourneyThroughEuropeUI extends Pane {
     private Button btnExit;
 
     //Game Setup Screen
+    private ComboBox numCardsSelectionComboBox;
     private ComboBox playerSelectionComboBox;
     private HBox northPanel;
     private FlowPane centerPanel;
     private VBox playerGridPanes[];
     private StackPane playerGridContainers[];
     private int numPlayers;
+    private int numCards;
     private Button btnGo;
     private ArrayList<PlayerManager> playersManager;
 
@@ -441,6 +443,7 @@ public class JourneyThroughEuropeUI extends Pane {
         northPanel = new HBox();
         centerPanel = new FlowPane();
         numPlayers = 1;
+        numCards = 2;
         playersManager = new ArrayList<PlayerManager>();
 
         playerSelectionComboBox = new ComboBox();
@@ -458,6 +461,19 @@ public class JourneyThroughEuropeUI extends Pane {
 
         Label lblPlayerSelection = this.initLabel(JourneyThroughEuropePropertyType.NUM_PLAYERS_IMG_NAME);
 
+        Label lblCardsSelection = this.initLabel(JourneyThroughEuropePropertyType.NUM_CARDS_IMG_NAME);
+        numCardsSelectionComboBox = new ComboBox();
+        numCardsSelectionComboBox.getItems().addAll("2", "3", "4", "5", "6", "7" , "8");
+        numCardsSelectionComboBox.setValue("2");
+        numCardsSelectionComboBox.setShape(new Circle(1));
+        numCardsSelectionComboBox.setStyle("-fx-font-size: 16px;");
+
+        numCardsSelectionComboBox.valueProperty().addListener(new ChangeListener<String>() {
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                numCards = Integer.parseInt(numCardsSelectionComboBox.getValue().toString());
+            }
+        });
+        
         btnGo = this.initButton(JourneyThroughEuropePropertyType.GO_IMG_NAME);
         btnGo.setShape(new Circle(1));
         btnGo.setStyle("-fx-effect: dropshadow( three-pass-box , sandybrown , 10 , 0 , 0 , 0 );");
@@ -466,15 +482,17 @@ public class JourneyThroughEuropeUI extends Pane {
             @Override
             public void handle(ActionEvent event) {
 
-                eventHandler.respondToStartGameRequest(JourneyThroughEuropeUIState.PLAY_GAME_STATE);
+                eventHandler.respondToStartGameRequest(JourneyThroughEuropeUIState.PLAY_GAME_STATE,numCards);
             }
         });
 
         northPanel.setSpacing(10);
-        northPanel.setPadding(new Insets(10, 0, 10, 50));
+        northPanel.setPadding(new Insets(10, 0, 10, 115));
         northPanel.setAlignment(Pos.CENTER_LEFT);
         northPanel.getChildren().add(lblPlayerSelection);
         northPanel.getChildren().add(playerSelectionComboBox);
+        northPanel.getChildren().add(lblCardsSelection);
+        northPanel.getChildren().add(numCardsSelectionComboBox);
         northPanel.getChildren().add(btnGo);
 
         centerPanel.setPadding(marginlessInsets);
@@ -1199,13 +1217,29 @@ public class JourneyThroughEuropeUI extends Pane {
 
         ToggleGroup group = new ToggleGroup();
         RadioButton player = new RadioButton("Player");
+        player.setStyle("-fx-font-size: 13px;"
+                    + " -fx-font-family: \"Trebuchet MS\";"
+                    + " -fx-font-weight: bold;");
+      
         RadioButton computer = new RadioButton("Computer");
+        computer.setStyle("-fx-font-size: 13px;"
+                    + " -fx-font-family: \"Trebuchet MS\";"
+                    + " -fx-font-weight: bold;");
+        
         player.setSelected(true);
         player.setToggleGroup(group);
         computer.setToggleGroup(group);
 
         Label lblName = new Label("Name:");
+        lblName.setStyle("-fx-font-size: 13px;"
+                    + " -fx-font-family: \"Trebuchet MS\";"
+                    + " -fx-font-weight: bold;");
+        
         TextField txtName = new TextField();
+        txtName.setStyle("-fx-font-size: 13px;"
+                    + " -fx-font-family: \"Trebuchet MS\";"
+                    + " -fx-font-weight: bold;");
+        
         txtName.setPrefColumnCount(5);
 
         VBox playerNamePane = new VBox();
@@ -1410,5 +1444,15 @@ public class JourneyThroughEuropeUI extends Pane {
         gameSetupScreenContainer.getChildren().clear();
         initGameSetupScreen();
         textArea.setText("Game Notifications");
+    }
+    
+    public int getNumCards()
+    {
+        return numCards;
+    }
+    
+    public void setNumCards(int numCards)
+    {
+        this.numCards = numCards;
     }
 }

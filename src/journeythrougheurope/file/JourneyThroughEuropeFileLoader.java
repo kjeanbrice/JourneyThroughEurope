@@ -40,6 +40,7 @@ public class JourneyThroughEuropeFileLoader {
     public static final String TOWN_INFO_FILE = "towninformation.txt";
     public static final String GAME_DATA_FILE = "data/game.dat";
     public static int CURRENT_PLAYER = 0;
+    public static int NUM_CARDS = 0;
 
     private static final String CITY_DATA_FILE = "data/cities.txt";
     private static final String AIRPORT_DATA_FILE = "data/airportdata.txt";
@@ -187,6 +188,8 @@ public class JourneyThroughEuropeFileLoader {
 
                 int numPlayers = dis.readInt();
                 CURRENT_PLAYER = dis.readInt();
+                NUM_CARDS = dis.readInt();
+                
                 for (int i = 0; i < numPlayers; i++) {
 
                     int playerCardsLength = dis.readInt();
@@ -226,7 +229,7 @@ public class JourneyThroughEuropeFileLoader {
         throw new RuntimeException("No File To Load.");
     }
 
-    public static void saveFile(ArrayList<PlayerManager> players, int currentPlayer) {
+    public static void saveFile(JourneyThroughEuropeUI ui,ArrayList<PlayerManager> players, int currentPlayer) {
 
         try {
             FileOutputStream fos = new FileOutputStream(GAME_DATA_FILE);
@@ -234,6 +237,7 @@ public class JourneyThroughEuropeFileLoader {
 
             dos.writeInt(players.size());
             dos.writeInt(currentPlayer);
+            dos.writeInt(ui.getNumCards());
 
             for (int i = 0; i < players.size(); i++) {
                 dos.writeInt(players.get(i).getCards().size());
